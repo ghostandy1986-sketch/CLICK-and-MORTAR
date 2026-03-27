@@ -813,6 +813,18 @@
             z-index: 1001;
         }
 
+	/* FIX: Make hover preview work on special buttons too */
+	.special-button:hover .preview-popup {
+    	    display: block;
+            opacity: 1;
+            transition-delay: 0.3s;
+        }
+
+	.special-button:not(:hover) .preview-popup {
+            opacity: 0;
+            transition-delay: 0s;
+        }
+
         /* Cursor Toggle Button */
         .cursor-toggle {
             position: fixed;
@@ -982,7 +994,7 @@
         
         <!-- Special Buttons -->
 	<!-- InfoKiosk - FIXED -->
-<button class="special-button infokiosk-button" 
+<button class="special-button infokiosk-button"
         style="top: 845px; left: 940px; width: 55px; height: 75px;"
         onclick="openSpecialModal('Info Kiosk', './logos/info-kiosk.png')"
         data-url="./info-kiosk-final.html">
@@ -994,20 +1006,20 @@
 </button>
 
 <!-- Wishing Well - FIXED -->
-<button class="special-button wishing-well-button" 
+<button class="special-button wishing-well-button"
         style="top: 1000px; left: 900px; width: 150px; height: 100px;"
-        onclick="openSpecialModal('Wishing Well', './wishing-well.jpg')"
+        onclick="openSpecialModal('Wishing Well', './logos/wishing-well.jpg')"
         data-url="./wish-fountain.html">
     
     <div class="preview-popup">
-        <img src="./wishing-well.jpg" alt="WishWell">
+        <img src="./logos/wishing-well.jpg" alt="WishWell">
         <p>toss a donation into the fountain and make a wish</p>
     </div>
 </button>
 
 <!-- Flower Box (already correct - no change needed) -->
 <button class="brand-button" style="top: 1535px; left: 841px; width: 237px; height: 77px;"
-        onclick="openModal('Flower Box', './logos/flowerboxnew.png', 'Beautiful flower arrangements and donations', this)"
+        onclick="openModal('Flower Box', './flowerbox.html', 'Beautiful flower arrangements and donations', this)"
         data-url="./flowerbox.html">
     
     <div class="preview-popup">
@@ -1470,7 +1482,7 @@
 
 <button class="brand-button" style="top: 922px; left: 1120px; width: 155px; height: 36px;"
         onclick="openModal('TTMB Music Box', './logos/ttmb-logo.png', 'Playing the greatest hits across the galaxy', this)"
-        data-url="./ttmb/ttmb-music-store.html">
+        data-url="./ttmb/ttmb-website.html">
     TTMB Music Box
     <div class="preview-popup">
         <img src="./logos/ttmb-logo.png" alt="TTMB">
@@ -2286,15 +2298,18 @@
             openModal(adTitle, './blankslate-ad.png', 'This is a placeholder for advertisement content. Click to learn more about our advertising opportunities.');
           }
 
-         // Special Modal Function - Fixed for special buttons
-         function openSpecialModal(title, url) {
-            currentBrandUrl = url;
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalImage').src = '';
-            document.getElementById('modalDescription').innerText = `Click "Visit Website" to open ${title}`;
-            document.getElementById('modalOverlay').style.display = 'block';
-            document.getElementById('productModal').style.display = 'block';
-          }
+         // FIXED: Special Modal now uses data-url (HTML page) instead of logo
+function openSpecialModal(title, logoPath) {
+    const button = event.currentTarget;           // ← this is the key line
+    currentBrandUrl = button.getAttribute('data-url');   // now reads the real HTML file
+
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalImage').src = logoPath;   // show the logo in the modal
+    document.getElementById('modalDescription').innerText = `Click "Visit Website" to open ${title}`;
+    
+    document.getElementById('modalOverlay').style.display = 'block';
+    document.getElementById('productModal').style.display = 'block';
+}
 
         // Cursor functionality
           function cycleCursor() {
