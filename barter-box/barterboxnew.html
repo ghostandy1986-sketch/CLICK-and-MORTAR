@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarterBox - Trade Your Treasures</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #ffffff, #f1f5f9);
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #2563eb;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .rotating-cube {
+            width: 100px;
+            height: 100px;
+            transform-style: preserve-3d;
+            animation: rotateCube 5s infinite linear;
+            margin: 20px auto;
+        }
+
+        .rotating-cube div {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(37, 99, 235, 0.8);
+            border: 1px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .rotating-cube .front { transform: rotateY(0deg) translateZ(50px); }
+        .rotating-cube .back { transform: rotateY(180deg) translateZ(50px); }
+        .rotating-cube .left { transform: rotateY(-90deg) translateZ(50px); }
+        .rotating-cube .right { transform: rotateY(90deg) translateZ(50px); }
+        .rotating-cube .top { transform: rotateX(90deg) translateZ(50px); }
+        .rotating-cube .bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+        @keyframes rotateCube {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+
+        .card {
+            border: 1px solid #2563eb;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            background: #2563eb;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .ad-space {
+            background: #f8fafc;
+            border: 2px dashed #e5e7eb;
+            text-align: center;
+            padding: 20px;
+            font-size: 1rem;
+            color: #2563eb;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .ad-space:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        BarterBox - Trade Your Treasures
+    </header>
+
+    <main class="container mx-auto px-4 py-6">
+        <div class="mb-6">
+            <h2 class="text-center text-2xl font-bold text-blue-700">Post an Item for Barter</h2>
+            <div class="max-w-xl mx-auto mt-4 p-4 bg-white rounded shadow-md">
+                <form id="barter-form">
+                    <div class="mb-4">
+                        <label for="image-url" class="block font-medium text-gray-700">Product Image URL:</label>
+                        <input type="url" id="image-url" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-500 p-2">
+                    </div>
+                    <div class="mb-4">
+                        <label for="description" class="block font-medium text-gray-700">Product Description:</label>
+                        <textarea id="description" rows="3" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-500 p-2"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="barter-items" class="block font-medium text-gray-700">Items for Barter (comma-separated):</label>
+                        <input type="text" id="barter-items" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-500 p-2">
+                    </div>
+                    <div class="mb-4">
+                        <label for="buy-price" class="block font-medium text-gray-700">Buy Now Price:</label>
+                        <input type="number" id="buy-price" min="0" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-500 p-2">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded shadow hover:bg-blue-600">
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h2 class="text-center text-2xl font-bold text-blue-700">Featured Ads</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                <div class="ad-space">
+                    Rent this ad space for just $5/month!
+                </div>
+                <div class="ad-space">
+                    Promote your business here!
+                </div>
+                <div class="ad-space">
+                    Reach thousands of traders daily!
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h2 class="text-center text-2xl font-bold text-blue-700">Rotating BarterBox Highlights</h2>
+            <div class="rotating-cube">
+                <div class="front">Front</div>
+                <div class="back">Back</div>
+                <div class="left">Left</div>
+                <div class="right">Right</div>
+                <div class="top">Top</div>
+                <div class="bottom">Bottom</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        © 2025 BarterBox. All Rights Reserved. | <a href="#" class="text-blue-200 hover:underline">Contact Us</a>
+    </footer>
+
+    <script>
+        document.getElementById('barter-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Your item has been submitted for barter!');
+            e.target.reset();
+        });
+    </script>
+</body>
+</html>

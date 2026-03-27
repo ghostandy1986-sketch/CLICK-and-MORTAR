@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Closet with Virtual Dressing Room</title>
+    <style>
+        /* Previous styles remain the same */
+
+        /* Enhanced Dressing Room Styles */
+        #dressingRoom {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .virtual-mirror {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: #f8f8f8;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .mirror-surface {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(200, 200, 200, 0.1);
+            border: 2px solid #ddd;
+        }
+
+        .camera-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .preview-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .user-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .clothing-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Layaway Section Styles */
+        .layaway-container {
+            padding: 20px;
+        }
+
+        .layaway-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .payment-schedule {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 5px;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #4CAF50;
+            transition: width 0.3s ease;
+        }
+
+        /* Storage Area Styles */
+        .storage-container {
+            padding: 20px;
+        }
+
+        .offers-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .offer-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .discount-badge {
+            background: #ff4444;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Previous navigation and structure remains -->
+
+    <!-- Enhanced Dressing Room -->
+    <div id="dressingRoom">
+        <div class="virtual-mirror">
+            <div class="mirror-surface">
+                <div class="preview-container">
+                    <img id="userImage" class="user-image" src="placeholder.jpg" alt="Your photo">
+                    <div id="clothingOverlay" class="clothing-overlay"></div>
+                </div>
+            </div>
+            <div class="camera-controls">
+                <button onclick="takePhoto()" class="camera-btn">Take Photo</button>
+                <button onclick="retakePhoto()" class="camera-btn">Retake</button>
+            </div>
+        </div>
+        <div class="measurements-panel">
+            <!-- Previous measurement form remains -->
+        </div>
+    </div>
+
+    <!-- Layaway Section -->
+    <div class="layaway-container">
+        <h2>Layaway Items</h2>
+        <div id="layawayItems"></div>
+    </div>
+
+    <!-- Storage Area with Offers -->
+    <div class="storage-container">
+        <h2>Exclusive Offers</h2>
+        <div class="offers-section" id="offersContainer"></div>
+    </div>
+
+    <script>
+        // Camera functionality
+        let stream;
+        let videoElement;
+
+        async function initCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement = document.createElement('video');
+                videoElement.srcObject = stream;
+                videoElement.play();
+            } catch (err) {
+                console.error('Camera error:', err);
+                alert('Camera access denied or error occurred');
+            }
+        }
+
+        function takePhoto() {
+            const canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            canvas.getContext('2d').drawImage(videoElement, 0, 0);
+            
+            const userImage = document.getElementById('userImage');
+            userImage.src = canvas.toDataURL('image/jpeg');
+            
+            stream.getTracks().forEach(track => track.stop());
+        }
+
+        // Drag and drop functionality for clothing
+        function initDragAndDrop() {
+            const clothingItems = document.querySelectorAll('.clothing-item');
+            const clothingOverlay = document.getElementById('clothingOverlay');
+
+            clothingItems.forEach(item => {
+                item.draggable = true;
+                item.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', item.dataset.image);
+                });
+            });
+
+            clothingOverlay.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            clothingOverlay.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const imageUrl = e.dataTransfer.getData('text/plain');
+                addClothingToOverlay(imageUrl);
+            });
+        }
+
+        function addClothingToOverlay(imageUrl) {
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.style.position = 'absolute';
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '100%';
+            document.getElementById('clothingOverlay').appendChild(img);
+        }
+
+        // Layaway functionality
+        function initLayaway() {
+            const layawayItems = [
+                {
+                    name: 'Designer Jacket',
+                    totalPrice: 1000,
+                    paidAmount: 400,
+                    payments: [
+                        { date: '2024-02-01', amount: 200 },
+                        { date: '2024-03-01', amount: 200 },
+                        { date: '2024-04-01', amount: 200 },
+                        { date: '2024-05-01', amount: 200 }
+                    ]
+                }
+                // Add more items as needed
+            ];
+
+            const container = document.getElementById('layawayItems');
+            layawayItems.forEach(item => {
+                const progress = (item.paidAmount / item.totalPrice) * 100;
+                const remainingAmount = item.totalPrice - item.paidAmount;
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = 'layaway-item';
+                itemElement.innerHTML = `
+                    <h3>${item.name}</h3>
+                    <p>Total Price: $${item.totalPrice}</p>
+                    <p>Paid: $${item.paidAmount}</p>
+                    <p>Remaining: $${remainingAmount}</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="payment-schedule">
+                        <h4>Payment Schedule</h4>
+                        ${item.payments.map(payment => `
+                            <p>${payment.date}: $${payment.amount}</p>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(itemElement);
+            });
+        }
+
+        // Storage area and offers functionality
+        function initOffers() {
+            const offers = [
+                {
+                    brand: 'LuxuryBrand',
+                    discount: 30,
+                    description: 'Winter Collection Sale',
+                    expiryDate: '2024-02-28'
+                }
+                // Add more offers as needed
+            ];
+
+            const container = document.getElementById('offersContainer');
+            offers.forEach(offer => {
+                const offerElement = document.createElement('div');
+                offerElement.className = 'offer-card';
+                offerElement.innerHTML = `
+                    <span class="discount-badge">${offer.discount}% OFF</span>
+                    <h3>${offer.brand}</h3>
+                    <p>${offer.description}</p>
+                    <p>Expires: ${offer.expiryDate}</p>
+                `;
+                container.appendChild(offerElement);
+            });
+        }
+
+        // Initialize all features
+        document.addEventListener('DOMContentLoaded', () => {
+            initCamera();
+            initDragAndDrop();
+            initLayaway();
+            initOffers();
+        });
+    </script>
+</body>
+</html>

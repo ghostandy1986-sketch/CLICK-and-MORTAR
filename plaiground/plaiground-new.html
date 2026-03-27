@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLaiGROUND: Your AI & POD Creative Hub</title>
+    <meta name="description" content="Unleash your creativity with AI art, animation, music, and turn your digital creations into physical products with integrated Print-on-Demand services. Explore, create, and monetize with PLaiGROUND.">
+    <style>
+        /* Basic Styling for readability - you'll want to move this to a separate style.css file */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px 40px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: #fff;
+        }
+        .nav-buttons {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .nav-button, .action-button {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none; /* For link buttons */
+            display: inline-block; /* For link buttons */
+            text-align: center;
+        }
+        .nav-button:hover, .action-button:hover {
+            background-color: #449d44;
+            transform: translateY(-2px);
+        }
+        .section {
+            background-color: #ffffff;
+            margin: 25px auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .section-title span {
+            font-size: 2.5em;
+            line-height: 1;
+        }
+        .section-title h2 {
+            margin: 0;
+            font-size: 1.8em;
+            color: #2e8b57;
+        }
+        .section-description {
+            margin-bottom: 25px;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .tool-button {
+            background-color: #20b2aa;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .tool-button:hover {
+            background-color: #178b86;
+            transform: translateY(-2px);
+        }
+        .marketplace, .pod-providers, .subscription-section {
+            background-color: #fcfcfc;
+            margin: 25px auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+        }
+        .marketplace h2, .pod-providers h2, .subscription-section h2 {
+            text-align: center;
+            color: #2e8b57;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .marketplace-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .product-card {
+            background-color: #e0ffe0;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .product-card h3 {
+            color: #2e8b57;
+            margin-top: 0;
+            font-size: 1.4em;
+        }
+        .product-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+            color: #444;
+        }
+        .product-card li {
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        .print-services {
+            background-color: #ffd700; /* Gold */
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px dashed #e6c200;
+            transition: background-color 0.3s ease;
+            margin-top: 30px;
+        }
+        .print-services h3 {
+            color: #8B4513; /* SaddleBrown */
+            font-size: 1.6em;
+            margin-bottom: 15px;
+        }
+        .print-services p {
+            color: #6e370a;
+            font-style: italic;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+        }
+        .print-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .print-buttons .tool-button {
+            background-color: #d8a000; /* Darker gold */
+        }
+        .print-buttons .tool-button:hover {
+            background-color: #b38400;
+        }
+
+        .pod-list {
+            margin-top: 20px;
+            list-style: none;
+            padding: 0;
+        }
+        .pod-list li {
+            background-color: #e6f7ff;
+            border: 1px solid #cceeff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .pod-list li strong {
+            color: #007bb5;
+            font-size: 1.2em;
+        }
+        .pod-list li span {
+            font-size: 0.9em;
+            color: #555;
+        }
+        .partnership-button, .subscribe-button {
+            background-color: #ff6347; /* Tomato */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: block;
+            width: fit-content;
+            margin: 30px auto 20px auto;
+        }
+        .partnership-button:hover, .subscribe-button:hover {
+            background-color: #e5533d;
+            transform: translateY(-2px);
+        }
+
+        .subscribe-button {
+            background-color: #8a2be2; /* BlueViolet */
+        }
+        .subscribe-button:hover {
+            background-color: #6a0ad8;
+        }
+        .subscribe-info {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #666;
+        }
+        .subscribe-info strong {
+            color: #8a2be2;
+        }
+
+        .stats-container {
+            background-color: #f0f8ff;
+            margin: 25px auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+        }
+        .stats-container h2 {
+            text-align: center;
+            color: #2e8b57;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+        .stat-card {
+            background-color: #d6eaf8;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .stat-card h4 {
+            margin-top: 0;
+            color: #1a5276;
+            font-size: 1.1em;
+        }
+        .stat-card p {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #0d47a1;
+            margin: 5px 0 0 0;
+        }
+
+        .buffbot-link {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #ffeb3b; /* Amber */
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .buffbot-link a {
+            font-size: 1.4em;
+            color: #c62828; /* Dark Red */
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .buffbot-link a:hover {
+            color: #ffc107; /* Lighter Amber */
+        }
+        .chatbot-container {
+            /* Basic styling, expand as needed */
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1001;
+        }
+        #chatbot-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            z-index: 1002;
+        }
+        #chatbot-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+            header h1 {
+                font-size: 2em;
+            }
+            .nav-buttons, .button-grid, .marketplace-grid, .stats-grid, .print-buttons {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .section, .marketplace, .pod-providers, .subscription-section, .stats-container, .buffbot-link {
+                margin: 15px auto;
+                padding: 20px;
+            }
+            .section-title h2 {
+                font-size: 1.5em;
+            }
+            .nav-button, .action-button, .tool-button, .partnership-button, .subscribe-button {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            #chatbot-button {
+                width: 50px;
+                height: 50px;
+                font-size: 1.8em;
+                bottom: 15px;
+                right: 15px;
+            }
+            .chatbot-container {
+                width: 90%;
+                height: 70%;
+                bottom: 5%;
+                right: 5%;
+                left: 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to PLaiGROUND</h1>
+        <p>Unleash Your Creativity with AI & Bring Ideas to Life with Print-on-Demand</p>
+        <div class="nav-buttons">
+            <a href="#construction-zone" class="nav-button">🏗️ Construction Zone</a>
+            <button class="nav-button">Upload Content</button>
+            <button class="nav-button">My Dashboard</button>
+            <button class="nav-button">🛒 Cart</button>
+            <a href="https://yourbuffbotdomain.com" target="_blank" class="nav-button">🤖 Visit BuffBot AI</a>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="section-title">
+            <span>🎨</span>
+            <h2>Digital Art Creation</h2>
+        </div>
+        <p class="section-description">Create stunning digital drawings, scan your hand-drawn sketches, and convert them into sellable products using the power of AI.</p>
+        <div class="button-grid">
+            <button class="tool-button" data-ai-use="1">Use MidJourney for AI Art</button>
+            <button class="tool-button" data-ai-use="1">Use DALL-E for Custom Images</button>
+            <button class="tool-button" data-ai-use="1">AI Sketch to Digital</button>
+            <button class="tool-button" data-ai-use="1">AI Image Upscaler</button>
+            <button class="tool-button" data-ai-use="1">Style Transfer Engine</button>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-title">
+            <span>🎬</span>
+            <h2>Animation & Videos</h2>
+        </div>
+        <p class="section-description">Generate captivating animations, edit movies, or create stunning motion graphics with AI-assisted tools.</p>
+        <div class="button-grid">
+            <button class="tool-button" data-ai-use="1">Animate with Runway ML</button>
+            <button class="tool-button" data-ai-use="1">OpenAI for AI-Assisted Video Edits</button>
+            <button class="tool-button" data-ai-use="1">Create GIFs with Lumen5</button>
+            <button class="tool-button" data-ai-use="1">AI Lip-Sync Generator</button>
+            <button class="tool-button" data-ai-use="1">Scene Generator</button>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-title">
+            <span>🎵</span>
+            <h2>Music & Sound</h2>
+        </div>
+        <p class="section-description">Compose original music, generate custom sound bytes, or create unique ringtones powered by advanced AI algorithms.</p>
+        <div class="button-grid">
+            <button class="tool-button" data-ai-use="1">Generate Music with Amper Music</button>
+            <button class="tool-button" data-ai-use="1">Create Sound Effects with AIVA</button>
+            <button class="tool-button" data-ai-use="1">AI Ringtone Creator</button>
+            <button class="tool-button" data-ai-use="1">AI Voice Synthesizer</button>
+            <button class="tool-button" data-ai-use="1">Automated Mastering Tool</button>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-title">
+            <span>✍️</span>
+            <h2>AI Writing & Content</h2>
+        </div>
+        <p class="section-description">Unleash the power of AI to generate compelling articles, creative stories, engaging ad copy, and more.</p>
+        <div class="button-grid">
+            <button class="tool-button" data-ai-use="1">Article Generator</button>
+            <button class="tool-button" data-ai-use="1">Ad Copy Creator</button>
+            <button class="tool-button" data-ai-use="1">Product Description AI</button>
+            <button class="tool-button" data-ai-use="1">Story Plot Generator</button>
+        </div>
+    </section>
+
+    <section id="construction-zone" class="section construction-zone-section">
+        <div class="section-title">
+            <span>🚧</span>
+            <h2>The Construction Zone (Subscriber Exclusive)</h2>
+        </div>
+        <p class="section-description">This is where the magic happens! Full access to cutting-edge AI models for product creation, advanced customization tools, exclusive templates, and early beta features. Unlock your ultimate creative potential!</p>
+        <div class="button-grid">
+            <button class="tool-button" data-ai-use="0" data-gated="true">Advanced Product Mockup Generator</button>
+            <button class="tool-button" data-ai-use="0" data-gated="true">3D AI Product Renderer</button>
+            <button class="tool-button" data-ai-use="0" data-gated="true">AI Trend Prediction for Products</button>
+            <button class="tool-button" data-ai-use="0" data-gated="true">Custom AI Model Training</button>
+        </div>
+        <p class="subscribe-info"><strong>Subscribe for $5/month</strong> to gain unlimited access to the Construction Zone and all AI models. Non-subscribers are limited to 5 AI uses per day across all tools.</p>
+        <button class="subscribe-button action-button">🚀 Subscribe Now for $5/month!</button>
+    </section>
+
+    <div class="marketplace">
+        <h2>Digital Creator Marketplace</h2>
+        <p class="section-description">Explore and purchase unique digital assets created by our talented community, or list your own creations!</p>
+        <div class="marketplace-grid">
+            <div class="product-card">
+                <h3>Digital Art</h3>
+                <ul>
+                    <li>Character Designs</li>
+                    <li>Illustrations</li>
+                    <li>Web Design Assets</li>
+                    <li>NFTs & Collectibles</li>
+                </ul>
+            </div>
+            <div class="product-card">
+                <h3>Music</h3>
+                <ul>
+                    <li>Beats & Instrumentals</li>
+                    <li>Song Lyrics</li>
+                    <li>Sheet Music</li>
+                    <li>Sound Packs & Loops</li>
+                </ul>
+            </div>
+            <div class="product-card">
+                <h3>E-Books</h3>
+                <ul>
+                    <li>Digital Books</li>
+                    <li>Guides & Tutorials</li>
+                    <li>Educational Content</li>
+                    <li>Creative Writing Prompts</li>
+                </ul>
+            </div>
+            <div class="product-card">
+                <h3>Animations & Video Assets</h3>
+                <ul>
+                    <li>Motion Graphics Templates</li>
+                    <li>Short Video Clips</li>
+                    <li>Animated Stickers</li>
+                    <li>Video Transitions</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="print-services">
+            <h3>Print-on-Demand Services</h3>
+            <p><strong>Drag and drop your AI-generated or uploaded content here to instantly create physical products!</strong></p>
+            <div class="print-buttons">
+                <button class="tool-button">👕 Apparel & Clothing</button>
+                <button class="tool-button">☕ Mugs & Drinkware</button>
+                <button class="tool-button">🖼️ Posters & Canvas</button>
+                <button class="tool-button">📱 Phone Cases</button>
+                <button class="tool-button">📚 Books & Journals</button>
+                <button class="tool-button">✨ Stickers & Decals</button>
+                <button class="tool-button">👜 Tote Bags & Accessories</button>
+                <button class="tool-button">🏠 Home Decor (Pillows, Blankets)</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="pod-providers">
+        <h2>Our Trusted Print-on-Demand Partners</h2>
+        <p class="section-description">We partner with leading POD providers to ensure the highest quality and widest range of physical products for your creations. Explore their specialties and find the perfect fit for your brand.</p>
+        <ul class="pod-list">
+            <li>
+                <strong>Printful:</strong>
+                <span>Specializes in: Apparel (T-shirts, hoodies, activewear), hats, mugs, phone cases, wall art, home & living (pillows, blankets), and accessories. Known for high-quality printing and strong branding options.</span>
+            </li>
+            <li>
+                <strong>Printify:</strong>
+                <span>Specializes in: Broad range of products due to extensive supplier network. Apparel, home decor (canvas prints, rugs), phone cases, mugs, and unique accessories. Offers competitive pricing by allowing choice of print provider.</span>
+            </li>
+            <li>
+                <strong>Gelato:</strong>
+                <span>Specializes in: Global reach with local printing. Best for wall art (posters, framed prints), stationery (cards, calendars), apparel, mugs, and photo books. Focus on fast, local fulfillment.</span>
+            </li>
+            <li>
+                <strong>Gooten:</strong>
+                <span>Specializes in: Diverse catalog including apparel, wall art, premium home decor, drinkware, and accessories. Good for high-volume orders and robust API integrations.</span>
+            </li>
+            <li>
+                <strong>CustomCat:</strong>
+                <span>Specializes in: Large product catalog including apparel, hats, bags, laptop sleeves, pet accessories, jewelry, and drinkware. Known for fast fulfillment times and a strong seller community.</span>
+            </li>
+            <li>
+                <strong>Apliiq:</strong>
+                <span>Specializes in: High-quality cut & sew apparel, private label clothing lines, pocket tees, premium joggers, and hoodies. Ideal for fashion brands.</span>
+            </li>
+            <li>
+                <strong>Lulu Direct (Lulu xPress):</strong>
+                <span>Specializes in: Books (paperbacks, hardcovers), comic books, magazines, and ebooks. Ideal for authors and publishers looking for print-on-demand book solutions.</span>
+            </li>
+            <li>
+                <strong>Amazon Merch on Demand:</strong>
+                <span>Specializes in: Apparel (T-shirts, hoodies, pop sockets, phone cases). Direct integration with Amazon marketplace, handling printing, shipping, and customer service.</span>
+            </li>
+        </ul>
+        <button class="partnership-button action-button">🤝 Become a PLaiGROUND POD Partner!</button>
+    </section>
+
+    <div class="stats-container">
+        <h2>PLaiGROUND Community Insights</h2>
+        <p class="section-description">See the impact of creativity and innovation on our platform.</p>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Total Sales Generated</h4>
+                <p>$123,456</p>
+            </div>
+            <div class="stat-card">
+                <h4>AI Generations Today</h4>
+                <p><span id="ai-generations-count">0</span> / 5</p>
+            </div>
+            <div class="stat-card">
+                <h4>POD Orders Fulfilled</h4>
+                <p>789</p>
+            </div>
+            <div class="stat-card">
+                <h4>Active Creators</h4>
+                <p>1,234</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="buffbot-link">
+        <p>Looking for even more advanced AI solutions?</p>
+        <a href="https://yourbuffbotdomain.com" target="_blank">Explore BuffBot AI for Enterprise Solutions!</a>
+    </div>
+
+    <button id="chatbot-button">
+        <span>🤖</span>
+    </button>
+
+    <div id="chatbot-container" class="chatbot-container">
+        <div style="padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;">
+            <strong>PLaiBOT</strong>
+            <button id="close-chatbot" style="background: none; border: none; font-size: 1.2em; cursor: pointer;">✖</button>
+        </div>
+        <div style="flex-grow: 1; padding: 15px; overflow-y: auto; background-color: #fff;">
+            <p>Hello! How can I help you create today?</p>
+        </div>
+        <div style="padding: 15px; border-top: 1px solid #ddd; display: flex;">
+            <input type="text" id="chatbot-input" placeholder="Type your message..." style="flex-grow: 1; padding: 10px; border: 1px solid #eee; border-radius: 5px;">
+            <button id="send-chat-button" style="margin-left: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; padding: 10px 15px; cursor: pointer;">Send</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let aiUsesRemaining = 5; // Initial daily AI uses for non-subscribers
+            const aiGenerationsCount = document.getElementById('ai-generations-count');
+            aiGenerationsCount.textContent = aiUsesRemaining;
+
+            // Tool buttons functionality
+            const toolButtons = document.querySelectorAll('.tool-button');
+            toolButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const isGated = button.dataset.gated === 'true'; // Check if tool is gated
+                    const consumesAIUse = button.dataset.aiUse === '1'; // Check if tool consumes an AI use
+
+                    if (isGated) {
+                        alert('This feature is part of the Construction Zone and requires a subscription to PLaiGROUND Premium.');
+                        return; // Prevent further action if gated
+                    }
+
+                    if (consumesAIUse) {
+                        if (aiUsesRemaining > 0) {
+                            alert(`Loading ${button.textContent}... You have ${aiUsesRemaining - 1} AI uses remaining today.`);
+                            aiUsesRemaining--;
+                            aiGenerationsCount.textContent = aiUsesRemaining;
+                            // Add your tool loading logic here
+                        } else {
+                            alert('You have used all your 5 daily AI generations. Subscribe to PLaiGROUND Premium for unlimited access!');
+                        }
+                    } else {
+                        alert(`Loading ${button.textContent}...`);
+                        // Add tool loading logic for non-AI consuming tools
+                    }
+                });
+            });
+
+            // Chatbot functionality
+            const chatButton = document.getElementById('chatbot-button');
+            const chatContainer = document.getElementById('chatbot-container');
+            const closeChatbotButton = document.getElementById('close-chatbot'); // New close button
+
+            chatButton.addEventListener('click', () => {
+                chatContainer.style.display = chatContainer.style.display === 'none' ? 'flex' : 'none';
+            });
+
+            closeChatbotButton.addEventListener('click', () => {
+                chatContainer.style.display = 'none';
+            });
+
+            // Example Chatbot logic (expand this with actual AI integration)
+            const chatbotInput = document.getElementById('chatbot-input');
+            const sendChatButton = document.getElementById('send-chat-button');
+            const chatMessagesContainer = chatContainer.querySelector('div:nth-child(2)'); // The div where messages appear
+
+            sendChatButton.addEventListener('click', () => {
+                const userMessage = chatbotInput.value.trim();
+                if (userMessage) {
+                    addChatMessage('You', userMessage);
+                    chatbotInput.value = '';
+                    // Simulate AI response
+                    setTimeout(() => {
+                        addChatMessage('PLaiBOT', `I received "${userMessage}". How can I help further?`);
+                    }, 1000);
+                }
+            });
+
+            chatbotInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendChatButton.click();
+                }
+            });
+
+            function addChatMessage(sender, message) {
+                const msgElement = document.createElement('p');
+                msgElement.textContent = `${sender}: ${message}`;
+                msgElement.style.textAlign = sender === 'You' ? 'right' : 'left';
+                msgElement.style.backgroundColor = sender === 'You' ? '#e0ffe0' : '#f0f0f0';
+                msgElement.style.padding = '8px';
+                msgElement.style.borderRadius = '5px';
+                msgElement.style.marginBottom = '5px';
+                chatMessagesContainer.appendChild(msgElement);
+                chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight; // Auto-scroll
+            }
+
+            // Drag and drop functionality for print services
+            const printServices = document.querySelector('.print-services');
+            printServices.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                printServices.style.background = '#ffe44d';
+            });
+
+            printServices.addEventListener('dragleave', () => {
+                printServices.style.background = '#ffd700';
+            });
+
+            printServices.addEventListener('drop', (e) => {
+                e.preventDefault();
+                printServices.style.background = '#ffd700';
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    alert(`Content "${files[0].name}" received for printing! Preparing product mockups...`);
+                    // In a real app, you'd process the file upload here
+                } else {
+                    alert('Content received for printing! (No file detected from drag)');
+                }
+            });
+
+            // Partnership Button functionality
+            document.querySelector('.partnership-button').addEventListener('click', () => {
+                alert('Redirecting to our Partner Application Form! Join the PLaiGROUND movement.');
+                // In a real app, this would redirect to a specific application page
+                window.location.href = 'https://yourdomain.com/partner-signup'; // Replace with your actual partner signup URL
+            });
+
+            // Subscribe Button functionality
+            document.querySelector('.subscribe-button').addEventListener('click', () => {
+                alert('Redirecting to PLaiGROUND Premium Subscription! Unlock unlimited creativity.');
+                // In a real app, this would redirect to a specific subscription page
+                window.location.href = 'https://yourdomain.com/subscribe'; // Replace with your actual subscription URL
+            });
+        });
+    </script>
+</body>
+</html>

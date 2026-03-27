@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>C&M Virtual Travel Agency - Premium Global Experiences</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Premium Header */
+        header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            padding: 3rem 0;
+            position: relative;
+            border-bottom: 1px solid #333;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            color: #ffffff;
+        }
+
+        header p {
+            font-size: 1.3rem;
+            color: #cccccc;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        /* Professional Navigation */
+        nav {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 400;
+            margin: 0 2rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #d4af37;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        nav a:hover {
+            color: #d4af37;
+        }
+
+        /* Premium Globe Container */
+        .globe-section {
+            background: #111111;
+            padding: 4rem 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .globe-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+        }
+
+        .globe-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .globe-header h2 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .globe-header p {
+            font-size: 1.1rem;
+            color: #999999;
+            font-weight: 300;
+        }
+
+        .globe-display {
+            height: 500px;
+            background: radial-gradient(circle at center, #1a1a1a, #000000);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        #globe {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+
+        #globe:active {
+            cursor: grabbing;
+        }
+
+        .destinations-overlay {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            padding: 2rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid #333;
+            min-width: 250px;
+        }
+
+        .destinations-overlay h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #d4af37;
+            font-weight: 400;
+        }
+
+        .destination-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            color: #cccccc;
+        }
+
+        .destination-item i {
+            margin-right: 0.8rem;
+            color: #d4af37;
+            width: 16px;
+        }
+
+        /* Revenue Streams Section */
+        .revenue-section {
+            background: #0d0d0d;
+            padding: 4rem 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: #999999;
+            font-weight: 300;
+        }
+
+        .revenue-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .revenue-card {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            padding: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid #333;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .revenue-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #f4d03f);
+        }
+
+        .revenue-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: #d4af37;
+        }
+
+        .revenue-card h3 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .revenue-card p {
+            color: #cccccc;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .revenue-amount {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #d4af37;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Premium Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            color: #000000;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ffffff;
+            padding: 1rem 2rem;
+            border: 2px solid #333;
+            border-radius: 4px;
+            font-weight: 400;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-secondary:hover {
+            border-color: #d4af37;
+            color: #d4af37;
+            transform: translateY(-2px);
+        }
+
+        /* Affiliate Program Section */
+        .affiliate-section {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            padding: 4rem 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .affiliate-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .affiliate-benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .benefit-item {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .benefit-item h4 {
+            color: #d4af37;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+
+        .benefit-item p {
+            color: #cccccc;
+            line-height: 1.6;
+        }
+
+        /* Tour Brochures Section */
+        .tours-section {
+            background: #0a0a0a;
+            padding: 4rem 0;
+        }
+
+        .brochure-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .brochure-card {
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #333;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .brochure-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            border-color: #d4af37;
+        }
+
+        .brochure-image {
+            height: 200px;
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 3rem;
+        }
+
+        .brochure-content {
+            padding: 2rem;
+        }
+
+        .brochure-content h3 {
+            font-size: 1.6rem;
+            font-weight: 400;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .brochure-content p {
+            color: #cccccc;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .tour-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            color: #999999;
+            font-size: 0.9rem;
+        }
+
+        .tour-price {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #d4af37;
+        }
+
+        .tour-rating {
+            display: flex;
+            align-items: center;
+        }
+
+        .tour-rating i {
+            color: #d4af37;
+            margin-right: 0.2rem;
+        }
+
+        /* Forms */
+        .form-section {
+            background: #111111;
+            padding: 4rem 0;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #ffffff;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        /* Statistics Dashboard */
+        .stats-section {
+            background: #0d0d0d;
+            padding: 4rem 0;
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            padding: 2.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #d4af37;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 300;
+            color: #d4af37;
+            margin-bottom: 1rem;
+        }
+
+        .stat-label {
+            color: #cccccc;
+            font-size: 1.1rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+            }
+            
+            nav a {
+                margin: 0.5rem 1rem;
+            }
+            
+            .globe-display {
+                height: 300px;
+            }
+            
+            .destinations-overlay {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 2rem;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            border-top-color: #d4af37;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Message System */
+        .message {
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            margin: 1rem auto;
+            max-width: 600px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .message.error {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        /* Container Wrapper */
+        .container {
+            background: transparent;
+            margin: 0;
+            padding: 0;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        /* Enhanced Scrolling Banner */
+        .news-ticker {
+            background: #d4af37;
+            color: #000000;
+            padding: 0.8rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: scroll 40s linear infinite;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        @keyframes scroll {
+            0% { transform: translate3d(100%, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>C&M VIRTUAL TRAVEL AGENCY</h1>
+            <p>Premium Global Experiences • Expert Local Guides • Exclusive Access</p>
+        </div>
+    </header>
+
+    <div class="news-ticker">
+        <div class="ticker-content">
+            SPECIAL OFFER: Premium membership now 30% off • New destinations: Swiss Alps, Norwegian Fjords, Sahara Desert • Join our affiliate program and earn up to $2,500 monthly • Over 25,000 satisfied travelers worldwide
+        </div>
+    </div>
+
+    <nav>
+        <div class="nav-container">
+            <a href="#globe">EXPLORE GLOBE</a>
+            <a href="#tours">PREMIUM TOURS</a>
+            <a href="#create">CREATE TOUR</a>
+            <a href="#dashboard">DASHBOARD</a>
+            <a href="#revenue">REVENUE STREAMS</a>
+            <a href="#affiliate">AFFILIATE PROGRAM</a>
+        </div>
+    </nav>
+
+    <!-- Interactive Globe Section -->
+    <div class="globe-section" id="globe">
+        <div class="globe-container">
+            <div class="globe-header">
+                <h2>GLOBAL DESTINATIONS</h2>
+                <p>Click and drag to explore premium tour destinations worldwide</p>
+            </div>
+            <div class="globe-display">
+                <div class="destinations-overlay">
+                    <h4>FEATURED DESTINATIONS</h4>
+                    <div class="destination-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Paris, France</span>
+                    </div>
+                    <div class="destination-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Tokyo, Japan</span>
+                    </div>
+                    <div class="destination-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>New York, USA</span>
+                    </div>
+                    <div class="destination-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Rome, Italy</span>
+                    </div>
+                    <div class="destination-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Swiss Alps</span>
+                    </div>
+                </div>
+                <div id="globe"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Streams Section -->
+    <div class="revenue-section" id="revenue">
+        <div class="section-header">
+            <h2>MULTIPLE REVENUE STREAMS</h2>
+            <p>Diversify your income with our comprehensive earning opportunities</p>
+        </div>
+        <div class="revenue-grid">
+            <div class="revenue-card">
+                <h3>Premium Marketplace</h3>
+                <p>Sell exclusive local products, artisanal goods, and digital souvenirs to tour participants worldwide.</p>
+                <div class="revenue-amount">UP TO $3,500/MONTH</div>
+                <button class="btn-primary" onclick="showMessage('marketplace', 'success')">LAUNCH STORE</button>
+            </div>
+            <div class="revenue-card">
+                <h3>Language Consulting</h3>
+                <p>Offer professional language courses and cultural consulting services to international travelers.</p>
+                <div class="revenue-amount">UP TO $2,800/MONTH</div>
+                <button class="btn-primary" onclick="showMessage('language', 'success')">START TEACHING</button>
+            </div>
+            <div class="revenue-card">
+                <h3>Photography Services</h3>
+                <p>Provide professional photography packages and custom photo shoots during virtual tours.</p>
+                <div class="revenue-amount">UP TO $4,200/MONTH</div>
+                <button class="btn-primary" onclick="showMessage('photography', 'success')">OFFER SERVICES</button>
+            </div>
+            <div class="revenue-card">
+                <h3>Corporate Experiences</h3>
+                <p>Design exclusive team-building experiences and corporate events for businesses worldwide.</p>
+                <div class="revenue-amount">UP TO $6,500/MONTH</div>
+                <button class="btn-primary" onclick="showMessage('corporate', 'success')">JOIN PROGRAM</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="stats-section">
+        <div class="section-header">
+            <h2>PLATFORM STATISTICS</h2>
+            <p>Join thousands of successful guides and travelers</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalTours">3,247</div>
+                <div class="stat-label">Premium Tours</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeGuides">856</div>
+                <div class="stat-label">Expert Guides</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="happyTravelers">28,950</div>
+                <div class="stat-label">Satisfied Travelers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalEarnings">$2.4M</div>
+                <div class="stat-label">Total Earnings</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Affiliate Program Section -->
+    <div class="affiliate-section" id="affiliate">
+        <div class="affiliate-container">
+            <div class="section-header">
+                <h2>AFFILIATE PARTNERSHIP PROGRAM</h2>
+                <p>Exclusive opportunity for local merchants and business partners</p>
+            </div>
+            <div class="affiliate-benefits">
+                <div class="benefit-item">
+                    <h4>PREMIUM COMMISSION</h4>
+                    <p>Earn 35% commission on all successful referrals with monthly performance bonuses up to $2,500</p>
+                </div>
+                <div class="benefit-item">
+                    <h4>MARKETING SUPPORT</h4>
+                    <p>Professional marketing materials, dedicated account manager, and comprehensive training resources</p>
+                </div>
+                <div class="benefit-item">
+                    <h4>REAL-TIME ANALYTICS</h4>
+                    <p>Advanced dashboard with detailed earnings tracking, conversion metrics, and performance insights</p>
+                </div>
+                <div class="benefit-item">
+                    <h4>EXCLUSIVE ACCESS</h4>
+                    <p>Priority access to new features, beta programs, and exclusive partnership opportunities</p>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="showAffiliateForm()" style="font-size: 1.2rem; padding: 1.5rem 3rem;">
+                JOIN AFFILIATE PROGRAM
+            </button>
+        </div>
+    </div>
+
+    <!-- Premium Tours Section -->
+    <div class="tours-section" id="tours">
+        <div class="section-header">
+            <h2>PREMIUM VIRTUAL EXPERIENCES</h2>
+            <p>Curated tours with expert local guides and exclusive access</p>
+        </div>
+        <div class="brochure-grid">
+            <div class="brochure-card">
+                <div class="brochure-image">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <div class="brochure-content">
+                    <h3>Parisian Art & Culture Immersion</h3>
+                    <div class="tour-meta">
+                        <div class="tour-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span style="margin-left: 0.5rem;">(247 reviews)</span>
+                        </div>
+                        <div class="tour-price">$185</div>
+                    </div>
+                    <p>Exclusive access to private galleries, artist studios, and hidden cultural gems with a professional art historian guide.</p>
+                    <button class="btn-secondary" onclick="bookTour('paris-premium')">BOOK EXPERIENCE</button>
+                </div>
+            </div>
+
+            <div class="brochure-card">
+                <div class="brochure-image">
+                    <i class="fas fa-torii-gate"></i>
+                </div>
+                <div class="brochure-content">
+                    <h3>Tokyo Zen & Tradition Experience</h3>
+                    <div class="tour-meta">
+                        <div class="tour-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span style="margin-left: 0.5rem;">(189 reviews)</span>
+                        </div>
+                        <div class="tour-price">$225</div>
+                    </div>
+                    <p>Private meditation sessions, traditional tea ceremony, and exclusive temple access with a certified Zen master.</p>
+                    <button class="btn-secondary" onclick="bookTour('tokyo-zen')">BOOK EXPERIENCE</button>
+                </div>
+            </div>
+
+            <div class="brochure-card">
+                <div class="brochure-image">
+                    <i class="fas fa-city"></i>
+                </div>
+                <div class="brochure-content">
+                    <h3>Manhattan Elite Experience</h3>
+                    <div class="tour-meta">
+                        <div class="tour-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span style="margin-left: 0.5rem;">(312 reviews)</span>
+                        </div>
+                        <div class="tour-price">$295</div>
+                    </div>
+                    <p>VIP access to exclusive rooftops, private clubs, and insider Manhattan locations with a luxury lifestyle expert.</p>
+                    <button class="btn-secondary" onclick="bookTour('manhattan-elite')">BOOK EXPERIENCE</button>
+                </div>
+            </div>
+
+            <div class="brochure-card">
+                <div class="brochure-image">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <div class="brochure-content">
+                    <h3>Roman Culinary Mastery</h3>
+                    <div class="tour-meta">
+                        <div class="tour-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span style="margin-left: 0.5rem;">(198 reviews)</span>
+                        </div>
+                        <div class="tour-price">$350</div>
+                    </div>
+                    <p>Private cooking sessions with Michelin-starred chefs, exclusive market tours, and wine pairing experiences.</p>
+                    <button class="btn-secondary" onclick="bookTour('rome-culinary')">BOOK EXPERIENCE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Tour Form -->
+    <div class="form-section" id="create">
+        <div class="form-container">
+            <div class="section-header">
+                <h2>CREATE PREMIUM TOUR</h2>
+                <p>Design your exclusive virtual experience</p>
+            </div>
+            <form id="tourForm">
+                <div class="form-group">
+                    <label for="tourName">TOUR TITLE</label>
+                    <input type="text" id="tourName" name="tourName" required placeholder="Exclusive Venetian Architecture & History">
+                </div>
+                <div class="form-group">
+                    <label for="tourDescription">DETAILED DESCRIPTION</label>
+                    <textarea id="tourDescription" name="tourDescription" required rows="6" placeholder="Provide a comprehensive description of your unique tour experience, highlighting exclusive access and expert insights..."></textarea>
+                </div>

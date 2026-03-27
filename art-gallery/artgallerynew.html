@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artistica Galleria - Premium Art Marketplace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/api/placeholder/1920/1080');
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            padding: 1rem;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #9c7c38;
+        }
+
+        .gallery {
+            padding: 2rem;
+            background: linear-gradient(to bottom, #f9f9f9, #ffffff);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .artwork-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            background: white;
+        }
+
+        .artwork-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .artwork-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .artwork-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.95);
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .artwork-card:hover .artwork-info {
+            transform: translateY(0);
+        }
+
+        .bid-button {
+            background: #9c7c38;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .bid-button:hover {
+            background: #7c6230;
+        }
+
+        .services {
+            padding: 4rem 2rem;
+            background: linear-gradient(45deg, #f3f3f3, #ffffff);
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .subscription-banner {
+            background: linear-gradient(45deg, #9c7c38, #7c6230);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+ <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Header and Navigation */
+        .header {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/api/placeholder/1920/1080');
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .nav {
+            position: fixed;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            z-index: 1000;
+        }
+
+        /* Horizontal Gallery Scroll */
+        .gallery-scroll {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            overflow-x: auto;
+            white-space: nowrap;
+            background: rgba(0,0,0,0.8);
+            padding: 20px 0;
+        }
+
+        .gallery-item {
+            display: inline-block;
+            width: 200px;
+            height: 160px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        /* Search and Filter Section */
+        .search-section {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .search-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Upload Form */
+        .upload-form {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        /* Rating Component */
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stars {
+            color: gold;
+            cursor: pointer;
+        }
+
+        /* Music Player */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        /* Magnifying Glass */
+        .magnifier {
+            position: absolute;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            display: none;
+        }
+
+        /* Frame Selection */
+        .frame-preview {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+        }
+
+        .frame-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Realtor Section */
+        .realtor-section {
+            padding: 40px 20px;
+            background: #f9f9f9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .search-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery-scroll {
+                height: 150px;
+            }
+            
+            .gallery-item {
+                width: 150px;
+                height: 120px;
+            }
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-links">
+            <!-- Navigation links here -->
+        </div>
+    </nav>
+
+    <!-- Header with Gallery Scroll -->
+    <header class="header">
+        <div class="gallery-scroll" id="galleryScroll">
+            <!-- Gallery items dynamically loaded here -->
+        </div>
+    </header>
+
+    <!-- Search and Filter Section -->
+    <section class="search-section">
+        <div class="search-controls">
+            <input type="text" placeholder="Search by title, artist, or keywords">
+            <select id="priceSort">
+                <option value="">Sort by Price</option>
+                <option value="low-high">Lowest to Highest</option>
+                <option value="high-low">Highest to Lowest</option>
+            </select>
+            <select id="dateSort">
+                <option value="">Sort by Date</option>
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+            </select>
+            <!-- Additional filters -->
+        </div>
+    </section>
+
+    <!-- Upload Artwork Form -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <form class="upload-form" id="artworkUploadForm">
+                <div class="form-group">
+                    <label>Artwork Type</label>
+                    <select name="artworkType" required>
+                        <option value="painting">Painting</option>
+                        <option value="sculpture">Sculpture</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Upload Images</label>
+                    <input type="file" name="images" multiple accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="number" name="price" required>
+                </div>
+                <div class="form-group">
+                    <label>Frame Options</label>
+                    <select name="frame" id="frameSelect">
+                        <!-- Frame options loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Add to Auction?</label>
+                    <input type="checkbox" name="auction">
+                </div>
+                <div class="form-group">
+                    <label>Available for Rental?</label>
+                    <input type="checkbox" name="rental">
+                </div>
+                <button type="submit">Upload Artwork</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Music Player -->
+    <div class="music-player">
+        <audio id="bgMusic" loop>
+            <source src="classical-music.mp3" type="audio/mpeg">
+        </audio>
+        <button id="musicToggle"><i class="fas fa-music"></i></button>
+    </div>
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-links">
+            <a href="#paintings">Gallery</a>
+            <a href="#sculptures">Sculptures</a>
+            <a href="#services">Services</a>
+            <a href="#subscription">Painters Club</a>
+            <a href="#showcase">Showcase Your Art</a>
+        </div>
+    </nav>
+
+    <header class="header">
+        <h1>Artistica Galleria</h1>
+        <p>Where Art Meets Elegance</p>
+    </header>
+
+    <section id="gallery" class="gallery">
+        <div class="gallery-grid">
+            <div class="artwork-card">
+                <img src="/api/placeholder/400/500" alt="Artwork" class="artwork-image">
+                <div class="artwork-info">
+                    <h3>Summer Breeze</h3>
+                    <p>By: Sarah Johnson</p>
+                    <p>Created: January 15, 2024</p>
+                    <p>Price: $2,500</p>
+                    <button class="bid-button">Place Bid</button>
+                </div>
+            </div>
+            <!-- More artwork cards would be dynamically generated -->
+        </div>
+    </section>
+
+    <section id="services" class="services">
+        <div class="service-grid">
+            <div class="service-card">
+                <i class="fas fa-print fa-3x"></i>
+                <h3>Print Services</h3>
+                <p>High-quality prints of your favorite artworks</p>
+                <button class="bid-button">Learn More</button>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-frame fa-3x"></i>
+                <h3>Custom Framing</h3>
+                <p>Professional framing services for your artwork</p>
+                <button class="bid-button">Get Quote</button>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-palette fa-3x"></i>
+                <h3>Art Courses</h3>
+                <p>Learn from professional artists</p>
+                <button class="bid-button">Enroll Now</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="subscription" class="subscription-banner">
+        <h2>Join Our Painters Club</h2>
+        <p>$10/month for exclusive tutorials, live sessions, and monthly projects</p>
+        <button class="bid-button">Subscribe Now</button>
+    </section>
+
+    <div id="artworkModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <img src="" alt="Large artwork view" style="max-width: 100%;">
+            <div id="modalInfo"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Artistica Galleria. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Modal functionality
+        const modal = document.getElementById('artworkModal');
+        const artworkCards = document.querySelectorAll('.artwork-card');
+        const closeModal = document.querySelector('.close-modal');
+
+        artworkCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const img = card.querySelector('img').src;
+                const info = card.querySelector('.artwork-info').innerHTML;
+                modal.querySelector('img').src = img;
+                document.getElementById('modalInfo').innerHTML = info;
+                modal.style.display = 'block';
+            });
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Sticky navigation
+        const nav = document.querySelector('.nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(255,255,255,0.95)';
+            } else {
+                nav.style.background = 'rgba(255,255,255,0.8)';
+            }
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+             // Gallery Scroll Loading
+        function loadGalleryItems() {
+            const gallery = document.getElementById('galleryScroll');
+            // Fetch and load gallery items
+        }
+
+        // Rating System
+        function initRating() {
+            const stars = document.querySelectorAll('.stars i');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = this.dataset.rating;
+                    // Handle rating submission
+                });
+            });
+        }
+
+        // Music Player
+        const musicToggle = document.getElementById('musicToggle');
+        const bgMusic = document.getElementById('bgMusic');
+        let isMusicPlaying = false;
+
+        musicToggle.addEventListener('click', () => {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                musicToggle.innerHTML = '<i class="fas fa-music"></i>';
+            } else {
+                bgMusic.play();
+                musicToggle.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        });
+
+        // Magnifying Glass
+        function initMagnifier() {
+            const artworks = document.querySelectorAll('.artwork-image');
+            const magnifier = document.createElement('div');
+            magnifier.className = 'magnifier';
+            document.body.appendChild(magnifier);
+
+            artworks.forEach(artwork => {
+                artwork.addEventListener('mousemove', function(e) {
+                    // Implement magnifying glass logic
+                });
+            });
+        }
+
+        // Frame Selection Preview
+        function updateFramePreview() {
+            const frameSelect = document.getElementById('frameSelect');
+            frameSelect.addEventListener('change', function() {
+                // Update frame preview
+            });
+        }
+
+        // Initialize all features
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGalleryItems();
+            initRating();
+            initMagnifier();
+            updateFramePreview();
+        });
+    });
+    </script>
+</body>
+</html>

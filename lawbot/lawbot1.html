@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Analysis Assistant</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        .step {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .disclaimer {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .disclaimer h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #0052a3;
+        }
+
+        .analysis {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .analysis h3 {
+            margin-bottom: 15px;
+        }
+
+        .analysis-section {
+            margin-bottom: 20px;
+        }
+
+        .analysis-section h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .analysis-section ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+
+        .payment-info {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="./lawbot.WEBP" alt="LawBot Logo" style="width: 40px; height: 40px;">
+            <h1>Legal Analysis Assistant</h1>
+        </div>
+
+        <div id="step1" class="step active">
+            <div class="disclaimer">
+                <h3>⚖️ Legal Disclaimer</h3>
+                <p>This is an AI-powered analysis tool and not a substitute for legal representation. 
+                All recommendations should be reviewed by a licensed attorney. No attorney-client 
+                relationship is created by using this service.</p>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="agreement"> 
+                    I understand and agree to the disclaimer
+                </label>
+            </div>
+            
+            <button id="continueBtn" disabled>Continue</button>
+        </div>
+
+        <div id="step2" class="step">
+            <div class="form-group">
+                <label for="chargeLevel">Charge Level:</label>
+                <select id="chargeLevel" required>
+                    <option value="">Select Level</option>
+                    <option value="low">Low Severity</option>
+                    <option value="medium">Medium Severity</option>
+                    <option value="high">High Severity</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="chargeType">Charge Type:</label>
+                <select id="chargeType" required>
+                    <option value="">Select Type</option>
+                    <option value="misdemeanor">Misdemeanor</option>
+                    <option value="felony">Felony</option>
+                    <option value="federal">Federal</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="zipcode">Zipcode:</label>
+                <input type="text" id="zipcode" pattern="[0-9]{5}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="documents">Upload Court Documents:</label>
+                <input type="file" id="documents" accept=".pdf,.doc,.docx,.jpg,.png">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description of Events:</label>
+                <textarea id="description" placeholder="Provide a detailed description of the events..."></textarea>
+            </div>
+
+            <button id="analyzeBtn">Generate Analysis</button>
+        </div>
+
+        <div id="step3" class="step">
+            <div id="paymentSection" class="payment-info">
+                <span class="price">Analysis Fee: $<span id="price">0</span></span>
+                <button id="payBtn">Pay to View Analysis</button>
+            </div>
+
+            <div id="analysisContent" style="display: none;">
+                <div class="analysis">
+                    <h3>Legal Analysis Report</h3>
+                    
+                    <div class="analysis-section">
+                        <h4>Relevant Laws:</h4>
+                        <ul id="relevantLaws"></ul>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h4>Recommended Actions:</h4>
+                        <ul id="recommendedActions"></ul>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h4>Possible Defenses:</h4>
+                        <ul id="possibleDefenses"></ul>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h4>Risk Assessment:</h4>
+                        <p id="riskAssessment"></p>
+                    </div>
+
+                    <div class="analysis-section">
+                        <h4>Estimated Timeframe:</h4>
+                        <p id="timeframe"></p>
+                    </div>
+
+                    <button id="printBtn" class="no-print">Print Analysis</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize variables
+        let currentStep = 1;
+        let analysisData = null;
+
+        // Event Listeners
+        document.getElementById('agreement').addEventListener('change', function(e) {
+            document.getElementById('continueBtn').disabled = !e.target.checked;
+        });
+
+        document.getElementById('continueBtn').addEventListener('click', function() {
+            showStep(2);
+        });
+
+        document.getElementById('analyzeBtn').addEventListener('click', function() {
+            if (validateForm()) {
+                generateAnalysis();
+                showStep(3);
+            }
+        });
+
+        document.getElementById('payBtn').addEventListener('click', function() {
+            document.getElementById('paymentSection').style.display = 'none';
+            document.getElementById('analysisContent').style.display = 'block';
+        });
+
+        document.getElementById('printBtn').addEventListener('click', function() {
+            window.print();
+        });
+
+        // Utility Functions
+        function showStep(step) {
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            currentStep = step;
+        }
+
+        function validateForm() {
+            const required = ['chargeLevel', 'chargeType', 'zipcode', 'description'];
+            return required.every(id => document.getElementById(id).value.trim() !== '');
+        }
+
+        function calculatePrice(level, type) {
+            const basePrices = {
+                misdemeanor: 50,
+                felony: 150,
+                federal: 300
+            };
+            
+            const severityMultiplier = {
+                low: 1,
+                medium: 1.5,
+                high: 2
+            };
+            
+            return basePrices[type] * severityMultiplier[level];
+        }
+
+        function generateAnalysis() {
+            const chargeLevel = document.getElementById('chargeLevel').value;
+            const chargeType = document.getElementById('chargeType').value;
+            
+            // Calculate price
+            const price = calculatePrice(chargeLevel, chargeType);
+            document.getElementById('price').textContent = price;
+
+            // Mock analysis data
+            analysisData = {
+                relevantLaws: [
+                    "State Statute 123.45 - Relevant precedent",
+                    "County Ordinance 789 - Applicable defense"
+                ],
+                recommendedActions: [
+                    "Consider filing for discovery",
+                    "Potential motion to dismiss based on precedent"
+                ],
+                possibleDefenses: [
+                    "Procedural violation in evidence collection",
+                    "Constitutional rights consideration"
+                ],
+                riskAssessment: "Medium",
+                estimatedTimeframe: "3-6 months"
+            };
+
+            // Populate analysis sections
+            document.getElementById('relevantLaws').innerHTML = 
+                analysisData.relevantLaws.map(law => `<li>${law}</li>`).join('');
+            document.getElementById('recommendedActions').innerHTML = 
+                analysisData.recommendedActions.map(action => `<li>${action}</li>`).join('');
+            document.getElementById('possibleDefenses').innerHTML = 
+                analysisData.possibleDefenses.map(defense => `<li>${defense}</li>`).join('');
+            document.getElementById('riskAssessment').textContent = analysisData.riskAssessment;
+            document.getElementById('timeframe').textContent = analysisData.estimatedTimeframe;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Virtual Travel Agency</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: url('c&mtravel 160x160.png');
+            color: green;
+            text-align: center;
+            padding: 1rem;
+        }
+        nav {
+            background-color: #00796b;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            color: #00796b;
+        }
+        form input, form textarea, form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #009688;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00796b;
+        }
+        .tour-list, .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .tour-item, .dashboard-item {
+            flex: 1 1 45%;
+            margin: 15px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .tour-item h3, .dashboard-item h3 {
+            color: #00796b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Virtual Travel Agency</h1>
+        <p>Explore the world, be a guide, and earn money by providing real-time tours!</p>
+    </header>
+
+    <nav>
+        <a href="#brochure-posting">Post a Brochure</a>
+        <a href="#traveler-navigation">Explore Tours</a>
+        <a href="#dashboard">Tour Guide Dashboard</a>
+    </nav>
+
+    <!-- Brochure Posting Area -->
+    <div class="container" id="brochure-posting">
+        <div class="section">
+            <h2>Post Your Tour Brochure</h2>
+            <p>Share your unique area and make money as a guide!</p>
+            <form action="/submit-brochure" method="POST">
+                <label for="tour-name">Tour Name</label>
+                <input type="text" id="tour-name" name="tour-name" required placeholder="e.g., Paris Street Art Tour">
+
+                <label for="tour-description">Tour Description</label>
+                <textarea id="tour-description" name="tour-description" required placeholder="Describe your tour in detail..."></textarea>
+
+                <label for="tour-duration">Select Tour Duration</label>
+                <select id="tour-duration" name="tour-duration" required>
+                    <option value="30">30 Minutes</option>
+                    <option value="60">1 Hour</option>
+                    <option value="240">4 Hours</option>
+                </select>
+
+                <label for="tour-areas">Areas to Explore</label>
+                <textarea id="tour-areas" name="tour-areas" required placeholder="List the areas you will cover (comma-separated)..."></textarea>
+
+                <button type="submit">Post Your Brochure</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Traveler Navigation -->
+    <div class="container" id="traveler-navigation">
+        <div class="section">
+            <h2>Explore Available Tours</h2>
+            <p>Choose a tour and book a time to explore with your guide!</p>
+            <div class="tour-list">
+                <div class="tour-item">
+                    <h3>Paris Street Art Tour</h3>
+                    <p>Join me for a unique street art tour of Paris. We’ll explore hidden murals and graffiti hotspots.</p>
+                    <button>Book Tour</button>
+                </div>
+                <div class="tour-item">
+                    <h3>Tokyo Hidden Temples Tour</h3>
+                    <p>Explore the hidden temples of Tokyo that most tourists miss, with a local guide.</p>
+                    <button>Book Tour</button>
+                </div>
+                <div class="tour-item">
+                    <h3>New York City Nightlife Tour</h3>
+                    <p>Join me for a thrilling nighttime tour of NYC's best bars, clubs, and underground spots.</p>
+                    <button>Book Tour</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tour Guide Dashboard -->
+    <div class="container" id="dashboard">
+        <div class="section">
+            <h2>Tour Guide Dashboard</h2>
+            <p>Manage your tours and track your bookings.</p>
+            <div class="dashboard">
+                <div class="dashboard-item">
+                    <h3>Your Tour: Paris Street Art</h3>
+                    <p>Status: Available</p>
+                    <button>Update Tour</button>
+                    <button>View Bookings</button>
+                </div>
+                <div class="dashboard-item">
+                    <h3>Your Tour: Tokyo Hidden Temples</h3>
+                    <p>Status: Unavailable</p>
+                    <button>Update Tour</button>
+                    <button>View Bookings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Confirmation -->
+    <div class="container">
+        <div class="section">
+            <h2>Tour Booking Confirmation</h2>
+            <p>You’ve booked the Paris Street Art Tour!</p>
+            <form>
+                <label for="chat-request">Would you like to chat with your guide?</label>
+                <select id="chat-request" name="chat-request">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+
+                <button type="submit">Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

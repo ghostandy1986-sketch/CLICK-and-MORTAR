@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VHSville</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body class="bg-black text-white">
+    <!-- Header -->
+    <header class="bg-gray-900 p-4 flex items-center justify-between">
+        <h1 class="text-3xl font-bold text-yellow-500">VHSville</h1>
+        <nav class="space-x-4">
+            <a href="#buy" class="text-white hover:text-yellow-500">Buy</a>
+            <a href="#sell" class="text-white hover:text-yellow-500">Sell</a>
+            <a href="#print-on-demand" class="text-white hover:text-yellow-500">Print on Demand</a>
+            <a href="#affiliate" class="text-white hover:text-yellow-500">VHSville Theater</a>
+        </nav>
+        <a href="/account" class="bg-yellow-500 px-4 py-2 rounded text-black">My Account</a>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-gray-800 text-center py-12">
+        <h2 class="text-4xl font-bold text-yellow-500">Buy, Sell, and Discover Movies</h2>
+        <p class="text-lg mt-4 text-gray-300">Explore a vast collection of VHS, DVDs, Blu-rays, and more.</p>
+        <a href="#shop" class="bg-yellow-500 px-6 py-3 rounded mt-6 inline-block text-black font-bold">Shop Now</a>
+    </section>
+
+    <!-- Categories -->
+    <section id="buy" class="py-12 bg-gray-900">
+        <h3 class="text-3xl font-bold text-center text-yellow-500">Shop By Category</h3>
+        <div class="flex justify-center space-x-8 mt-8">
+            <div class="text-center">
+                <img src="https://placehold.co/200x200" alt="VHS tapes" class="rounded-lg">
+                <h4 class="text-xl mt-4">VHS</h4>
+                <a href="/category/vhs" class="text-yellow-500 hover:underline">Shop Now</a>
+            </div>
+            <div class="text-center">
+                <img src="https://placehold.co/200x200" alt="VHS tapes" class="rounded-lg">
+                <h4 class="text-xl mt-4">VHS</h4>
+                <a href="/category/vhs" class="text-yellow-500 hover:underline">Shop Now</a>
+            </div>
+            <div class="text-center">
+                <img src="https://placehold.co/200x200" alt="VHS tapes" class="rounded-lg">
+                <h4 class="text-xl mt-4">VHS</h4>
+                <a href="/category/vhs" class="text-yellow-500 hover:underline">Shop Now</a>
+            </div>            
+            <div class="text-center">
+                <img src="https://placehold.co/200x200" alt="DVDs" class="rounded-lg">
+                <h4 class="text-xl mt-4">DVDs</h4>
+                <a href="/category/dvds" class="text-yellow-500 hover:underline">Shop Now</a>
+            </div>
+            <div class="text-center">
+                <img src="https://placehold.co/200x200" alt="Blu-rays" class="rounded-lg">
+                <h4 class="text-xl mt-4">Blu-rays</h4>
+                <a href="/category/blu-rays" class="text-yellow-500 hover:underline">Shop Now</a>
+            </div>            <div class="text-center">
+                <img src="https://placehold.co/200x200" alt="VHS tapes" class="rounded-lg">
+                <h4 class="text-xl mt-4">VHS</h4>
+                <a href="/category/vhs" class="text-yellow-500 hover:underline">Shop Now</a>
+            </div>            
+            <div class="text-center">
+                <img src="https://placehold.co/200x200" alt="DVDs" class="rounded-lg">
+                <h4 class="text-xl mt-4">DVDs</h4>
+                <a href="/category/dvds" class="text-yellow-500 hover:underline">Shop Now</a>
+            </div>
+            <div class="text-center">
+                <img src="https://placehold.co/200x200" alt="Blu-rays" class="rounded-lg">
+                <h4 class="text-xl mt-4">Film</h4>
+                <a href="/category/blu-rays" class="text-yellow-500 hover:underline">Shop Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sell Section -->
+    <section id="sell" class="bg-gray-800 py-12">
+        <h3 class="text-3xl font-bold text-center text-yellow-500">Sell Your Movies</h3>
+        <p class="text-center text-gray-300 mt-4">List your movies for sale. Sign in to get started.</p>
+        <div class="text-center mt-8">
+            <a href="/account/login" class="bg-yellow-500 px-6 py-3 rounded text-black font-bold">Login to Sell</a>
+        </div>
+    </section>
+
+    <!-- Print on Demand -->
+    <section id="print-on-demand" class="bg-gray-900 py-12">
+        <h3 class="text-3xl font-bold text-center text-yellow-500">Print on Demand</h3>
+        <p class="text-center text-gray-300 mt-4">Customize and order posters,VHS/DVD covers, cases, and more.</p>
+        <div class="flex justify-center mt-8">
+            <div class="text-center">
+                <img src="https://placehold.co/300x400" alt="Movie Poster" class="rounded-lg">
+                <h4 class="text-xl mt-4">Custom Posters</h4>
+                <a href="/print-on-demand/posters" class="text-yellow-500 hover:underline">Order Now</a>
+            </div>
+            <div class="text-center">
+                <img src="https://placehold.co/300x400" alt="VHS Cover" class="rounded-lg">
+                <h4 class="text-xl mt-4">VHS Covers</h4>
+                <a href="/print-on-demand/vhs-covers" class="text-yellow-500 hover:underline">Order Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Affiliate Section -->
+    <section id="affiliate" class="bg-gray-800 py-12">
+        <h3 class="text-3xl font-bold text-center text-yellow-500">VHSville Movie Theater</h3>
+        <p class="text-center text-gray-300 mt-4">Earn money by sharing your original films, sitcoms, cartoons and more!.</p>
+        <div class="text-center mt-8">
+            <a href="./vhsville/ticketbooth.html" class="bg-yellow-500 px-6 py-3 rounded text-black font-bold">Learn More</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-8 text-center">
+        <p class="text-gray-500">&copy; 2024 VHSville. All rights reserved.</p>
+    </footer>
+    <!-- Added Image at Bottom -->
+    <img src="VHSVILLE EDIT RESIZE 1920 X 1097.png" alt="./vhsville/vhsville 160 x 160.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+</body>
+</html>

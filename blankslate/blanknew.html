@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Interactive Ad Room</title>
+    <style>
+        :root {
+            --primary-color: #2196f3;
+            --secondary-color: #ff9800;
+            --dark-bg: #2a2a2a;
+            --toolbox-bg: #444;
+            --tool-bg: #666;
+            --tool-hover: #888;
+            --tool-active: #ff4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .room {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 100%;
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .ad-box {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .ad-box canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .ad-box span {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        .toolbox {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            background-color: var(--toolbox-bg);
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            overflow-y: auto;
+        }
+
+        .tool {
+            background: var(--tool-bg);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .tool:hover {
+            background: var(--tool-hover);
+            transform: translateY(-2px);
+        }
+
+        .tool.active {
+            background: var(--tool-active);
+        }
+
+        .tool img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .tool-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .tool:hover .tool-tooltip {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .room {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .toolbox {
+                height: 160px;
+            }
+
+            .tool {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="room" id="room"></div>
+    <div class="toolbox" id="toolbox"></div>
+
+    <script>
+        class AdRoom {
+            constructor() {
+                this.room = document.getElementById('room');
+                this.toolbox = document.getElementById('toolbox');
+                this.currentTool = null;
+                this.effects = [];
+                this.adBoxes = [];
+                this.tools = [
+                    { name: 'Pointer', color: '#2196f3', type: 'basic' },
+                    { name: 'Refresh', color: '#4caf50', type: 'basic' },
+                    { name: 'Coupon', color: '#ff9800', type: 'basic' },
+                    { name: 'Hammer', color: '#8B4513', type: 'effect' },
+                    { name: 'Flamethrower', color: '#FF4500', type: 'effect' },
+                    { name: 'Icethrower', color: '#ADD8E6', type: 'effect' },
+                    { name: 'Spray Paint', color: '#FF1493', type: 'effect' },
+                    { name: 'Wrecking Ball', color: '#A0522D', type: 'effect' },
+                    { name: 'Chainsaw', color: '#CD853F', type: 'effect' },
+                    { name: 'Egg Carton', color: '#FFFACD', type: 'effect' },
+                    { name: 'Marker', color: '#000000', type: 'effect' },
+                    { name: 'Bomb', color: '#696969', type: 'effect' },
+                    { name: 'Jackhammer', color: '#B8860B', type: 'effect' },
+                    { name: 'Tomatoes', color: '#FF6347', type: 'effect' },
+                    { name: 'Window Breaker', color: '#C0C0C0', type: 'effect' },
+                    { name: 'Text Box', color: '#4682B4', type: 'effect' },
+                    { name: 'Laser Beam', color: '#FF0000', type: 'effect' },
+                    { name: 'Eraser', color: '#FFFFFF', type: 'effect' }
+                ];
+                this.initialize();
+            }
+
+            initialize() {
+                this.createTools();
+                this.generateAdBoxes();
+                this.setupEventListeners();
+                this.startAnimation();
+            }
+
+            createTools() {
+                this.tools.forEach(tool => {
+                    const button = document.createElement('button');
+                    button.className = 'tool';
+                    button.innerHTML = `
+                        <img src="/api/placeholder/24/24" alt="${tool.name}">
+                        <span>${tool.name}</span>
+                        <div class="tool-tooltip">${tool.name}</div>
+                    `;
+                    button.onclick = () => this.selectTool(tool, button);
+                    this.toolbox.appendChild(button);
+                });
+            }
+
+            selectTool(tool, button) {
+                document.querySelectorAll('.tool').forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+                this.currentTool = tool;
+            }
+
+            generateAdBoxes() {
+                const numberOfAds = 12;
+                this.room.innerHTML = '';
+                
+                for (let i = 0; i < numberOfAds; i++) {
+                    const adBox = document.createElement('div');
+                    adBox.className = 'ad-box';
+                    adBox.dataset.counter = '3';
+                    adBox.dataset.id = `ad-${i}`;
+                    
+                    const counterSpan = document.createElement('span');
+                    counterSpan.textContent = adBox.dataset.counter;
+                    adBox.appendChild(counterSpan);
+                    
+                    const canvas = document.createElement('canvas');
+                    canvas.width = adBox.clientWidth || 300;
+                    canvas.height = adBox.clientHeight || 200;
+                    adBox.appendChild(canvas);
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    this.room.appendChild(adBox);
+                    this.adBoxes.push({ element: adBox, canvas, ctx });
+                }
+            }
+
+            setupEventListeners() {
+                this.adBoxes.forEach(({ element, canvas }) => {
+                    canvas.addEventListener('mousedown', (e) => this.handleInteraction(e, canvas));
+                    canvas.addEventListener('mousemove', (e) => {
+                        if (e.buttons === 1) this.handleInteraction(e, canvas);
+                    });
+                });
+
+                window.addEventListener('resize', () => {
+                    this.adBoxes.forEach(({ element, canvas }) => {
+                        canvas.width = element.clientWidth;
+                        canvas.height = element.clientHeight;
+                    });
+                });
+            }
+
+            handleInteraction(e, canvas) {
+                if (!this.currentTool) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+                if (this.currentTool.type === 'effect') {
+                    this.createEffect(canvas, x, y);
+                } else {
+                    this.handleBasicTool(canvas, e);
+                }
+            }
+
+            createEffect(canvas, x, y) {
+                const effect = {
+                    tool: this.currentTool,
+                    x, y,
+                    canvas,
+                    timestamp: Date.now(),
+                    opacity: 1
+                };
+
+                this.effects.push(effect);
+                this.drawEffect(effect);
+            }
+
+            handleBasicTool(canvas, e) {
+                const adBox = canvas.parentElement;
+                switch (this.currentTool.name) {
+                    case 'Pointer':
+                        this.decrementCounter(adBox);
+                        break;
+                    case 'Refresh':
+                        this.refreshAd(adBox);
+                        break;
+                    case 'Coupon':
+                        this.generateCoupon(adBox);
+                        break;
+                }
+            }
+
+            decrementCounter(adBox) {
+                let counter = parseInt(adBox.dataset.counter);
+                if (counter > 0) {
+                    counter--;
+                    adBox.dataset.counter = counter;
+                    adBox.querySelector('span').textContent = counter;
+                }
+            }
+
+            refreshAd(adBox) {
+                adBox.dataset.counter = '3';
+                adBox.querySelector('span').textContent = '3';
+                const canvas = adBox.querySelector('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                this.effects = this.effects.filter(effect => effect.canvas !== canvas);
+            }
+
+            generateCoupon(adBox) {
+                const existingCoupon = adBox.querySelector('.coupon');
+                if (existingCoupon) existingCoupon.remove();
+
+                const coupon = document.createElement('div');
+                coupon.className = 'coupon';
+                coupon.textContent = `SAVE${Math.floor(Math.random() * 50 + 10)}`;
+                coupon.style.cssText = `
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background-color: var(--secondary-color);
+                    padding: 15px;
+                    border-radius: 8px;
+                    animation: bounce 0.5s ease;
+                    z-index: 100;
+                `;
+                adBox.appendChild(coupon);
+
+                setTimeout(() => coupon.remove(), 3000);
+            }
+
+            drawEffect(effect) {
+                const { canvas, x, y, tool, opacity } = effect;
+                const ctx = canvas.getContext('2d');
+                
+                ctx.globalAlpha = opacity;
+                ctx.fillStyle = tool.color;
+                ctx.strokeStyle = tool.color;
+
+                const effectFunctions = {
+                    'Hammer': () => this.createIndent(ctx, x, y),
+                    'Flamethrower': () => this.createFire(ctx, x, y),
+                    'Icethrower': () => this.createIce(ctx, x, y),
+                    'Spray Paint': () => this.createSprayPaint(ctx, x, y),
+                    'Wrecking Ball': () => this.createWreckingBall(ctx, x, y),
+                    'Chainsaw': () => this.createCut(ctx, x, y),
+                    'Egg Carton': () => this.createEggSplatter(ctx, x, y),
+                    'Marker': () => this.createMarker(ctx, x, y),
+                    'Bomb': () => this.createExplosion(ctx, x, y),
+                    'Jackhammer': () => this.createCracks(ctx, x, y),
+                    'Tomatoes': () => this.createTomatoSplatter(ctx, x, y),
+                    'Window Breaker': () => this.createShatter(ctx, x, y),
+                    'Text Box': () => this.createText(ctx, x, y),
+                    'Laser Beam': () => this.createLaser(ctx, x, y),
+                    'Eraser': () => this.createErase(ctx, x, y)
+                };
+
+                if (effectFunctions[tool.name]) {
+                    effectFunctions[tool.name]();
+                }
+                
+                ctx.globalAlpha = 1;
+            }
+
+            // Effect drawing functions
+            createIndent(ctx, x, y) {
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, Math.PI * 2);
+                ctx.fill();
+                this.createCracks(ctx, x, y, 5);
+            }
+
+            createFire(ctx, x, y) {
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, 30);
+                gradient.addColorStop(0, 'rgba(255, 69, 0, 0.8)');
+                gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            createIce(ctx, x, y) {
+                ctx.fillStyle = 'rgba(173, 216, 230, 0.5)';
+                ctx.strokeStyle = 'rgba(173, 216, 230, 0.8)';
+                ctx.beginPath();
+                ctx.rect(x - 15, y - 15, 30, 30);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+                        createSprayPaint(ctx, x, y) {
+                for (let i = 0; i < 20; i++) {
+                    const dx = (Math.random() - 0.5) * 20;
+                    const dy = (Math.random() - 0.5) * 20;
+                    ctx.beginPath();
+                    ctx.arc(x + dx, y + dy, 1, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            createWreckingBall(ctx, x, y) {
+                ctx.beginPath();
+                ctx.arc(x, y, 25, 0, Math.PI * 2);
+                ctx.fill();
+                this.createCracks(ctx, x, y, 10);
+            }
+
+            createCut(ctx, x, y) {
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(x - 20, y - 20);
+                ctx.lineTo(x + 20, y + 20);
+                ctx.stroke();
+            }
+
+            createEggSplatter(ctx, x, y) {
+                ctx.fillStyle = 'rgba(255, 255, 240, 0.8)';
+                for (let i = 0; i < 8; i++) {
+                    const dx = (Math.random() - 0.5) * 30;
+                    const dy = (Math.random() - 0.5) * 30;
+                    ctx.beginPath();
+                    ctx.arc(x + dx, y + dy, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.fillStyle = 'rgba(255, 215, 0, 0.8)';
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            createMarker(ctx, x, y) {
+                ctx.lineWidth = 8;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + 1, y);
+                ctx.stroke();
+            }
+
+            createExplosion(ctx, x, y) {
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, 50);
+                gradient.addColorStop(0, 'rgba(255, 69, 0, 0.8)');
+                gradient.addColorStop(0.5, 'rgba(128, 128, 128, 0.5)');
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(x, y, 50, 0, Math.PI * 2);
+                ctx.fill();
+                this.createCracks(ctx, x, y, 15);
+            }
+
+            createCracks(ctx, x, y, size = 8) {
+                for (let i = 0; i < size; i++) {
+                    const angle = (Math.PI * 2 * i) / size;
+                    const length = 10 + Math.random() * 20;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(
+                        x + Math.cos(angle) * length,
+                        y + Math.sin(angle) * length
+                    );
+                    ctx.stroke();
+                }
+            }
+
+            createTomatoSplatter(ctx, x, y) {
+                ctx.fillStyle = 'rgba(255, 99, 71, 0.7)';
+                for (let i = 0; i < 12; i++) {
+                    const dx = (Math.random() - 0.5) * 40;
+                    const dy = (Math.random() - 0.5) * 40;
+                    ctx.beginPath();
+                    ctx.arc(x + dx, y + dy, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            createShatter(ctx, x, y) {
+                ctx.strokeStyle = 'rgba(192, 192, 192, 0.8)';
+                for (let i = 0; i < 16; i++) {
+                    const angle = (Math.PI * 2 * i) / 16;
+                    const length = 20 + Math.random() * 30;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(
+                        x + Math.cos(angle) * length,
+                        y + Math.sin(angle) * length
+                    );
+                    ctx.stroke();
+                }
+            }
+
+            createText(ctx, x, y) {
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#000';
+                ctx.fillText('Sample Text', x, y);
+            }
+
+            createLaser(ctx, x, y) {
+                const gradient = ctx.createLinearGradient(x - 10, y - 10, x + 10, y + 10);
+                gradient.addColorStop(0, 'rgba(255, 0, 0, 0.8)');
+                gradient.addColorStop(1, 'rgba(139, 0, 0, 0.5)');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            createErase(ctx, x, y) {
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(x, y, 15, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            startAnimation() {
+                const animate = () => {
+                    const now = Date.now();
+                    
+                    this.effects.forEach((effect, index) => {
+                        const age = now - effect.timestamp;
+                        if (age < 3600000) { // 1 hour
+                            effect.opacity = Math.max(0.2, 1 - (age / 3600000) * 0.8);
+                            this.drawEffect(effect);
+                        }
+                    });
+
+                    // Remove effects older than 1 hour
+                    this.effects = this.effects.filter(e => now - e.timestamp < 3600000);
+
+                    requestAnimationFrame(animate);
+                };
+
+                animate();
+            }
+        }
+
+        // Initialize the ad room when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const adRoom = new AdRoom();
+        });
+    </script>
+</body>
+</html>

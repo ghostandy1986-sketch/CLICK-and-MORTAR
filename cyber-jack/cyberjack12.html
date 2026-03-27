@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEALTH OPS - 3D Security Heist</title>
+    <style>
+        :root {
+            --primary-color: #00ff88;
+            --secondary-color: #ff0055;
+            --danger-color: #ff3344;
+            --success-color: #00ff88;
+            --dark-bg: #0a0a0a;
+            --light-bg: #1a1a2a;
+            --glow-intensity: 0 0 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--dark-bg), var(--light-bg));
+            font-family: 'Orbitron', 'Courier New', monospace;
+            color: var(--primary-color);
+            cursor: crosshair;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 136, 0.05) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.05) 2px, transparent 2px);
+            background-size: 40px 40px;
+            z-index: -1;
+            animation: gridMove 30s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            perspective: 1200px;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+        }
+
+        .logo-watermark {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-shadow: 0 0 20px var(--primary-color);
+            z-index: 100;
+            letter-spacing: 4px;
+        }
+
+        #game-ui {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid var(--primary-color);
+            box-shadow: var(--glow-intensity) var(--primary-color);
+            z-index: 100;
+            min-width: 200px;
+        }
+
+        .ui-stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        .ui-label {
+            color: #888;
+        }
+
+        .ui-value {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        #health-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        #health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--success-color);
+        }
+
+        .store-3d {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transform: rotateX(45deg) rotateZ(0deg);
+            transform-origin: center center;
+        }
+
+        .floor {
+            position: absolute;
+            width: 90%;
+            height: 80%;
+            left: 5%;
+            top: 10%;
+            background: 
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100px 100px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            box-shadow: inset 0 0 100px rgba(0, 255, 136, 0.1);
+        }
+
+        .aisle {
+            position: absolute;
+            background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
+            border: 2px solid rgba(0, 255, 136, 0.4);
+            border-radius: 10px;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                inset 0 0 20px rgba(0, 255, 136, 0.1);
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+        }
+
+        .aisle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent, rgba(0, 255, 136, 0.05));
+            border-radius: 8px;
+        }
+
+        .aisle:hover {
+            box-shadow: 
+                0 15px 40px rgba(0, 255, 136, 0.3),
+                inset 0 0 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .camera {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, var(--danger-color), #aa0000);
+            border-radius: 50%;
+            z-index: 10;
+            border: 3px solid #fff;
+            box-shadow: 
+                var(--glow-intensity) var(--danger-color),
+                0 0 30px var(--danger-color);
+            animation: cameraPulse 2s infinite;
+        }
+
+        @keyframes cameraPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .camera::after {
+            content: '📹';
+            font-size: 18px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .camera-view {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255, 0, 0, 0.3), rgba(255, 0, 0, 0.05));
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            border: 2px solid rgba(255, 0, 0, 0.4);
+            animation: scanPulse 2s infinite;
+        }
+
+        @keyframes scanPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .item {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            cursor: grab;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #444, #666);
+            border-radius: 12px;
+            font-size: 32px;
+            z-index: 50;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(0, 255, 136, 0.3);
+            transition: all 0.2s ease;
+            border: 2px solid rgba(0, 255, 136, 0.5);
+        }
+
+        .item:hover {
+            transform: scale(1.15) translateY(-5px);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.7),
+                0 0 40px var(--primary-color);
+        }
+
+        .item.dragging {
+            cursor: grabbing;
+            transform: scale(1.3) rotate(8deg);
+            z-index: 100;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.8),
+                0 0 60px var(--primary-color);
+            animation: itemGlow 0.5s infinite alternate;
+        }
+
+        @keyframes itemGlow {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.3); }
+        }
+
+        .item.cellphone {
+            background: linear-gradient(145deg, #4a90e2, #2563eb);
+        }
+
+        .item.laptop {
+            background: linear-gradient(145deg, #f59e0b, #d97706);
+        }
+
+        .item.tv {
+            background: linear-gradient(145deg, #8b5cf6, #6d28d9);
+        }
+
+        .exit-zone {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--success-color), #00aa55);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            font-weight: bold;
+            font-size: 24px;
+            z-index: 60;
+            border: 5px solid #fff;
+            box-shadow: 
+                var(--glow-intensity) var(--success-color),
+                0 0 50px var(--success-color);
+            animation: exitPulse 2s infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes exitPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+
+        .exit-zone::before {
+            content: '🚪';
+            font-size: 50px;
+        }
+
+        .caught-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.4);
+            display: none;
+            z-index: 200;
+            animation: caughtFlash 0.5s;
+        }
+
+        @keyframes caughtFlash {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        #game-over {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        #game-over-content {
+            background: linear-gradient(145deg, var(--dark-bg), var(--light-bg));
+            padding: 50px;
+            border-radius: 25px;
+            text-align: center;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 0 80px var(--primary-color);
+            max-width: 600px;
+            animation: gameOverPop 0.5s ease-out;
+        }
+
+        @keyframes gameOverPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #game-over-content h2 {
+            font-size: 48px;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px var(--primary-color);
+        }
+
+        #game-over-content p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        #game-over-content button {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: #000;
+            border: none;
+            padding: 18px 40px;
+            font-size: 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        #game-over-content button:hover {
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 10px 30px var(--primary-color);
+        }
+
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: var(--primary-color);
+            padding: 30px 50px;
+            border-radius: 15px;
+            border: 3px solid var(--primary-color);
+            font-size: 28px;
+            font-weight: bold;
+            z-index: 999;
+            animation: notificationPop 2s ease-in-out;
+            box-shadow: 0 0 60px var(--primary-color);
+        }
+
+        @keyframes notificationPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+            15% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            box-shadow: 0 0 5px var(--primary-color);
+        }
+
+        .instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 30px;
+            border-radius: 15px;
+            border: 2px solid var(--primary-color);
+            z-index: 100;
+            font-size: 16px;
+            text-align: center;
+            box-shadow: 0 0 30px var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .item { width: 50px; height: 50px; font-size: 24px; }
+            .exit-zone { width: 100px; height: 100px; font-size: 18px; }
+            #game-ui { padding: 15px; min-width: 150px; }
+            .ui-stat { font-size: 14px; }
+            .logo-watermark { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-watermark">STEALTH OPS</div>
+    
+    <div id="game-container">
+        <div id="game-ui">
+            <div class="ui-stat">
+                <span class="ui-label">Score:</span>
+                <span class="ui-value" id="score">0</span>
+            </div>
+            <div class="ui-stat">
+                <span class="ui-label">Lives:</span>
+                <span class="ui-value" id="lives">3</span>
+            </div>
+            <div id="health-bar">
+                <div id="health-fill" style="width: 100%"></div>
+            </div>
+        </div>
+
+        <div class="store-3d">
+            <div class="floor"></div>
+            <div id="store-grid"></div>
+        </div>
+
+        <div class="exit-zone" id="exit"></div>
+        <div class="caught-overlay" id="caught-overlay"></div>
+
+        <div class="instructions">
+            🎯 Drag items to the exit • Avoid camera detection • Steal all 3 items!
+        </div>
+
+        <div id="game-over">
+            <div id="game-over-content">
+                <h2 id="game-over-title">MISSION COMPLETE</h2>
+                <p id="game-over-message"></p>
+                <button onclick="location.reload()">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            TOTAL_ITEMS: 3,
+            CAMERA_ROTATION_SPEED: 0.001,
+            CAMERA_DETECTION_RANGE: 180,
+            LIVES: 3,
+            PARTICLE_COUNT: 80
+        };
+
+        class StealthGame {
+            constructor() {
+                this.score = 0;
+                this.lives = CONFIG.LIVES;
+                this.health = 100;
+                this.cameras = [];
+                this.items = [];
+                this.isDragging = false;
+                this.currentItem = null;
+                this.gameActive = true;
+                this.particles = [];
+                this.init();
+            }
+
+            init() {
+                this.createParticles();
+                this.createEnvironment();
+                this.createCameras();
+                this.createItems();
+                this.setupEventListeners();
+                this.startGameLoop();
+                this.positionExit();
+            }
+
+            createParticles() {
+                for (let i = 0; i < CONFIG.PARTICLE_COUNT; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * window.innerWidth + 'px';
+                    particle.style.top = Math.random() * window.innerHeight + 'px';
+                    document.getElementById('game-container').appendChild(particle);
+                    this.particles.push({
+                        element: particle,
+                        x: Math.random() * window.innerWidth,
+                        y: Math.random() * window.innerHeight,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5
+                    });
+                }
+            }
+
+            createEnvironment() {
+                const grid = document.getElementById('store-grid');
+                const aisleConfigs = [
+                    { left: '10%', top: '15%', width: '15%', height: '60%' },
+                    { left: '30%', top: '10%', width: '12%', height: '70%' },
+                    { left: '48%', top: '20%', width: '15%', height: '50%' },
+                    { left: '68%', top: '15%', width: '12%', height: '65%' },
+                    { left: '20%', top: '75%', width: '25%', height: '15%' },
+                    { left: '55%', top: '78%', width: '20%', height: '12%' }
+                ];
+
+                aisleConfigs.forEach(config => {
+                    const aisle = document.createElement('div');
+                    aisle.className = 'aisle';
+                    Object.assign(aisle.style, config);
+                    grid.appendChild(aisle);
+                });
+            }
+
+            createCameras() {
+                const cameraPositions = [
+                    { left: '8%', top: '12%', range: 200 },
+                    { left: '28%', top: '8%', range: 220 },
+                    { left: '46%', top: '18%', range: 180 },
+                    { left: '66%', top: '13%', range: 210 },
+                    { left: '18%', top: '73%', range: 190 },
+                    { left: '53%', top: '76%', range: 200 },
+                    { left: '38%', top: '45%', range: 240 },
+                    { left: '75%', top: '50%', range: 220 }
+                ];
+
+                cameraPositions.forEach(pos => {
+                    const camera = document.createElement('div');
+                    camera.className = 'camera';
+                    camera.style.left = pos.left;
+                    camera.style.top = pos.top;
+
+                    const view = document.createElement('div');
+                    view.className = 'camera-view';
+                    view.style.width = pos.range + 'px';
+                    view.style.height = pos.range + 'px';
+                    view.style.left = `calc(${pos.left} - ${pos.range / 2 - 15}px)`;
+                    view.style.top = `calc(${pos.top} - ${pos.range / 2 - 15}px)`;
+
+                    document.getElementById('store-grid').appendChild(camera);
+                    document.getElementById('store-grid').appendChild(view);
+
+                    this.cameras.push({
+                        camera,
+                        view,
+                        rotation: Math.random() * Math.PI * 2,
+                        speed: 0.001 + Math.random() * 0.001,
+                        range: pos.range
+                    });
+                });
+            }
+
+            createItems() {
+                const items = [
+                    { type: 'cellphone', emoji: '📱', x: '5%', y: '30%' },
+                    { type: 'laptop', emoji: '💻', x: '5%', y: '50%' },
+                    { type: 'tv', emoji: '📺', x: '5%', y: '70%' }
+                ];
+
+                items.forEach(itemData => {
+                    const item = document.createElement('div');
+                    item.className = `item ${itemData.type}`;
+                    item.innerHTML = itemData.emoji;
+                    item.style.left = itemData.x;
+                    item.style.top = itemData.y;
+                    item.dataset.originalX = itemData.x;
+                    item.dataset.originalY = itemData.y;
+                    document.getElementById('store-grid').appendChild(item);
+                    this.items.push(item);
+                });
+            }
+
+            positionExit() {
+                const exit = document.getElementById('exit');
+                exit.style.right = '50px';
+                exit.style.top = '50%';
+                exit.style.transform = 'translateY(-50%)';
+            }
+
+            setupEventListeners() {
+                this.items.forEach(item => {
+                    item.addEventListener('mousedown', (e) => this.startDragging(e, item));
+                    item.addEventListener('touchstart', (e) => this.startDragging(e, item));
+                });
+
+                document.addEventListener('mousemove', (e) => this.handleDrag(e));
+                document.addEventListener('touchmove', (e) => this.handleDrag(e));
+                document.addEventListener('mouseup', () => this.stopDragging());
+                document.addEventListener('touchend', () => this.stopDragging());
+            }
+
+            startDragging(e, item) {
+                if (!this.gameActive) return;
+                e.preventDefault();
+                this.isDragging = true;
+                this.currentItem = item;
+                item.classList.add('dragging');
+                this.vibrate([50]);
+            }
+
+            handleDrag(e) {
+                if (!this.isDragging || !this.currentItem) return;
+                e.preventDefault();
+
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+                const x = clientX - this.currentItem.offsetWidth / 2;
+                const y = clientY - this.currentItem.offsetHeight / 2;
+
+                this.currentItem.style.left = Math.max(0, Math.min(window.innerWidth - this.currentItem.offsetWidth, x)) + 'px';
+                this.currentItem.style.top = Math.max(0, Math.min(window.innerHeight - this.currentItem.offsetHeight, y)) + 'px';
+
+                this.checkCameraDetection();
+            }
+
+            stopDragging() {
+                if (!this.isDragging) return;
+                this.isDragging = false;
+                if (this.currentItem) {
+                    this.currentItem.classList.remove('dragging');
+                    this.checkExit();
+                }
+                this.currentItem = null;
+            }
+
+            checkCameraDetection() {
+                if (!this.currentItem) return;
+
+                const itemRect = this.currentItem.getBoundingClientRect();
+                const itemCenterX = itemRect.left + itemRect.width / 2;
+                const itemCenterY = itemRect.top + itemRect.height / 2;
+
+                let detected = false;
+
+                this.cameras.forEach(({ camera, range }) => {
+                    const cameraRect = camera.getBoundingClientRect();
+                    const cameraCenterX = cameraRect.left + cameraRect.width / 2;
+                    const cameraCenterY = cameraRect.top + cameraRect.height / 2;
+
+                    const distance = Math.sqrt(
+                        Math.pow(itemCenterX - cameraCenterX, 2) +
+                        Math.pow(itemCenterY - cameraCenterY, 2)
+                    );
+
+                    if (distance < range / 2) {
+                        detected = true;
+                    }
+                });
+
+                if (detected) {
+                    this.handleCaught();
+                }
+            }
+
+            handleCaught() {
+                this.lives--;
+                this.health = (this.lives / CONFIG.LIVES) * 100;
+                this.updateUI();
+                
+                document.getElementById('caught-overlay').style.display = 'block';
+                this.vibrate([200, 100, 200]);
+                
+                setTimeout(() => {
+                    document.getElementById('caught-overlay').style.display = 'none';
+                }, 500);
+
+                this.showNotification('⚠️ DETECTED!');
+
+                if (this.currentItem) {
+                    this.resetItemPosition(this.currentItem);
+                    this.currentItem.classList.remove('dragging');
+                }
+                this.currentItem = null;
+                this.isDragging = false;
+
+                if (this.lives <= 0) {
+                    this.endGame(false, 'Mission Failed! You were caught too many times.');
+                }
+            }
+
+            checkExit() {
+                if (!this.currentItem) return;
+
+                const itemRect = this.currentItem.getBoundingClientRect();
+                const exitRect = document.getElementById('exit').getBoundingClientRect();
+
+                if (this.isColliding(itemRect, exitRect)) {
+                    this.score++;
+                    this.updateUI();
+                    this.showNotification('✅ Item Secured!');
+                    this.vibrate([50, 50, 50]);
+                    this.currentItem.remove();
+                    this.items = this.items.filter(item => item !== this.currentItem);
+
+                    if (this.items.length === 0) {
+                        this.endGame(true, 'Mission Accomplished! All items secured successfully!');
+                    }
+                }
+            }
+
+            isColliding(rect1, rect2) {
+                return !(rect1.right < rect2.left || 
+                        rect1.left > rect2.right || 
+                        rect1.bottom < rect2.top || 
+                        rect1.top > rect2.bottom);
+            }
+
+            resetItemPosition(item) {
+                item.style.left = item.dataset.originalX;
+                item.style.top = item.dataset.originalY;
+            }
+
+            updateUI() {
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('lives').textContent = this.lives;
+                document.getElementById('health-fill').style.width = this.health + '%';
+            }
+
+            showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 2000);
+            }
+
+            endGame(won, message) {
+                this.gameActive = false;
+                document.getElementById('game-over-title').textContent = won ? 'MISSION COMPLETE!' : 'MISSION FAILED';
+                document.getElementById('game-over-message').textContent = message;
+                document.getElementById('game-over').style.display = 'flex';
+            }
+
+            vibrate(pattern = [100]) {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(pattern);
+                }
+            }
+
+            startGameLoop() {
+                const animate = () => {
+                    if (!this.gameActive) return;
+
+                    // Update camera rotations
+                    this.cameras.forEach(({ view, rotation, speed }, index) => {
+                        this.cameras[index].rotation += speed;
+                        const angle = Math.sin(this.cameras[index].rotation) * 60;
+                        view.style.transform = `rotate(${angle}deg)`;
+                    });
+
+                    // Update particles
+                    this.particles.forEach(particle => {
+                        particle.x += particle.vx;
+                        particle.y += particle.vy;
+
+                        if (particle.x <= 0 || particle.x >= window.innerWidth) particle.vx *= -1;
+                        if (particle.y <= 0 || particle.y >= window.innerHeight) particle.vy *= -1;
+
+                        particle.element.style.left = particle.x + 'px';
+                        particle.element.style.top = particle.y + 'px';
+                        particle.element.style.opacity = Math.sin(Date.now() * 0.003) * 0.5 + 0.5;
+                    });
+
+                    requestAnimationFrame(animate);
+                };
+                animate();
+            }
+        }
+
+        // Start game
+        window.onload = () => new StealthGame();
+
+        // Prevent context menu
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+</html>

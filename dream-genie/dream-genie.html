@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dream Genie Advisor - Achieve your dreams with AI-driven strategic plans and resources.">
+    <meta name="keywords" content="Dream Planner, AI Advisor, Strategic Planning, Achieve Goals, AI Partnerships, Affiliate Marketing">
+    <title>Dream Genie Advisor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #8e44ad;
+            --success: #2ecc71;
+            --background: #f0f2f5;
+            --text: #2c3e50;
+        }
+
+          {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .genie-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .genie-button:hover {
+            transform: scale(1.1);
+        }
+
+        .genie-button img {
+            width: 35px;
+            height: 35px;
+        }
+
+        .genie-interface {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 380px;
+            height: 650px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+        }
+
+        .genie-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .genie-character {
+            width: 100px;
+            height: 100px;
+            margin: -50px auto 10px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .genie-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .button:hover {
+            background: #357abd;
+        }
+
+        .genie-response {
+            display: none;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .premium-offer {
+            background: #f8f4ff;
+            border: 2px solid var(--secondary);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button class="genie-button">
+        🧞
+    </button>
+
+    <div class="genie-interface">
+        <div class="genie-header">
+            <h2>Dream Genie Advisor</h2>
+        </div>
+        
+        <div class="genie-character">
+            🧞
+        </div>
+        
+        <div class="genie-content">
+            <!-- Questionnaire Section -->
+            <div id="questionnaire">
+                <!-- Personal Information -->
+                <div class="question-card active" id="card-1">
+                    <h3>Let’s Start with You</h3>
+                    <div class="input-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" placeholder="Enter your age" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="location">Your Location</label>
+                        <input type="text" id="location" placeholder="City/State">
+                    </div>
+                    <button class="button" onclick="nextCard(2)">Next</button>
+                </div>
+
+                <!-- Current Status -->
+                <div class="question-card" id="card-2">
+                    <h3>Tell Us About You</h3>
+                    <div class="input-group">
+                        <label for="occupation">Current Occupation</label>
+                        <input type="text" id="occupation" placeholder="e.g., Teacher, Designer, Entrepreneur">
+                    </div>
+                    <div class="input-group">
+                        <label for="income">Current Annual Income</label>
+                        <input type="number" id="income" placeholder="e.g., 50000">
+                    </div>
+                    <div class="input-group">
+                        <label for="health">Health Status</label>
+                        <select id="health">
+                            <option value="excellent">Excellent</option>
+                            <option value="good">Good</option>
+                            <option value="fair">Fair</option>
+                            <option value="limited">Limited</option>
+                        </select>
+                    </div>
+                    <button class="button" onclick="previousCard(1)">Back</button>
+                    <button class="button" onclick="nextCard(3)">Next</button>
+                </div>
+
+                <!-- Dream Details -->
+                <div class="question-card" id="card-3">
+                    <h3>What’s Your Dream?</h3>
+                    <div class="input-group">
+                        <label for="dream">Describe Your Dream</label>
+                        <textarea id="dream" placeholder="e.g., Open a bakery, travel the world..."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="timeline">Desired Timeline</label>
+                        <select id="timeline">
+                            <option value="6months">6 months or less</option>
+                            <option value="1year">Within 1 year</option>
+                            <option value="1-3years">1-3 years</option>
+                            <option value="5years">Within 5 years</option>
+                            <option value="5-10years">5-10 years</option>
+                        </select>
+                    </div>
+                    <button class="button" onclick="previousCard(2)">Back</button>
+                    <button class="button" onclick="generatePlan()">Generate Plan</button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading" id="loading" style="display: none;">⏳ Generating your plan...</div>
+
+            <!-- Initial Response -->
+            <div class="genie-response" id="initial-response" style="display: none;"></div>
+
+            <!-- Premium Offer -->
+            <div class="premium-offer" id="premium-offer" style="display: none;">
+                <h3>🎁 Unlock Your Full Plan</h3>
+                <p>For $29.99, get:</p>
+                <ul>
+                    <li>Step-by-step plan</li>
+                    <li>Full resource list</li>
+                    <li>Alternative backup strategies</li>
+                    <li>AI-curated recommendations</li>
+                </ul>
+                <button class="button" onclick="alert('Proceed to payment!')">Buy Now</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCard = 1;
+
+        function nextCard(next) {
+            document.getElementById(`card-${currentCard}`).classList.remove('active');
+            document.getElementById(`card-${next}`).classList.add('active');
+            currentCard = next;
+        }
+
+        function previousCard(prev) {
+            document.getElementById(`card-${currentCard}`).classList.remove('active');
+            document.getElementById(`card-${prev}`).classList.add('active');
+            currentCard = prev;
+        }
+
+        function generatePlan() {
+            document.getElementById('questionnaire').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('initial-response').style.display = 'block';
+                document.getElementById('premium-offer').style.display = 'block';
+
+                const dream = document.getElementById('dream').value || 'your dream';
+                document.getElementById('initial-response').innerHTML = `
+                    <h3>🎉 Initial Dream Analysis</h3>
+                    <p>We’ve crafted the first steps for achieving <strong>${dream}</strong>.</p>
+                `;
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

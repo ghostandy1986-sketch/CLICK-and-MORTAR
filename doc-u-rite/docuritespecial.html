@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doc-U-Rite | Document Viewer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu {
+            margin-bottom: 30px;
+            background: #2c3e50;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            overflow-x: auto;
+            border-radius: 5px;
+        }
+
+        .menu button {
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .menu button:hover {
+            background-color: #2980b9;
+        }
+
+        .document-preview {
+            display: none;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .document-preview.active {
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 30px;
+        }
+
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .highlight {
+            background-color: #e8f4ff;
+            padding: 5px;
+            border-left: 4px solid #3498db;
+            margin: 10px 0;
+        }
+
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            .firearm-document, .blueprint-document {
+                box-shadow: none;
+                margin: 0;
+                padding: 20px;
+            }
+
+            .document-header img {
+                width: 150px;
+            }
+     
+	     /* Add logo to the printable version */
+            .print-logo {
+                background-image: url('doc.png'); /* Path to uploaded image */
+                background-size: contain;
+                background-repeat: no-repeat;
+                height: 100px; /* Adjust size accordingly */
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container"
+
+        <!-- Menu for Document Selection -->
+        <div class="menu" id="menu">
+            <!-- 38 Buttons for Document Previews -->
+            <button onclick="showDocument(1)">1. Firearm Sale/Transfer Document</button>
+            <button onclick="showDocument(2)">2. Blueprint for EZAutoApp</button>
+            <button onclick="showDocument(3)">3. Invoice</button>
+            <button onclick="showDocument(4)">4. Manual</button>
+            <button onclick="showDocument(5)">5. Passport</button>
+            <button onclick="showDocument(6)">6. Purchase Order</button>
+            <button onclick="showDocument(7)">7. Bylaws</button>
+            <button onclick="showDocument(8)">8. Form I-9</button>
+            <button onclick="showDocument(9)">9. Registration Form</button>
+            <button onclick="showDocument(10)">10. Application Form</button>
+            <button onclick="showDocument(11)">11. Contact Form</button>
+            <button onclick="showDocument(12)">12. Donation Form</button>
+            <button onclick="showDocument(13)">13. Feedback Form</button>
+            <button onclick="showDocument(14)">14. Order Form</button>
+            <button onclick="showDocument(15)">15. Consent Form</button>
+            <button onclick="showDocument(16)">16. Survey Form</button>
+            <button onclick="showDocument(17)">17. Leave Request Form</button>
+            <button onclick="showDocument(18)">18. Subscription Form</button>
+            <button onclick="showDocument(19)">19. Incident Report</button>
+            <button onclick="showDocument(20)">20. Expense Report</button>
+            <button onclick="showDocument(21)">21. Interview Evaluation</button>
+            <button onclick="showDocument(22)">22. Performance Appraisal</button>
+            <button onclick="showDocument(23)">23. Waiver Form</button>
+            <button onclick="showDocument(24)">24. Liability Form</button>
+            <button onclick="showDocument(25)">25. Complaint Form</button>
+            <button onclick="showDocument(26)">26. Medical Consent Form</button>
+            <button onclick="showDocument(27)">27. Medical History Form</button>
+            <button onclick="showDocument(28)">28. Cost-Plus Contract</button>
+            <button onclick="showDocument(29)">29. Fixed Price Contract</button>
+            <button onclick="showDocument(30)">30. Time and Materials Contract</button>
+            <button onclick="showDocument(31)">31. Unit Price Contract</button>
+            <button onclick="showDocument(32)">32. Implied Contract</button>
+            <button onclick="showDocument(33)">33. Unilateral Contract</button>
+            <button onclick="showDocument(34)">34. Express Contract</button>
+            <button onclick="showDocument(35)">35. Bilateral Contract</button>
+            <button onclick="showDocument(36)">36. Event Flyer</button>
+            <button onclick="showDocument(37)">37. Club Flyer</button>
+            <button onclick="showDocument(38)">38. Announcement Flyer</button>
+        </div>
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Doc-U-Rite Document Viewer</h1>
+        <h2>Select a Document to Preview</h2>
+
+        <!-- Document Previews -->
+        <div id="document-1" class="document-preview active">
+            <h2>Firearm Sale/Transfer Document</h2>
+            <div class="firearm-document">
+		<img src="doc1.png" alt="Doc-U-Rite Logo">
+                <form id="firearmForm">
+                    <div class="form-group">
+                        <label>Seller's Name:</label>
+                        <input type="text" id="sellerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Buyer's Name:</label>
+                        <input type="text" id="buyerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Firearm Make and Model:</label>
+                        <input type="text" id="firearmModel" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Serial Number:</label>
+                        <input type="text" id="serialNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Transaction:</label>
+                        <input type="date" id="transactionDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>State of Transfer:</label>
+                        <input type="text" id="transferState" required>
+                    </div>
+                    <button type="button" class="button" onclick="window.print()">Print Document</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="document-2" class="document-preview">
+	<img src="doc1.png" alt="Doc-U-Rite Logo">
+            <h3>Blueprint for EZAutoApp</h3>
+            <pre>
+# Cross-Platform Vehicle Inspection & Virtual Diagnostic System
+
+## Part 1: Enhanced Physical Inspection Protocol
+### A. Pre-Inspection Setup
+1. **Documentation Requirements**
+   - Vehicle Info Capture
+     - VIN scanning
+     - Mileage verification
+     - Previous service history
+     - Customer complaints
+   - Tool Organization
+     - Diagnostic scanner
+     - Compression tester
+     - Multimeter
+     - Torque wrench set
+     - Brake gauge
+     - Fluid testing strips
+
+2. **Systematic Testing Matrix**
+Engine Performance:
+├── Compression Test (all cylinders)
+│ ├── Normal: 125-160 psi
+│ └── Document variance <15%
+├── Vacuum Test
+│ ├── Idle: 18-22 inHg
+│ └── Load response
+└── Timing Check
+├── Base timing
+└── Advance curve
+
+Electrical Systems:
+├── Battery Load Test
+│ ├── Voltage (12.6V standard)
+│ └── Load response
+├── Alternator Output
+│ ├── 13.5-14.5V charging
+│ └── Ripple test
+└── Starter Draw Test
+└── Amperage check
+
+
+3. **Fluid Analysis Protocol**
+Test Sequence:
+
+Engine Oil
+Color/consistency
+Particle test
+Viscosity check
+Transmission Fluid
+Level hot/cold
+Color/smell
+Particle check
+Brake Fluid
+Moisture content
+Copper content
+Boiling point
+Coolant
+Freeze point
+pH level
+Electrolysis test
+
+### B. Inspection Zones & Documentation
+
+1. **Engine Bay (45 minutes)**
+Sequence:
+
+Cold Tests
+Belt condition/tension
+Hose integrity
+Fluid levels
+Running Tests
+Noise analysis
+Leak detection
+Performance checks
+Hot Tests
+Temperature distribution
+Pressure tests
+Emissions check
+
+2. **Undercarriage (30 minutes)**
+Systematic Check:
+
+Frame/Structure
+Weld integrity
+Rust assessment
+Damage inspection
+Suspension
+Bush condition
+Spring integrity
+Damper tests
+Brakes
+Pad measurement
+Rotor condition
+Line inspection
+
+## Part 2: Virtual Test Drive System Overview
+
+### A. Recording Components
+Hardware Setup:
+
+Primary Camera (Windshield)
+
+4K resolution
+Stabilization
+Wide dynamic range
+Secondary Cameras
+
+360° roof mount
+Undercarriage view
+Engine bay thermal
+Sensor Package
+
+OBD2 data
+GPS tracking
+G-force metrics
+
+### B. AI-Guided Recording Protocol
+Test Sequence:
+
+Standard Route
+
+Normal driving
+Various speeds
+Different turns
+Performance Tests
+
+Acceleration
+Braking
+Handling
+Special Maneuvers
+
+Parking
+Reverse
+Emergency moves
+
+## Part 3: Virtual Mechanic System
+
+### A. AI-Guided Recording Interface
+Component Recording Guide:
+
+Position Guidance
+
+AR overlay markers
+Distance indicators
+Angle guides
+Lighting Requirements
+
+Exposure settings
+Shadow reduction
+Reflection handling
+Focus Points
+
+Critical areas
+Detail requirements
+Multiple angles
+
+### B. Diagnostic Upload System
+Processing Pipeline:
+
+Video Enhancement
+
+Stabilization
+Color correction
+Detail enhancement
+AI Analysis
+
+Part recognition
+Defect detection
+Wear measurement
+Report Generation
+
+Condition assessment
+Repair recommendations
+Cost estimates
+
+### C. Virtual Inspection Platform
+Mechanic Interface:
+
+Multi-View Display
+
+3D rotation
+Zoom capability
+Measurement tools
+Diagnostic Tools
+
+Component comparison
+Wear analysis
+Failure prediction
+Communication System
+
+Video annotations
+Voice notes
+Text comments
+
+### D. Implementation Requirements
+
+1. **User App Features**
+AR guidance
+Voice instructions
+Real-time feedback
+Upload management
+
+2. **Mechanic Portal**
+Case management
+Diagnostic tools
+Report generation
+Client communication
+
+3. **Backend System**
+Video processing
+AI analysis
+Data storage
+Security protocols
+
+### E. Quality Control
+Verification Steps:
+
+Video Quality Check
+
+Resolution
+Stability
+Coverage
+Data Validation
+
+Completeness
+Accuracy
+Consistency
+Report Review
+
+Technical accuracy
+Clarity
+Completeness
+
+
+Key system benefits:
+
+1. Comprehensive physical and virtual inspection capabilities
+2. AI-guided recording ensures consistent quality
+3. Scalable for both single components and full vehicle
+4. Efficient remote diagnostic capabilities
+
+Would you like me to:
+1. Detail specific component inspection procedures?
+2. Expand the AI guidance system?
+3. Show example diagnostic reports?
+4. Develop cost analysis?
+
+
+ I'll create a detailed example of a GPS-guided test route with multiple variations and the corresponding AI voice guidance.
+
+
+
+graph TD
+Start((Start/End Point)) --> L1A[Lap 1: Normal Speed]
+Start --> L2A[Lap 2: Dynamic Speed]
+Start --> L3A[Lap 3: Alt Route]
+
+%% Lap 1 - Basic Route
+L1A --> L1B[Right Turn<br/>Normal/15mph]
+L1B --> L1C[Straight/25mph]
+L1C --> L1D[Left Turn<br/>Normal/15mph]
+L1D --> L1E[Straight/25mph]
+L1E --> Start
+
+%% Lap 2 - Speed Variations
+L2A --> L2B[Right Turn<br/>Quick/20mph]
+L2B --> L2C[Straight/35mph]
+L2C --> L2D[Left Turn<br/>Slow/10mph]
+L2D --> L2E[Straight/30mph]
+L2E --> Start
+
+%% Lap 3 - Alternative Route
+L3A --> L3B[Wide Turn<br/>15mph]
+L3B --> L3C[Side Street<br/>20mph]
+L3C --> L3D[Sharp Turn<br/>12mph]
+L3D --> L3E[Main Street<br/>30mph]
+L3E --> Start
+
+style Start fill:#f9f,stroke:#333,stroke-width:4px
+style L1A fill:#afd,stroke:#333
+style L2A fill:#fda,stroke:#333
+style L3A fill:#acf,stroke:#333
+
+
+# Test Route Recording Matrix
+## Location Parameters
+- Starting Point: Main Street & 1st Avenue
+- Block Dimensions: Approximately 0.25 miles per side
+- Total Route Length: 1 mile per lap
+- Time per Lap: 3-5 minutes
+- Traffic Conditions: Light to moderate
+
+## Lap 1: Baseline Recording
+### Purpose: Establish standard driving behavior
+
+**Segment 1 - Initial Straight**
+GPS: [Starting Point] to [Corner 1]
+Speed: 25 mph steady
+Voice Guidance:
+
+"Starting baseline recording. Maintain 25 mph"
+"Approaching first right turn in 200 feet"
+"Prepare for standard right turn at 15 mph"
+
+**Segment 2 - First Turn**
+GPS: [Corner 1] turning right
+Speed: Reduce to 15 mph
+Voice Guidance:
+
+"Begin turn at 15 mph"
+"Apply steady steering input"
+"Maintain consistent radius through turn"
+
+**Segment 3 - Second Straight**
+GPS: [Corner 1] to [Corner 2]
+Speed: Resume 25 mph
+Voice Guidance:
+
+"Accelerate smoothly to 25 mph"
+"Maintain center lane position"
+"Left turn approaching in quarter mile"
+
+**Segment 4 - Second Turn**
+GPS: [Corner 2] turning left
+Speed: Reduce to 15 mph
+Voice Guidance:
+
+"Reduce speed for left turn"
+"Begin turn at 15 mph"
+"Complete turn and prepare to accelerate"
+
+## Lap 2: Dynamic Speed Variations
+### Purpose: Capture different acceleration and braking patterns
+
+**Segment 1 - Quick Acceleration**
+GPS: [Starting Point] to [Corner 1]
+Speed: 0-35 mph
+Voice Guidance:
+
+"Perform moderate acceleration to 35 mph"
+"Hold speed steady at 35"
+"Prepare for braking sequence"
+
+**Segment 2 - Performance Turn**
+GPS: [Corner 1] turning right
+Speed: 20 mph through turn
+Voice Guidance:
+
+"Brake firmly to 20 mph"
+"Maintain higher turn speed"
+"Apply smooth steering input"
+
+**Segment 3 - Variable Speed Straight**
+GPS: [Corner 1] to [Corner 2]
+Speed: 35-25-35 mph
+Voice Guidance:
+
+"Accelerate to 35 mph"
+"Reduce to 25 mph over 5 seconds"
+"Return to 35 mph smoothly"
+
+## Lap 3: Alternative Route Variations
+### Purpose: Capture different turning radiuses and road positions
+
+**Segment 1 - Wide Turn Entry**
+GPS: [Starting Point] to [Corner 1 Wide]
+Speed: 15 mph
+Voice Guidance:
+
+"Position vehicle for wide turn"
+"Begin turn from outer lane"
+"Maintain steady 15 mph through turn"
+
+**Segment 2 - Side Street Navigation**
+GPS: [Side Street] to [Corner 2 Sharp]
+Speed: 20 mph
+Voice Guidance:
+
+"Navigate narrow street section"
+"Watch for parked vehicles"
+"Prepare for sharp turn ahead"
+
+**Segment 3 - Sharp Turn Exit**
+GPS: [Corner 2 Sharp] to [Main Street]
+Speed: 12 mph
+Voice Guidance:
+
+"Execute sharp turn at 12 mph"
+"Apply greater steering input"
+"Straighten and accelerate smoothly"
+
+## Data Integration Points
+Each Segment Records:
+
+Precise GPS coordinates (5Hz sampling)
+Vehicle speed and acceleration
+Steering angle and rate
+Engine RPM and load
+Suspension movement
+Road surface texture
+Ambient and engine sound
+
+## Virtual Environment Creation Matrix
+Combining Elements:
+
+Base Environment
+
+Road geometry from GPS
+Building positions from 360° camera
+Surface textures from forward camera
+Dynamic Elements
+
+Multiple turn radius options
+Speed-dependent physics
+Variable acceleration curves
+Brake force variations
+Sound Design
+
+Engine noise at various RPMs
+Tire noise at different speeds
+Wind noise variation
+Suspension/chassis sounds
+
+## User Control Implementation
+Real-time Blending:
+
+Interpolate between recorded speeds
+Blend turning radius variations
+Mix sound samples based on speed
+Adjust physics model to user input
+
+
+This implementation demonstrates:
+
+1. Three distinct lap patterns providing varied data capture
+2. Precise voice guidance coordinated with GPS positions
+3. Different driving dynamics for complete vehicle behavior recording
+4. Clear integration points for virtual environment creation
+
+The key advantages are:
+- Systematic coverage of all driving behaviors
+- Natural progression of complexity
+- Clear, actionable voice guidance
+- Comprehensive data capture for realistic simulation
+...
+            </pre>
+            <button class="button" onclick="window.print()">Print Document</button>
+        </div>
+
+        <!-- Other documents preview -->
+        <div id="document-3" class="document-preview">
+            <h3>manuals Template</h3>
+            <p>a type of training documentation that provides step by step instructions for using a product. This is a professional invoice template that includes fields for the seller, buyer, itemized list of products, and payment terms. Auto-calculation features and compliance fields are included.</p>
+        </div>
+
+ 	<div id="document-4" class="document-preview">
+            <h3>Passports Template</h3>
+            <p>an offical government issued travel document that verifies a person;s identity and nationality. This is a professional invoice template that includes fields for the seller, buyer, itemized list of products, and payment terms. Auto-calculation features and compliance fields are included.</p>
+        </div>
+        <div id="document-5" class="document-preview">
+            <h3>Purchase orders Template</h3>
+            <p>a commercial document issued by a buter to a swller that indicates the typrs, quantities, and agreed prices for products. This is a professional invoice template that includes fields for the seller, buyer, itemized list of products, and payment terms. Auto-calculation features and compliance fields are included.</p>
+        </div>
+
+ 	<div id="document-6" class="document-preview">
+            <h3>Bylaws Template</h3>
+            <p>a company's documentation of internal rules and regulations that outline the company's standards and practices. This is a professional invoice template that includes fields for the seller, buyer, itemized list of products, and payment terms. Auto-calculation features and compliance fields are included.</p>
+        </div>
+
+        <div id="document-7" class="document-preview">
+            <h3>Form I-9 Template</h3>
+            <p>an employment eligibility verification form that U.S. employers must complete for every individual they hire. This is a professional invoice template that includes fields for the seller, buyer, itemized list of products, and payment terms. Auto-calculation features and compliance fields are included.</p>
+        </div>
+
+ 	<div id="document-8" class="document-preview">
+            <h3>Doc and DOCX Template</h3>
+            <p>a microsoft proprietary fiename extension for storing documents in microsoft word binary dile format. This is a professional invoice template that includes fields for the seller, buyer, itemized list of products, and payment terms. Auto-calculation features and compliance fields are included.</p>
+        </div>
+        <div id="document-9" class="document-preview">
+            <h3>Invoice Template</h3>
+            <p>This is a professional invoice template that includes fields for the seller, buyer, itemized list of products, and payment terms. Auto-calculation features and compliance fields are included.</p>
+        </div>
+
+ 	<div id="document-3" class="document-preview">
+            <h3>Invoice Template</h3>
+            <p>This is a professional invoice template that includes fields for the seller, buyer, itemized list of products, and payment terms. Auto-calculation features and compliance fields are included.</p>
+        </div>
+        <!-- Add previews for all remaining documents -->
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2025 Doc-U-Rite | All Rights Reserved | <a href="#">Privacy Policy</a></p>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to Show Selected Document Preview
+        function showDocument(documentId) {
+            const previews = document.querySelectorAll('.document-preview');
+            previews.forEach(preview => preview.classList.remove('active'));
+
+            const activePreview = document.getElementById(`document-${documentId}`);
+            if (activePreview) activePreview.classList.add('active');
+        }
+    </script>
+</body>
+</html>

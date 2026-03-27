@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: auto; /* Allows vertical scrolling */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-y: auto; /* Enable vertical scroll */
+        }
+
+        .background-container {
+            width: 100vw;
+            height: 3843px; /* Set exact height of your image */
+            background-image: url('bowwowmeowEDITED2.png');
+            background-size: 100% 100%; /* Cover full width and height */
+            background-position: top center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        .content {
+            width: 100%;
+            height: auto;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .pet-container {
+            position: absolute;
+            display: flex;
+            gap: 50px;
+        }
+
+        .pet {
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute; /* Absolute positioning */
+            cursor: pointer;
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .pet img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Pet Hover Animations */
+        .cat:hover {
+            animation: catHover 1s infinite;
+        }
+
+        .dog:hover {
+            animation: dogHover 1s infinite;
+        }
+
+        .rabbit:hover {
+            animation: rabbitHover 1s infinite;
+        }
+
+        /* Animation for Cat */
+        @keyframes catHover {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Animation for Dog */
+        @keyframes dogHover {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(20deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* Animation for Rabbit */
+        @keyframes rabbitHover {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        .pet-button {
+            position: absolute;
+            top: 120%;
+            background-color: #ff8c00;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Show pet button when pet is clicked */
+        .pet.clicked .pet-button {
+            display: block;
+        }
+
+        /* 3D Shadow Effect */
+        .btn-3d {
+            background-color: transparent;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: absolute;
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-4px);
+            box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-3d:active {
+            transform: translateY(2px);
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Pet Sounds */
+        audio {
+            display: none;
+        }
+
+        /* Navigation Buttons - MS Paint Coordinates */
+        #btn1 {
+            top: 606px;
+            left: 19px;
+            width: 114px;
+            height: 50px;
+        }
+
+        #btn2 {
+            top: 607px;
+            left: 153px;
+            width: 243px;
+            height: 48px;
+        }
+
+        #btn3 {
+            top: 606px;
+            left: 408px;
+            width: 331px;
+            height: 46px;
+        }
+
+        #btn4 {
+            top: 604px;
+            left: 755px;
+            width: 281px;
+            height: 48px;
+        }
+
+        #btn5 {
+            top: 603px;
+            left: 1048px;
+            width: 260px;
+            height: 48px;
+        }
+
+        #btn6 {
+            top: 601px;
+            left: 1320px;
+            width: 215px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-container">
+        <div class="content">
+            <!-- Navigation Buttons -->
+            <a href="#section1" class="btn-3d" id="btn1">Home</a>
+            <a href="#section2" class="btn-3d" id="btn2">About Our Pets</a>
+            <a href="#section3" class="btn-3d" id="btn3">Adoption Information</a>
+            <a href="#section4" class="btn-3d" id="btn4">Pet Services</a>
+            <a href="#section5" class="btn-3d" id="btn5">Shop Pet Supplies</a>
+            <a href="#section6" class="btn-3d" id="btn6">Contact Us</a>
+
+            <div class="pet-container">
+                <!-- Dog Position (467px, 723px) and Size (174x175px) with adjustment -->
+                <div class="pet dog" onclick="interactWithPet('dog')" style="top: 723px; left: 367px; width: 174px; height: 175px;">
+                    <img src="dog.png" alt="Dog">
+                    <div class="pet-button" onclick="petDog(event)">Pet the Dog</div>
+                </div>
+
+                <!-- Cat Position (867px, 726px) and Size (179x159px) with adjustment -->
+                <div class="pet cat" onclick="interactWithPet('cat')" style="top: 726px; left: 767px; width: 179px; height: 159px;">
+                    <img src="cat.png" alt="Cat">
+                    <div class="pet-button" onclick="petCat(event)">Pet the Cat</div>
+                </div>
+
+                <!-- Rabbit Position (1543px, 720px) and Size (181x170px) with adjustment -->
+                <div class="pet rabbit" onclick="interactWithPet('rabbit')" style="top: 720px; left: 1143px; width: 181px; height: 170px;">
+                    <img src="rabbit.png" alt="Rabbit">
+                    <div class="pet-button" onclick="petRabbit(event)">Pet the Rabbit</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio -->
+    <audio id="meowSound" src="meow.mp3"></audio>
+    <audio id="barkSound" src="bark.mp3"></audio>
+    <audio id="purrSound" src="purr.mp3"></audio>
+    <audio id="thumpSound" src="thump.mp3"></audio>
+
+    <script>
+        let currentPet = '';
+
+        function interactWithPet(pet) {
+            currentPet = pet;
+            const petElement = document.querySelector(`.${pet}`);
+            petElement.classList.add('clicked');
+
+            if (pet === 'cat') {
+                const meowSound = document.getElementById('meowSound');
+                meowSound.play();
+                petElement.style.transform = 'rotate(0deg)';
+            } else if (pet === 'dog') {
+                const barkSound = document.getElementById('barkSound');
+                barkSound.play();
+            } else if (pet === 'rabbit') {
+                const thumpSound = document.getElementById('thumpSound');
+                thumpSound.play();
+            }
+        }
+
+        function petCat(event) {
+            event.stopPropagation(); // Prevent pet click event from being triggered
+            const purrSound = document.getElementById('purrSound');
+            purrSound.play();
+            alert("The cat purrs as you pet it!");
+
+            // After petting, the cat will start following the user
+            alert("The cat is following you and meowing!");
+        }
+
+        function petDog(event) {
+            event.stopPropagation(); // Prevent pet click event from being triggered
+            alert("The dog jumps excitedly and starts fetching!");
+        }
+
+        function petRabbit(event) {
+            event.stopPropagation(); // Prevent pet click event from being triggered
+            alert("The rabbit hops away and leaves a surprise Easter egg!");
+        }
+    </script>
+</body>
+</html>

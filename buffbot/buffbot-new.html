@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buff Bot AI-Gym</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+        }
+        .hero {
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            padding: 50px 0;
+        }
+        .btn-primary {
+            background-color: #00c4cc;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background-color: #01969c;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        .card h4 {
+            font-size: 20px;
+            color: #00c4cc;
+        }
+        .pricing {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        footer {
+            background-color: #101010;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="py-4 px-8 bg-black flex items-center justify-between">
+        <h1 class="text-4xl font-bold text-cyan-500 flex items-center">
+            <i class="fas fa-robot mr-3"></i> Buff Bot AI-Gym
+        </h1>
+        <nav class="space-x-6">
+            <a href="#train" class="hover:text-cyan-300">Train AI</a>
+            <a href="#marketplace" class="hover:text-cyan-300">Marketplace</a>
+            <a href="#dream" class="hover:text-cyan-300">Ask the Genie</a>
+            <a href="#affiliate" class="hover:text-cyan-300">Affiliate</a>
+        </nav>
+        <a href="/account" class="btn-primary">Login</a>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero text-center text-white py-20">
+        <h2 class="text-5xl font-bold">Train Your AI to Peak Performance</h2>
+        <p class="text-lg mt-4">The ultimate platform to buy, sell, rent, and train your AI tools.</p>
+        <div class="mt-6">
+            <a href="#train" class="btn-primary mr-4">Start Training</a>
+            <a href="#marketplace" class="btn-primary">View Marketplace</a>
+        </div>    
+    <!-- Added Image top -->
+    <img src="rental.png" alt="rental bots" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+    </section>
+
+    <!-- AI Rental Packages -->
+    <section id="train" class="py-12 bg-gray-900">
+        <h3 class="text-3xl font-bold text-center text-cyan-400">AI Rental Packages</h3>
+        <p class="text-center text-gray-400 mt-4">Rent state-of-the-art AI systems to develop your next project.</p>
+        <div class="grid grid-cols-3 gap-8 mt-8 px-8">
+            <!-- Rental Card 1 -->
+            <div class="card">
+                <h4>Quantum Processing Unit (QPU)</h4>
+                <p>Advanced quantum computing for complex AI scenarios.</p>
+                <p class="pricing">$999/week</p>
+                <a href="/reserve-qpu" class="btn-primary mt-4">Reserve Now</a>
+            </div>
+            <!-- Rental Card 2 -->
+            <div class="card">
+                <h4>Neural Network Accelerator</h4>
+                <p>Specialized hardware for rapid neural network training.</p>
+                <p class="pricing">$799/week</p>
+                <a href="/reserve-nna" class="btn-primary mt-4">Reserve Now</a>
+            </div>
+            <!-- Rental Card 3 -->
+            <div class="card">
+                <h4>Data Processing Array</h4>
+                <p>High-throughput data processing for AI systems.</p>
+                <p class="pricing">$699/week</p>
+                <a href="/reserve-dpa" class="btn-primary mt-4">Reserve Now</a>
+            </div>
+        </div>
+    <!-- Added Image center -->
+    <img src="training (1).png" alt="trainer" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+    </section>
+
+    <!-- AI Marketplace -->
+    <section id="marketplace" class="py-12 bg-black">
+        <h3 class="text-3xl font-bold text-center text-cyan-400">
+            AI Marketplace
+        </h3>
+        <p class="text-center text-gray-400 mt-4">
+            Buy and sell custom AI tools and models.
+        </p>
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8 px-8 max-h-[700px] overflow-y-auto"
+        >
+            <!-- Existing Marketplace Items -->
+            <div class="card">
+                <h4>Custom GPT Model</h4>
+                <p>Fully-trained GPT model tailored for your needs.</p>
+                <p class="pricing">$1,499</p>
+                <a href="/buy-gpt" class="btn-primary mt-4">Buy Now</a>
+            </div>
+            <div class="card">
+                <h4>Image Processing AI</h4>
+                <p>AI model optimized for image generation and editing.</p>
+                <p class="pricing">$1,199</p>
+                <a href="/buy-image-ai" class="btn-primary mt-4">Buy Now</a>
+            </div>
+            <div class="card">
+                <h4>AI Content Generator</h4>
+                <p>Create unique content for blogs, social media, and more.</p>
+                <p class="pricing">$999</p>
+                <a href="/buy-content-ai" class="btn-primary mt-4">Buy Now</a>
+            </div>
+            <div class="card">
+                <h4>Voice Recognition AI</h4>
+                <p>Accurate and fast speech-to-text processing AI.</p>
+                <p class="pricing">$1,299</p>
+                <a href="/buy-voice-ai" class="btn-primary mt-4">Buy Now</a>
+            </div>
+
+            <!-- Added AI Companies & Products -->
+
+            <!-- OpenAI -->
+            <div class="card">
+                <h4>OpenAI GPT-4 API</h4>
+                <p>Access powerful language models for chatbots and content.</p>
+                <p class="pricing">API Access</p>
+                <a
+                    href="https://openai.com/api"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary mt-4"
+                    >Get API Access</a
+                >
+            </div>
+
+            <!-- Microsoft Azure AI -->
+            <div class="card">
+                <h4>Microsoft Azure Cognitive Services</h4>
+                <p>Vision, Speech, Language APIs with reseller opportunities.</p>
+                <p class="pricing">Contact for Pricing</p>
+                <a
+                    href="https://partner.microsoft.com/en-US/solutions/ai"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary mt-4"
+                    >Become a Reseller</a
+                >
+            </div>
+
+            <!-- Google Cloud AI -->
+            <div class="card">
+                <h4>Google Cloud AI Platform</h4>
+                <p>Custom ML models, Dialogflow chatbots, Vision AI.</p>
+                <p class="pricing">Contact for Pricing</p>
+                <a
+                    href="https://cloud.google.com/partners"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary mt-4"
+                    >Join Partner Program</a
+                >
+            </div>
+
+            <!-- IBM Watson -->
+            <div class="card">
+                <h4>IBM Watson AI Services</h4>
+                <p>Customer service automation and data analysis tools.</p>
+                <p class="pricing">Contact for Pricing</p>
+                <a
+                    href="https://www.ibm.com/partnerworld/public"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary mt-4"
+                    >Become a Partner</a
+                >
+            </div>
+
+            <!-- AWS AI -->
+            <div class="card">
+                <h4>AWS AI & Machine Learning</h4>
+                <p>SageMaker, Rekognition, Lex, Comprehend APIs.</p>
+                <p class="pricing">Contact for Pricing</p>
+                <a
+                    href="https://aws.amazon.com/partners/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary mt-4"
+                    >Join AWS Partner Network</a
+                >
+            </div>
+
+            <!-- Hugging Face -->
+            <div class="card">
+                <h4>Hugging Face API</h4>
+                <p>NLP models, AutoNLP, and model hosting platform.</p>
+                <p class="pricing">Enterprise Plans</p>
+                <a
+                    href="https://huggingface.co/enterprise"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary mt-4"
+                    >Explore Enterprise Plans</a
+                >
+            </div>
+
+            <!-- DataRobot -->
+            <div class="card">
+                <h4>DataRobot AutoML Platform</h4>
+                <p>Automated machine learning for predictive analytics.</p>
+                <p class="pricing">Contact for Pricing</p>
+                <a
+                    href="https://www.datarobot.com/partners/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary mt-4"
+                    >Become a Partner</a
+                >
+            </div>
+
+    <!-- Ask the Genie -->
+    <section id="dream" class="py-20 bg-gray-900 text-center">
+        <h3 class="text-3xl font-bold text-cyan-400">Ask the Genie</h3>
+        <p class="text-gray-400 mt-4">Dare to dream and let the Genie map out a path to achieve it.</p>
+        <div class="mt-8">
+            <a href="./dreAmGENiE/dreamgenie2.html" class="btn-primary">Ask the Genie</a>
+        </div>
+    </section>
+
+    <!-- Affiliate Program -->
+    <section id="affiliate" class="py-12 bg-black">
+        <h3 class="text-3xl font-bold text-center text-cyan-400">Affiliate Program</h3>
+        <p class="text-center text-gray-400 mt-4">Partner with Buff Bot AI-Gym and earn commissions on sales and rentals.</p>
+        <div class="text-center mt-8">
+            <a href="/affiliate" class="btn-primary">Join Affiliate Program</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-400 py-6">
+        <p>&copy; 2024 Buff Bot AI-Gym. All Rights Reserved.</p>
+    </footer>
+    <!-- Added Image at Bottom -->
+    <img src="buff.png" alt="buff ai gym" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+
+</body>
+</html>

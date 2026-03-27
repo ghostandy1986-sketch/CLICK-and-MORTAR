@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InventoShack - Underground Marketplace for World Domination</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;700;900&family=Creepster&family=Share+Tech+Mono&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: auto;
+            overflow-x: hidden;
+            overflow-y: visible;
+            font-family: 'Orbitron', monospace;
+            background: #000;
+            color: #fff;
+            cursor: crosshair;
+        }
+
+        .background-container {
+            width: 100vw;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #000, #1a1a1a, #000);
+            background-size: 400% 400%;
+            animation: backgroundShift 20s ease infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .content {
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 4;
+        }
+
+        .matrix-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 60%, rgba(255, 0, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 100, 255, 0.15) 0%, transparent 50%);
+            animation: energyPulse 6s infinite ease-in-out;
+            z-index: 2;
+        }
+
+        @keyframes energyPulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+
+        .lightning-system {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .lightning-bolt {
+            position: absolute;
+            width: 3px;
+            background: linear-gradient(to bottom, transparent, #00ffff, #ffffff, #00ffff, transparent);
+            opacity: 0;
+            animation: lightningStrike 8s infinite;
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        @keyframes lightningStrike {
+            0%, 95%, 100% { opacity: 0; }
+            1%, 3%, 5% { opacity: 1; }
+        }
+
+        .genius-terminal {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-family: 'Share Tech Mono', monospace;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.6);
+            z-index: 10;
+        }
+
+        .terminal-line {
+            color: #00ff00;
+            font-size: 0.9rem;
+            margin: 2px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #00ff00;
+            animation: typing 4s steps(50, end) infinite, blink 1s infinite;
+        }
+
+        @keyframes typing {
+            0%, 50% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        .site-header {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 5;
+        }
+
+        .main-title {
+            font-family: 'Creepster', cursive;
+            font-size: clamp(3rem, 12vw, 10rem);
+            color: #ff6600;
+            text-shadow: 
+                0 0 10px #ff6600,
+                0 0 20px #ff6600,
+                0 0 40px #ff6600,
+                0 0 80px #ff6600,
+                0 0 160px #ff6600;
+            animation: titlePulse 4s ease-in-out infinite alternate;
+            margin-bottom: 20px;
+            letter-spacing: 5px;
+        }
+
+        @keyframes titlePulse {
+            from { 
+                text-shadow: 
+                    0 0 10px #ff6600,
+                    0 0 20px #ff6600,
+                    0 0 40px #ff6600,
+                    0 0 80px #ff6600,
+                    0 0 160px #ff6600;
+            }
+            to { 
+                text-shadow: 
+                    0 0 20px #ff6600,
+                    0 0 40px #ff6600,
+                    0 0 80px #ff6600,
+                    0 0 160px #ff6600,
+                    0 0 320px #ff6600;
+            }
+        }
+
+        .site-tagline {
+            font-size: clamp(1.2rem, 5vw, 2.5rem);
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff;
+            animation: taglineFlicker 5s infinite;
+            font-weight: 400;
+            letter-spacing: 3px;
+        }
+
+        @keyframes taglineFlicker {
+            0%, 100% { opacity: 1; }
+            20% { opacity: 0.8; }
+            40% { opacity: 0.6; }
+            60% { opacity: 0.9; }
+            80% { opacity: 0.7; }
+        }
+
+        .mastermind-sections {
+            position: absolute;
+            top: 400px;
+            width: 100%;
+            padding: 30px;
+            z-index: 5;
+        }
+
+        .mastermind {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(30, 30, 30, 0.9));
+            border: 4px solid;
+            border-radius: 30px;
+            margin: 60px 0;
+            padding: 50px;
+            position: relative;
+            backdrop-filter: blur(20px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .mastermind::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: conic-gradient(from 0deg, transparent, currentColor, transparent);
+            animation: spinBorder 6s linear infinite;
+            opacity: 0.2;
+        }
+
+        @keyframes spinBorder {
+            100% { transform: rotate(360deg); }
+        }
+
+        .mastermind:hover {
+            transform: scale(1.05) perspective(1000px) rotateX(10deg);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
+        }
+
+        .voltaic-section {
+            border-color: #00ff41;
+            color: #00ff41;
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.4);
+        }
+
+        .gearwright-section {
+            border-color: #ff0040;
+            color: #ff0040;
+            box-shadow: 0 0 50px rgba(255, 0, 64, 0.4);
+        }
+
+        .spectrum-section {
+            border-color: #0080ff;
+            color: #0080ff;
+            box-shadow: 0 0 50px rgba(0, 128, 255, 0.4);
+        }
+
+        .mastermind-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .avatar-container {
+            width: 100px;
+            height: 100px;
+            border: 4px solid currentColor;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-right: 30px;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.6));
+            animation: avatarSpin 3s infinite ease-in-out;
+            position: relative;
+        }
+
+        @keyframes avatarSpin {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.15) rotate(180deg); }
+        }
+
+        .mastermind-info h2 {
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px currentColor;
+        }
+
+        .mastermind-role {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            font-weight: 300;
+            font-style: italic;
+        }
+
+        .power-indicator {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 20px;
+            border-radius: 25px;
+            border: 3px solid currentColor;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            z-index: 3;
+            animation: powerPulse 2s infinite;
+        }
+
+        @keyframes powerPulse {
+            0%, 100% { box-shadow: 0 0 20px currentColor; }
+            50% { box-shadow: 0 0 40px currentColor; }
+        }
+
+        .mastermind-story {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin: 30px 0;
+            color: #ddd;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+        }
+
+        .inventory-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .inventory-item {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .inventory-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .inventory-item:hover::before {
+            left: 100%;
+        }
+
+        .inventory-item:hover {
+            transform: translateY(-15px) rotateY(10deg);
+            border-color: currentColor;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .item-symbol {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            display: block;
+            animation: itemFloat 3s infinite ease-in-out;
+        }
+
+        @keyframes itemFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .item-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .item-details {
+            font-size: 0.95rem;
+            color: #bbb;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .item-pricing {
+            color: #ffaa00;
+            font-weight: 900;
+            font-size: 1.5rem;
+            text-shadow: 0 0 15px #ffaa00;
+            margin-bottom: 15px;
+        }
+
+        .item-availability {
+            font-size: 0.85rem;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .available { background: rgba(0, 255, 0, 0.25); color: #00ff00; }
+        .limited { background: rgba(255, 165, 0, 0.25); color: #ffa500; }
+        .prototype { background: rgba(255, 0, 255, 0.25); color: #ff00ff; }
+        .classified { background: rgba(255, 0, 0, 0.25); color: #ff0000; }
+
+        .intelligence-hub {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 350px;
+            background: rgba(0, 0, 0, 0.98);
+            border: 3px solid #ff6600;
+            border-radius: 20px;
+            padding: 20px;
+            z-index: 1000;
+            font-family: 'Share Tech Mono', monospace;
+            box-shadow: 0 0 40px rgba(255, 102, 0, 0.5);
+        }
+
+        .intel-header {
+            color: #ff6600;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.1rem;
+            text-shadow: 0 0 10px #ff6600;
+        }
+
+        .intel-feed {
+            color: #00ffff;
+            font-size: 0.9rem;
+            animation: intelScroll 10s infinite;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        @keyframes intelScroll {
+            0%, 30% { opacity: 1; }
+            70%, 100% { opacity: 0.8; }
+        }
+
+        .domination-meter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            width: 280px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 3px solid #ff0000;
+            border-radius: 20px;
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.5);
+        }
+
+        .meter-title {
+            color: #ff0000;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff6600, #ff0000, #8a0000);
+            width: 0%;
+            transition: width 4s ease;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: 'WORLD DOMINATION PROGRESS';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #000;
+            white-space: nowrap;
+        }
+
+        .threat-status {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #ccc;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .revelation-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            display: none;
+            z-index: 3000;
+            animation: modalReveal 0.8s ease;
+        }
+
+        @keyframes modalReveal {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-window {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a, #1a1a1a);
+            border: 4px solid #ff6600;
+            border-radius: 25px;
+            padding: 50px;
+            max-width: 90%;
+            max-height: 85%;
+            overflow-y: auto;
+            text-align: center;
+            box-shadow: 0 0 100px rgba(255, 102, 0, 0.8);
+        }
+
+        .modal-exit {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 2.5rem;
+            color: #ff6600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-exit:hover {
+            transform: rotate(90deg) scale(1.2);
+            color: #ff0000;
+        }
+
+        .circuit-network {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .circuit-trace {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            animation: dataFlow 8s infinite linear;
+            opacity: 0.4;
+        }
+
+        @keyframes dataFlow {
+            0% { transform: translateX(-100vw); }
+            100% { transform: translateX(100vw); }
+        }
+
+        .affiliate-section, .contact-section {
+            padding: 40px;
+            text-align: center;
+            background: rgba(255, 140, 98, 0.1);
+            margin-top: 100px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 140, 98, 0.3);
+        }
+
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding: 30px 0;
+            background-color: rgba(255, 140, 98, 0.8);
+            color: #000;
+            font-weight: 700;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .mastermind-sections { padding: 15px; top: 380px; }
+            .mastermind { margin: 40px 0; padding: 30px; }
+            .inventory-showcase { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+            .intelligence-hub { width: 280px; font-size: 0.8rem; }
+            .domination-meter { width: 220px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-container">
+        <div class="matrix-overlay"></div>
+        <div class="lightning-system" id="lightningSystem"></div>
+        <div class="circuit-network" id="circuitNetwork"></div>
+        
+        <div class="content">
+            <div class="genius-terminal">
+                <div class="terminal-line" id="terminalOutput">
+                    > ACCESSING CLASSIFIED NETWORK... AUTHENTICATION VERIFIED
+                </div>
+            </div>
+
+            <div class="site-header">
+                <h1 class="main-title">INVENTOSHACK</h1>
+                <p class="site-tagline">UNDERGROUND MARKETPLACE FOR WORLD DOMINATION</p>
+            </div>
+
+            <div class="mastermind-sections">
+                <!-- DR. VOLTAIC - Electronics Division -->
+                <div class="mastermind voltaic-section" onclick="unveilSecrets('voltaic')">
+                    <div class="power-indicator">POWER: 87%</div>
+                    <div class="mastermind-header">
+                        <div class="avatar-container">⚡</div>
+                        <div class="mastermind-info">
+                            <h2>DR. VOLTAIC</h2>
+                            <div class="mastermind-role">Electronics Mastermind</div>
+                        </div>
+                    </div>
+                    <p class="mastermind-story">
+                        Deep within his electromagnetic laboratory, Dr. Voltaic resurrects broken electronics into weapons of digital warfare. 
+                        His collection spans quantum processors to neural interface chips - each salvaged component bringing him closer to his ultimate goal: 
+                        complete technological dominion over humanity's electronic infrastructure. The sparks that fly from his workbench are not accidents, but deliberate strikes of genius.
+                    </p>
+                    
+                    <div class="inventory-showcase">
+                        <div class="inventory-item">
+                            <div class="item-symbol">🖥️</div>
+                            <div class="item-title">Quantum Processor Array</div>
+                            <div class="item-details">Salvaged from decommissioned supercomputers, enhanced with experimental quantum entanglement protocols</div>
+                            <div class="item-pricing">$299.99</div>
+                            <div class="item-availability limited">LIMITED STOCK</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">🧠</div>
+                            <div class="item-title">Neural Interface Chips</div>
+                            <div class="item-details">Direct brain-computer connection modules with built-in thought encryption</div>
+                            <div class="item-pricing">$149.99</div>
+                            <div class="item-availability prototype">PROTOTYPE</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">⚡</div>
+                            <div class="item-title">Tesla Coil Generation Kit</div>
+                            <div class="item-details">High-voltage electromagnetic pulse generator with wireless power transmission capabilities</div>
+                            <div class="item-pricing">$89.99</div>
+                            <div class="item-availability available">IN STOCK</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">📖</div>
+                            <div class="item-title">EMP Warfare Manual</div>
+                            <div class="item-details">Comprehensive digital guide with schematics for electromagnetic pulse weaponry</div>
+                            <div class="item-pricing">$49.99</div>
+                            <div class="item-availability available">DIGITAL DOWNLOAD</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">📡</div>
+                            <div class="item-title">Signal Interceptor Matrix</div>
+                            <div class="item-details">Multi-frequency signal capture and analysis system with AI pattern recognition</div>
+                            <div class="item-pricing">$199.99</div>
+                            <div class="item-availability limited">REFURBISHED</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">🔋</div>
+                            <div class="item-title">Supercapacitor Bank</div>
+                            <div class="item-details">Ultra-high energy storage system salvaged from electric vehicle prototypes</div>
+                            <div class="item-pricing">$79.99</div>
+                            <div class="item-availability available">SALVAGED</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROF. GEARWRIGHT - Mechanical Division -->
+                <div class="mastermind gearwright-section" onclick="unveilSecrets('gearwright')">
+                    <div class="power-indicator">POWER: 94%</div>
+                    <div class="mastermind-header">
+                        <div class="avatar-container">⚙️</div>
+                        <div class="mastermind-info">
+                            <h2>PROF. GEARWRIGHT</h2>
+                            <div class="mastermind-role">Mechanical Madman</div>
+                        </div>
+                    </div>
+                    <p class="mastermind-story">
+                        Within his workshop of mechanical impossibilities, Professor Gearwright transforms industrial scrap into precision instruments of power. 
+                        His perpetual motion machines defy conventional physics while his clockwork mechanisms tick toward inevitable domination. 
+                        Every gear serves a purpose, every spring coils with potential energy, and every blueprint inches closer to mechanical perfection that will reshape reality itself.
+                    </p>
+                    
+                    <div class="inventory-showcase">
+                        <div class="inventory-item">
+                            <div class="item-symbol">🔄</div>
+                            <div class="item-title">Perpetual Motion Blueprints</div>
+                            <div class="item-details">Theoretical schematics for self-sustaining mechanical systems that challenge thermodynamics</div>
+                            <div class="item-pricing">$199.99</div>
+                            <div class="item-availability classified">CLASSIFIED</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">⚙️</div>
+                            <div class="item-title">Precision Gear Assembly</div>
+                            <div class="item-details">Hand-machined gears from mysterious alloys with tolerances beyond current manufacturing</div>
+                            <div class="item-pricing">$79.99</div>
+                            <div class="item-availability available">HANDCRAFTED</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">🚂</div>
+                            <div class="item-title">Steam Engine Components</div>
+                            <div class="item-details">Victorian-era power systems enhanced with modern materials and efficiency modifications</div>
+                            <div class="item-pricing">$129.99</div>
+                            <div class="item-availability limited">ANTIQUE</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">🕰️</div>
+                            <div class="item-title">Clockwork Automation Plans</div>
+                            <div class="item-details">Intricate timing mechanisms and self-operating system blueprints</div>
+                            <div class="item-pricing">$39.99</div>
+                            <div class="item-availability available">DIGITAL</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">🔩</div>
+                            <div class="item-title">Mechanical Actuator Suite</div>
+                            <div class="item-details">Pneumatic and hydraulic components for creating responsive automated systems</div>
+                            <div class="item-pricing">$159.99</div>
+                            <div class="item-availability available">INDUSTRIAL</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">🛠️</div>
+                            <div class="item-title">Master Craftsman Tool Set</div>
+                            <div class="item-details">Professional-grade precision instruments for mechanical fabrication and modification</div>
+                            <div class="item-pricing">$249.99</div>
+                            <div class="item-availability limited">PROFESSIONAL</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DR. SPECTRUM - Energy Division -->
+                <div class="mastermind spectrum-section" onclick="unveilSecrets('spectrum')">
+                    <div class="power-indicator">POWER: 91%</div>
+                    <div class="mastermind-header">
+                        <div class="avatar-container">☢️</div>
+                        <div class="mastermind-info">
+                            <h2>DR. SPECTRUM</h2>
+                            <div class="mastermind-role">Energy Harvester</div>
+                        </div>
+                    </div>
+                    <p class="mastermind-story">
+                        From his solar observatory fortress, Dr. Spectrum captures energy from every conceivable source across the electromagnetic spectrum. 
+                        His antenna arrays reach toward cosmic radiation while his collectors siphon power from radio frequencies, solar wind, and atmospheric electricity. 
+                        He believes that unlimited energy is the ultimate key to control, and his network of power harvesting stations grows stronger each day.
+                    </p>
+                    
+                    <div class="inventory-showcase">
+                        <div class="inventory-item">
+                            <div class="item-symbol">☀️</div>
+                            <div class="item-title">Solar Collector Matrix</div>
+                            <div class="item-details">High-efficiency photovoltaic arrays enhanced with quantum dot technology and sun-tracking systems</div>
+                            <div class="item-pricing">$349.99</div>
+                            <div class="item-availability available">ADVANCED</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">📡</div>
+                            <div class="item-title">RF Amplification System</div>
+                            <div class="item-details">Radio frequency energy harvesting with signal amplification and wireless power transmission</div>
+                            <div class="item-pricing">$189.99</div>
+                            <div class="item-availability prototype">EXPERIMENTAL</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">🌩️</div>
+                            <div class="item-title">Lightning Rod Network</div>
+                            <div class="item-details">Atmospheric electrical discharge capture system with surge protection and storage capabilities</div>
+                            <div class="item-pricing">$229.99</div>
+                            <div class="item-availability limited">WEATHER-DEPENDENT</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">🔬</div>
+                            <div class="item-title">Fusion Cell Prototype</div>
+                            <div class="item-details">Miniaturized fusion reactor components for unlimited portable power generation</div>
+                            <div class="item-pricing">$999.99</div>
+                            <div class="item-availability classified">TOP SECRET</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">🌍</div>
+                            <div class="item-title">Geothermal Tap Kit</div>
+                            <div class="item-details">Deep earth thermal energy extraction system with heat pump amplification</div>
+                            <div class="item-pricing">$299.99</div>
+                            <div class="item-availability available">UNDERGROUND</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-symbol">⚛️</div>
+                            <div class="item-title">Zero-Point Energy Schematics</div>
+                            <div class="item-details">Theoretical blueprints for tapping into quantum vacuum fluctuations</div>
+                            <div class="item-pricing">$599.99</div>
+                            <div class="item-availability classified">THEORETICAL</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intelligence Hub -->
+            <div class="intelligence-hub">
+                <div class="intel-header">INTELLIGENCE NETWORK</div>
+                <div class="intel-feed" id="intelFeed">
+                    > Satellite surveillance active...<br>
+                    > Monitoring global energy grids...<br>
+                    > Agents embedded in 47 nations...<br>
+                    > Quantum encryption protocols enabled...
+                </div>
+            </div>
+
+            <!-- World Domination Meter -->
+            <div class="domination-meter">
+                <div class="meter-title">OPERATION STATUS</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="dominationProgress"></div>
+                </div>
+                <div class="threat-status" id="threatLevel">THREAT LEVEL: MODERATE</div>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="affiliate-section">
+                <h3 style="color: #ff6600; font-size: 2rem; margin-bottom: 20px;">JOIN THE REVOLUTION</h3>
+                <p style="font-size: 1.2rem; margin-bottom: 30px;">
+                    Ready to contribute to our cause? We're always seeking talented individuals with questionable morals and exceptional skills.
+                </p>
+                <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                    <div style="background: rgba(0,0,0,0.8); padding: 20px; border-radius: 15px; border: 2px solid #00ff00;">
+                        <h4 style="color: #00ff00;">RECRUITMENT</h4>
+                        <p>recruitment@inventoshack.dark</p>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.8); padding: 20px; border-radius: 15px; border: 2px solid #ff0040;">
+                        <h4 style="color: #ff0040;">PARTNERSHIPS</h4>
+                        <p>alliances@inventoshack.dark</p>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.8); padding: 20px; border-radius: 15px; border: 2px solid #0080ff;">
+                        <h4 style="color: #0080ff;">INTEL EXCHANGE</h4>
+                        <p>secrets@inventoshack.dark</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>© 2024 InventoShack Underground Marketplace | All rights reserved in multiple dimensions</p>
+                <p style="font-size: 0.9rem; margin-top: 10px;">
+                    "Where broken dreams become tomorrow's nightmares" - Est. 2019
+                </p>
+            </div>
+        </div>
+
+        <!-- Secret Modal -->
+        <div class="revelation-modal" id="secretModal">
+            <div class="modal-window">
+                <div class="modal-exit" onclick="hideSecrets()">&times;</div>
+                <div id="modalContent">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Terminal Animation
+        const terminalMessages = [
+            "> ACCESSING CLASSIFIED NETWORK... AUTHENTICATION VERIFIED",
+            "> QUANTUM ENCRYPTION ACTIVE... SIGNAL SECURED",
+            "> SCANNING FOR SURVEILLANCE... ALL CLEAR",
+            "> INITIALIZING STEALTH PROTOCOLS... COMPLETE",
+            "> CONNECTING TO SHADOW NETWORK... ESTABLISHED"
+        ];
+        let messageIndex = 0;
+
+        function updateTerminal() {
+            const terminal = document.getElementById('terminalOutput');
+            terminal.textContent = terminalMessages[messageIndex];
+            messageIndex = (messageIndex + 1) % terminalMessages.length;
+        }
+
+        setInterval(updateTerminal, 5000);
+
+        // Lightning Effects
+        function createLightning() {
+            const system = document.getElementById('lightningSystem');
+            const bolt = document.createElement('div');
+            bolt.className = 'lightning-bolt';
+            
+            bolt.style.left = Math.random() * 100 + '%';
+            bolt.style.height = (200 + Math.random() * 400) + 'px';
+            bolt.style.animationDelay = Math.random() * 8 + 's';
+            
+            system.appendChild(bolt);
+            
+            setTimeout(() => {
+                if (bolt.parentNode) {
+                    bolt.parentNode.removeChild(bolt);
+                }
+            }, 8000);
+        }
+
+        setInterval(createLightning, 3000);
+
+        // Circuit Network Animation
+        function createCircuitTrace() {
+            const network = document.getElementById('circuitNetwork');
+            const trace = document.createElement('div');
+            trace.className = 'circuit-trace';
+            
+            trace.style.top = Math.random() * 100 + '%';
+            trace.style.width = (100 + Math.random() * 200) + 'px';
+            trace.style.animationDelay = Math.random() * 4 + 's';
+            
+            network.appendChild(trace);
+            
+            setTimeout(() => {
+                if (trace.parentNode) {
+                    trace.parentNode.removeChild(trace);
+                }
+            }, 8000);
+        }
+
+        setInterval(createCircuitTrace, 2000);
+
+        // Intelligence Feed Animation
+        const intelMessages = [
+            "> Satellite surveillance active...",
+            "> Monitoring global energy grids...",
+            "> Agents embedded in 47 nations...",
+            "> Quantum encryption protocols enabled...",
+            "> Signal intercepted from Area 51...",
+            "> Cryptocurrency mining farms online...",
+            "> Weather control satellites positioned...",
+            "> Underground bunkers 87% complete...",
+            "> Mind control frequency calibrated...",
+            "> Global internet backdoors active..."
+        ];
+
+        let intelIndex = 0;
+        function updateIntelFeed() {
+            const feed = document.getElementById('intelFeed');
+            let content = '';
+            for (let i = 0; i < 4; i++) {
+                content += intelMessages[(intelIndex + i) % intelMessages.length] + '<br>';
+            }
+            feed.innerHTML = content;
+            intelIndex = (intelIndex + 1) % intelMessages.length;
+        }
+
+        setInterval(updateIntelFeed, 3000);
+
+        // World Domination Progress
+        let dominationLevel = 0;
+        function updateDominationMeter() {
+            const progressBar = document.getElementById('dominationProgress');
+            const threatStatus = document.getElementById('threatLevel');
+            
+            dominationLevel += Math.random() * 2;
+            if (dominationLevel > 100) dominationLevel = 100;
+            
+            progressBar.style.width = dominationLevel + '%';
+            
+            if (dominationLevel < 25) {
+                threatStatus.textContent = 'THREAT LEVEL: LOW';
+                threatStatus.style.color = '#00ff00';
+            } else if (dominationLevel < 50) {
+                threatStatus.textContent = 'THREAT LEVEL: MODERATE';
+                threatStatus.style.color = '#ffff00';
+            } else if (dominationLevel < 75) {
+                threatStatus.textContent = 'THREAT LEVEL: HIGH';
+                threatStatus.style.color = '#ff6600';
+            } else {
+                threatStatus.textContent = 'THREAT LEVEL: CRITICAL';
+                threatStatus.style.color = '#ff0000';
+            }
+        }
+
+        setInterval(updateDominationMeter, 5000);
+
+        // Secret Modal System
+        const secrets = {
+            voltaic: {
+                title: "DR. VOLTAIC'S CLASSIFIED FILES",
+                content: `
+                    <h2 style="color: #00ff41; margin-bottom: 30px;">⚡ ELECTROMAGNETIC DOMINION PROTOCOL ⚡</h2>
+                    <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+                        <h3 style="color: #00ff41;">PHASE 1: INFRASTRUCTURE INFILTRATION</h3>
+                        <p>• Quantum processors deployed in 73% of global data centers</p>
+                        <p>• Neural interface chips embedded in consumer electronics</p>
+                        <p>• EMP devices positioned near critical power grids</p>
+                        
+                        <h3 style="color: #00ff41; margin-top: 30px;">PHASE 2: SIGNAL DOMINANCE</h3>
+                        <p>• RF interceptors monitoring all communications</p>
+                        <p>• Tesla coil networks creating electromagnetic barriers</p>
+                        <p>• Supercapacitor banks storing enough energy to power small nations</p>
+                        
+                        <h3 style="color: #00ff41; margin-top: 30px;">FINAL PHASE: THE GREAT SHUTDOWN</h3>
+                        <p style="color: #ffff00;">When activated, all electronic infrastructure will bow to my command. 
+                        The age of digital democracy ends, and the era of electromagnetic empire begins!</p>
+                    </div>
+                `
+            },
+            gearwright: {
+                title: "PROF. GEARWRIGHT'S MECHANICAL MANIFESTO",
+                content: `
+                    <h2 style="color: #ff0040; margin-bottom: 30px;">⚙️ THE CLOCKWORK CONSPIRACY ⚙️</h2>
+                    <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+                        <h3 style="color: #ff0040;">THE GRAND DESIGN</h3>
+                        <p>• Perpetual motion machines will eliminate energy dependence</p>
+                        <p>• Precision gear assemblies create perfect mechanical timing</p>
+                        <p>• Steam engines modernized for unstoppable industrial power</p>
+                        
+                        <h3 style="color: #ff0040; margin-top: 30px;">MECHANICAL ARMY DEPLOYMENT</h3>
+                        <p>• Clockwork automation systems controlling global manufacturing</p>
+                        <p>• Pneumatic actuators replacing human labor entirely</p>
+                        <p>• Master craftsman tools ensuring perfect mechanical reproduction</p>
+                        
+                        <h3 style="color: #ff0040; margin-top: 30px;">THE INEVITABLE TICK</h3>
+                        <p style="color: #ffff00;">Every gear turns according to my design. Every spring coils with my ambition. 
+                        When the great clockwork awakens, humanity will march to the rhythm of my mechanical heartbeat!</p>
+                    </div>
+                `
+            },
+            spectrum: {
+                title: "DR. SPECTRUM'S ENERGY EQUATIONS",
+                content: `
+                    <h2 style="color: #0080ff; margin-bottom: 30px;">☢️ UNLIMITED POWER PROTOCOL ☢️</h2>
+                    <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+                        <h3 style="color: #0080ff;">ENERGY HARVEST NETWORK</h3>
+                        <p>• Solar collector matrices capturing 99.7% of available photons</p>
+                        <p>• RF amplification systems drawing power from radio waves</p>
+                        <p>• Lightning rod networks storing atmospheric electrical discharge</p>
+                        
+                        <h3 style="color: #0080ff; margin-top: 30px;">BREAKTHROUGH TECHNOLOGIES</h3>
+                        <p>• Fusion cell prototypes achieving sustained reaction</p>
+                        <p>• Geothermal taps reaching the planet's molten core</p>
+                        <p>• Zero-point energy extraction from quantum vacuum</p>
+                        
+                        <h3 style="color: #0080ff; margin-top: 30px;">ENERGY SINGULARITY</h3>
+                        <p style="color: #ffff00;">When I achieve unlimited energy extraction, I will control the fundamental force 
+                        that drives all existence. Power over energy means power over everything!</p>
+                    </div>
+                `
+            }
+        };
+
+        function unveilSecrets(mastermind) {
+            const modal = document.getElementById('secretModal');
+            const content = document.getElementById('modalContent');
+            const secret = secrets[mastermind];
+            
+            content.innerHTML = `
+                <h1 style="color: #ff6600; margin-bottom: 20px;">${secret.title}</h1>
+                ${secret.content}
+                <div style="margin-top: 40px;">
+                    <button onclick="hideSecrets()" style="
+                        background: linear-gradient(45deg, #ff6600, #ff0000);
+                        border: none;
+                        color: white;
+                        padding: 15px 30px;
+                        font-size: 1.2rem;
+                        font-weight: bold;
+                        border-radius: 25px;
+                        cursor: pointer;
+                        font-family: 'Orbitron', monospace;
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                        box-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
+                    ">CLASSIFIED - CLOSE FILE</button>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+            setTimeout(() => {
+                modal.style.animation = 'modalReveal 0.8s ease';
+            }, 10);
+        }
+
+        function hideSecrets() {
+            const modal = document.getElementById('secretModal');
+            modal.style.display = 'none';
+        }
+
+        // Initialize animations on page load
+        window.addEventListener('load', function() {
+            // Start domination meter at random level
+            dominationLevel = Math.random() * 40 + 20;
+            updateDominationMeter();
+            
+            // Create initial effects
+            createLightning();
+            createCircuitTrace();
+            updateIntelFeed();
+        });
+
+        // Easter eggs - Konami code
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+
+        document.addEventListener('keydown', function(e) {
+            konamiCode.push(e.code);
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
+            }
+            
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                document.body.style.filter = 'hue-rotate(180deg) saturate(2)';
+                alert('🎮 CHEAT ACTIVATED: NEON NIGHTMARE MODE! 🎮');
+                setTimeout(() => {
+                    document.body.style.filter = 'none';
+                }, 10000);
+                konamiCode = [];
+            }
+        });
+    </script>
+</body>
+</html>

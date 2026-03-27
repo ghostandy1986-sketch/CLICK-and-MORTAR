@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>99 Sense - Where Every $ Counts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: #2f855a;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        header nav a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        header nav a:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 50px;
+            background-color: #48bb78;
+            color: white;
+        }
+
+        .hero-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .hero-section a {
+            background-color: white;
+            color: #2f855a;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .hero-section a:hover {
+            background-color: #e6ffe6;
+        }
+
+        /* Conveyor Section */
+        .conveyor-container {
+            width: 100%;
+            padding: 20px;
+            background: #ffffff;
+            position: relative;
+            overflow: hidden;
+            border-top: 5px solid #2f855a;
+        }
+
+        .conveyor {
+            width: 90%;
+            height: 150px;
+            background: repeating-linear-gradient(
+                45deg,
+                #333 0px,
+                #333 10px,
+                #444 10px,
+                #444 20px
+            );
+            margin: 0 auto;
+            border-radius: 10px;
+            position: relative;
+            animation: conveyorMove 20s linear infinite;
+        }
+
+        @keyframes conveyorMove {
+            from {
+                background-position: 0 0;
+            }
+            to {
+                background-position: 1920px 0;
+            }
+        }
+
+        .shape {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            cursor: grab;
+            transition: all 0.3s ease;
+        }
+
+        .shape.circle {
+            background: #ff6b6b;
+            border-radius: 50%;
+            top: -150px;
+            left: 300px;
+        }
+
+        .shape.square {
+            background: #4ecdc4;
+            top: -150px;
+            left: 600px;
+        }
+
+        .shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid #45b7d1;
+            background: transparent;
+            top: -150px;
+            left: 900px;
+        }
+
+        .drop-zone {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 3px dashed #666;
+            border-radius: 10px;
+            background-color: rgba(76, 175, 80, 0.2);
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            line-height: 120px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .cart-counter {
+            position: absolute;
+            right: 50px;
+            bottom: 180px;
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1><i class="fas fa-leaf"></i> 99 Sense</h1>
+    <nav>
+        <a href="#shop">Shop</a>
+        <a href="#sell">Sell</a>
+        <a href="#local">Local Food Deals</a>
+        <a href="#affiliate">Affiliate Program</a>
+    </nav>
+    <button onclick="alert('Mockup Login')">Login</button>
+</header>
+
+<section class="hero-section">
+    <h2>Where Every $ Counts</h2>
+    <p>Buy, Sell, and Discover Goods for 99 Cents or Less</p>
+    <a href="#shop">Start Shopping</a>
+</section>
+
+<section id="shop" style="padding: 20px; background-color: #f9f9f9;">
+    <h3>Shop by Aisle</h3>
+    <div>
+        <button onclick="alert('Snacks Clicked')">Snacks</button>
+        <button onclick="alert('Drinks Clicked')">Drinks</button>
+        <button onclick="alert('Household Clicked')">Household</button>
+    </div>
+</section>
+
+<section id="sell" style="padding: 20px; background-color: #ffffff;">
+    <h3>Sell Items</h3>
+    <button onclick="alert('Go to Sell Mockup!')">Click to Begin Selling</button>
+</section>
+
+<section id="affiliate">
+    <h2>Affiliate Marketing Program</h2>
+</section>
+
+<!-- Conveyor Section -->
+<div class="conveyor-container">
+    <div class="conveyor"></div>
+    <div class="shape circle" draggable="true"></div>
+    <div class="shape square" draggable="true"></div>
+    <div class="shape triangle" draggable="true"></div>
+    <div class="drop-zone">Drop Here</div>
+    <div class="cart-counter">Cart: 0 items</div>
+</div>
+
+<script>
+const shapes = document.querySelectorAll('.shape');
+const dropZone = document.querySelector('.drop-zone');
+const cartCounter = document.querySelector('.cart-counter');
+let cartCount = 0;
+
+shapes.forEach((shape) => {
+    shape.addEventListener('dragstart', handleDragStart);
+    shape.addEventListener('dragend', handleDragEnd);
+});
+
+function handleDragStart(e) {
+    e.dataTransfer.setData('text/plain', e.target.className);
+}
+
+function handleDragEnd() {
+    this.style.opacity = '1';
+}
+
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.style.borderColor = '#4CAF50';
+});
+
+dropZone.addEventListener('dragleave', () => {
+    dropZone.style.borderColor = '#666';
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.style.borderColor = '#666';
+
+    const droppedClass = e.dataTransfer.getData('text/plain');
+    if (droppedClass) {
+        cartCount++;
+        cartCounter.textContent = `Cart: ${cartCount} items`;
+    }
+});
+</script>
+</body>
+</html>

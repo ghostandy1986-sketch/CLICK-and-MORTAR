@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>99 Sense Advanced Conveyor Shopping System</title>
+<style>
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: visible;
+    font-family: Arial, sans-serif;
+}
+
+.background-container {
+    width: 1920px;
+    height: 1353px;
+    background-image: url('99 SENSE EDIT CONVEYOR.png');
+    background-size: 100% 100%;
+    background-position: Absolute;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.content {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Shopping Item Containers */
+.item-container {
+    position: absolute;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+}
+
+.item-container:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    z-index: 100;
+}
+
+.item-image {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(45deg, #4CAF50, #81C784);
+    border-radius: 4px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+}
+
+.item-price {
+    color: #2E7D32;
+    font-size: 10px;
+    margin-top: 2px;
+}
+
+.coupon-indicator {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #FF5722;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Conveyor Belt System */
+.conveyor {
+    position: absolute;
+    background: repeating-linear-gradient(
+        45deg,
+        #333 0px,
+        #333 10px,
+        #555 10px,
+        #555 20px
+    );
+    border: 3px solid #222;
+    border-radius: 15px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+}
+
+.conveyor.horizontal {
+    animation: conveyorMoveHorizontal 8s linear infinite;
+}
+
+.conveyor.vertical {
+    animation: conveyorMoveVertical 8s linear infinite;
+}
+
+.conveyor.reverse-horizontal {
+    animation: conveyorMoveReverseHorizontal 8s linear infinite;
+}
+
+.conveyor.reverse-vertical {
+    animation: conveyorMoveReverseVertical 8s linear infinite;
+}
+
+.conveyor.highlight {
+    outline: 4px solid #4CAF50;
+    outline-offset: 2px;
+}
+
+@keyframes conveyorMoveHorizontal {
+    from { background-position: 0 0; }
+    to { background-position: 40px 0; }
+}
+
+@keyframes conveyorMoveReverseHorizontal {
+    from { background-position: 40px 0; }
+    to { background-position: 0 0; }
+}
+
+@keyframes conveyorMoveVertical {
+    from { background-position: 0 0; }
+    to { background-position: 0 40px; }
+}
+
+@keyframes conveyorMoveReverseVertical {
+    from { background-position: 0 40px; }
+    to { background-position: 0 0; }
+}
+
+/* Shopping item on conveyor */
+.item-on-conveyor {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #333;
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+/* Shopping Cart */
+.cart {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 4px solid #FF6B6B;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+    animation: cartGlow 3s ease-in-out infinite alternate;
+}
+
+.cart-icon {
+    font-size: 48px;
+    color: #FF6B6B;
+    margin-bottom: 10px;
+}
+
+.cart-counter {
+    background: #FF6B6B;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+}
+
+@keyframes cartGlow {
+    0% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3); }
+    100% { box-shadow: 0 8px 35px rgba(255, 107, 107, 0.6); }
+}
+
+/* Movement Animations */
+@keyframes moveRight {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(100% + 20px)); }
+}
+
+@keyframes moveLeft {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-100% - 20px)); }
+}
+
+@keyframes moveDown {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(calc(100% + 20px)); }
+}
+
+@keyframes moveUp {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(calc(-100% - 20px)); }
+}
+
+/* Price Comparison Panel */
+.price-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: none;
+}
+
+.price-panel.active {
+    display: block;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.coupon-found {
+    background: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    margin: 5px 0;
+    display: inline-block;
+}
+
+/* Status Bar */
+.status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(51, 51, 51, 0.9);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    z-index: 1000;
+}
+
+.total-savings {
+    color: #4CAF50;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="background-container">
+    <div class="content">
+        <!-- Left Side Product Containers -->
+        <!-- Greeting Cards -->
+        <div class="item-container" style="left: 699px; top: 1029px; width: 139px; height: 130px;" 
+             data-item="greeting-cards" data-price="2.99" data-category="stationery">
+            <div class="item-image">📄</div>
+            Greeting Cards
+            <div class="item-price">$2.99</div>
+            <div class="coupon-indicator">%</div>
+        </div>
+
+        <!-- School Supplies -->
+        <div class="item-container" style="left: 339px; top: 1033px; width: 273px; height: 124px;" 
+             data-item="school-supplies" data-price="4.99" data-category="education">
+            <div class="item-image">✏️</div>
+            School Supplies
+            <div class="item-price">$4.99</div>
+        </div>
+
+        <!-- Snacks/Candy -->
+        <div class="item-container" style="left: 70px; top: 1031px; width: 184px; height: 126px;" 
+             data-item="snacks-candy" data-price="1.99" data-category="food">
+            <div class="item-image">🍬</div>
+            Snacks & Candy
+            <div class="item-price">$1.99</div>
+            <div class="coupon-indicator">%</div>
+        </div>
+
+        <!-- Middle Row Products -->
+        <div class="item-container" style="left: 740px; top: 780px; width: 150px; height: 124px;" 
+             data-item="beverages" data-price="3.49" data-category="drinks">
+            <div class="item-image">🥤</div>
+            Beverages
+            <div class="item-price">$3.49</div>
+        </div>
+
+        <div class="item-container" style="left: 441px; top: 775px; width: 216px; height: 131px;" 
+             data-item="household" data-price="6.99" data-category="home">
+            <div class="item-image">🧽</div>
+            Household Items
+            <div class="item-price">$6.99</div>
+        </div>
+
+        <div class="item-container" style="left: 215px; top: 769px; width: 128px; height: 131px;" 
+             data-item="personal-care" data-price="5.49" data-category="health">
+            <div class="item-image">🧴</div>
+            Personal Care
+            <div class="item-price">$5.49</div>
+            <div class="coupon-indicator">%</div>
+        </div>
+
+        <!-- Rear Row Products -->
+        <div class="item-container" style="left: 775px; top: 642px; width: 98px; height: 89px;" 
+             data-item="electronics" data-price="12.99" data-category="tech">
+            <div class="item-image">🔌</div>
+            Electronics
+            <div class="item-price">$12.99</div>
+        </div>
+
+        <div class="item-container" style="left: 520px; top: 642px; width: 179px; height: 85px;" 
+             data-item="books" data-price="8.99" data-category="media">
+            <div class="item-image">📚</div>
+            Books & Media
+            <div class="item-price">$8.99</div>
+        </div>
+
+        <div class="item-container" style="left: 326px; top: 642px; width: 104px; height: 92px;" 
+             data-item="toys" data-price="7.99" data-category="entertainment">
+            <div class="item-image">🧸</div>
+            Toys & Games
+            <div class="item-price">$7.99</div>
+            <div class="coupon-indicator">%</div>
+        </div>
+
+        <!-- Conveyor Belt System -->
+        <!-- Left Side Horizontal Conveyors -->
+        <div class="conveyor horizontal" id="conveyor-h1" data-direction="right" data-next="conveyor-v-left"
+             style="left: 3px; top: 941px; width: 838px; height: 24px;"></div>
+        
+        <div class="conveyor horizontal" id="conveyor-h2" data-direction="right" data-next="conveyor-v-left"
+             style="left: 3px; top: 749px; width: 857px; height: 24px;"></div>
+        
+        <div class="conveyor horizontal" id="conveyor-h3" data-direction="right" data-next="conveyor-v-left"
+             style="left: 182px; top: 622px; width: 691px; height: 14px;"></div>
+        
+        <div class="conveyor horizontal" id="conveyor-h4" data-direction="right" data-next="conveyor-v-left"
+             style="left: 339px; top: 466px; width: 499px; height: 13px;"></div>
+
+        <!-- Right Side Horizontal Conveyors -->
+        <div class="conveyor horizontal reverse-horizontal" id="conveyor-h5" data-direction="left" data-next="conveyor-v-right"
+             style="left: 1087px; top: 941px; width: 831px; height: 30px;"></div>
+        
+        <div class="conveyor horizontal reverse-horizontal" id="conveyor-h6" data-direction="left" data-next="conveyor-v-right"
+             style="left: 1074px; top: 756px; width: 831px; height: 15px;"></div>
+        
+        <div class="conveyor horizontal reverse-horizontal" id="conveyor-h7" data-direction="left" data-next="conveyor-v-right"
+             style="left: 1054px; top: 625px; width: 689px; height: 11px;"></div>
+        
+        <div class="conveyor horizontal reverse-horizontal" id="conveyor-h8" data-direction="left" data-next="conveyor-v-right"
+             style="left: 1122px; top: 464px; width: 473px; height: 9px;"></div>
+
+        <!-- Vertical Conveyors -->
+        <div class="conveyor vertical" id="conveyor-v-left" data-direction="down" data-next="conveyor-v-center"
+             style="left: 334px; top: 464px; width: 307px; height: 301px;"></div>
+        
+        <div class="conveyor vertical" id="conveyor-v-center" data-direction="down" data-next="cart"
+             style="left: 941px; top: 602px; width: 92px; height: 556px;"></div>
+        
+        <div class="conveyor vertical reverse-vertical" id="conveyor-v-right" data-direction="up" data-next="conveyor-v-center"
+             style="left: 1582px; top: 447px; width: 336px; height: 298px;"></div>
+
+        <!-- Shopping Cart -->
+        <div class="cart" id="cart" style="left: 900px; top: 1200px;">
+            <div class="cart-icon">🛒</div>
+            <div class="cart-counter">0 items</div>
+        </div>
+    </div>
+</div>
+
+<!-- Price Comparison Panel -->
+<div class="price-panel" id="price-panel">
+    <h3>Price Comparison</h3>
+    <div id="price-content"></div>
+    <button onclick="closePricePanel()" style="background: #f44336; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; float: right; margin-top: 10px;">Close</button>
+</div>
+
+<!-- Status Bar -->
+<div class="status-bar">
+    <span>Total Items: <span id="total-items">0</span></span> | 
+    <span>Cart Value: $<span id="cart-value">0.00</span></span> | 
+    <span class="total-savings">Savings: $<span id="total-savings">0.00</span></span>
+</div>
+
+<script>
+let cartCount = 0;
+let cartValue = 0;
+let totalSavings = 0;
+const items = document.querySelectorAll('.item-container');
+const conveyors = document.querySelectorAll('.conveyor');
+const cart = document.querySelector('.cart');
+
+// Item database with pricing and coupon info
+const itemData = {
+    'greeting-cards': { basePrice: 2.99, couponSavings: 0.50, competitors: ['$3.49 at Store B', '$2.79 at Store C'] },
+    'school-supplies': { basePrice: 4.99, couponSavings: 0, competitors: ['$5.29 at Store B', '$4.89 at Store C'] },
+    'snacks-candy': { basePrice: 1.99, couponSavings: 0.30, competitors: ['$2.19 at Store B', '$1.89 at Store C'] },
+    'beverages': { basePrice: 3.49, couponSavings: 0, competitors: ['$3.69 at Store B', '$3.29 at Store C'] },
+    'household': { basePrice: 6.99, couponSavings: 0, competitors: ['$7.49 at Store B', '$6.79 at Store C'] },
+    'personal-care': { basePrice: 5.49, couponSavings: 0.75, competitors: ['$5.99 at Store B', '$5.29 at Store C'] },
+    'electronics': { basePrice: 12.99, couponSavings: 0, competitors: ['$13.49 at Store B', '$12.79 at Store C'] },
+    'books': { basePrice: 8.99, couponSavings: 0, competitors: ['$9.49 at Store B', '$8.79 at Store C'] },
+    'toys': { basePrice: 7.99, couponSavings: 1.00, competitors: ['$8.49 at Store B', '$7.79 at Store C'] }
+};
+
+// Setup drag and drop for items
+items.forEach(item => {
+    item.draggable = true;
+    item.addEventListener('dragstart', handleDragStart);
+    item.addEventListener('click', showPriceComparison);
+});
+
+// Setup conveyor drop zones
+conveyors.forEach(conveyor => {
+    conveyor.addEventListener('dragover', handleDragOver);
+    conveyor.addEventListener('dragleave', handleDragLeave);
+    conveyor.addEventListener('drop', handleDrop);
+});
+
+function handleDragStart(e) {
+    e.dataTransfer.setData('text/plain', JSON.stringify({
+        item: this.dataset.item,
+        price: this.dataset.price,
+        category: this.dataset.category
+    }));
+    this.style.opacity = '0.5';
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    this.classList.add('highlight');
+}
+
+function handleDragLeave() {
+    this.classList.remove('highlight');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    this.classList.remove('highlight');
+
+    const itemInfo = JSON.parse(e.dataTransfer.getData('text/plain'));
+    const rect = this.getBoundingClientRect();
+    const dropX = e.clientX - rect.left - 30;
+    const dropY = e.clientY - rect.top - 30;
+
+    // Create item on conveyor
+    const itemOnConveyor = document.createElement('div');
+    itemOnConveyor.className = 'item-on-conveyor';
+    itemOnConveyor.style.left = `${Math.max(0, Math.min(dropX, rect.width - 60))}px`;
+    itemOnConveyor.style.top = `${Math.max(0, Math.min(dropY, rect.height - 60))}px`;
+    itemOnConveyor.textContent = getItemEmoji(itemInfo.item);
+    itemOnConveyor.dataset.item = itemInfo.item;
+    itemOnConveyor.dataset.price = itemInfo.price;
+    
+    this.appendChild(itemOnConveyor);
+
+    // Start movement
+    moveItemOnConveyor(itemOnConveyor, this.id, this.dataset.direction);
+    
+    // Reset original item opacity
+    document.querySelector(`[data-item="${itemInfo.item}"]`).style.opacity = '1';
+}
+
+function getItemEmoji(itemType) {
+    const emojis = {
+        'greeting-cards': '📄',
+        'school-supplies': '✏️',
+        'snacks-candy': '🍬',
+        'beverages': '🥤',
+        'household': '🧽',
+        'personal-care': '🧴',
+        'electronics': '🔌',
+        'books': '📚',
+        'toys': '🧸'
+    };
+    return emojis[itemType] || '📦';
+}
+
+function moveItemOnConveyor(item, conveyorId, direction) {
+    const conveyor = document.getElementById(conveyorId);
+    const nextConveyor = conveyor.dataset.next;
+    
+    let animationName = '';
+    let duration = '6s';
+    
+    switch(direction) {
+        case 'right': animationName = 'moveRight'; break;
+        case 'left': animationName = 'moveLeft'; break;
+        case 'down': animationName = 'moveDown'; break;
+        case 'up': animationName = 'moveUp'; break;
+    }
+    
+    item.style.animation = `${animationName} ${duration} linear forwards`;
+    
+    item.addEventListener('animationend', () => {
+        if (nextConveyor === 'cart') {
+            addToCart(item);
+        } else {
+            transferToNextConveyor(item, nextConveyor);
+        }
+    });
+}
+
+function transferToNextConveyor(item, nextConveyorId) {
+    const currentConveyor = item.parentElement;
+    const nextConveyor = document.getElementById(nextConveyorId);
+    
+    if (!nextConveyor) return;
+    
+    // Remove from current conveyor
+    item.remove();
+    
+    // Create new item on next conveyor
+    const newItem = document.createElement('div');
+    newItem.className = 'item-on-conveyor';
+    newItem.textContent = item.textContent;
+    newItem.dataset.item = item.dataset.item;
+    newItem.dataset.price = item.dataset.price;
+    
+    // Position at start of next conveyor
+    newItem.style.left = '10px';
+    newItem.style.top = '10px';
+    
+    nextConveyor.appendChild(newItem);
+    
+    // Continue movement
+    moveItemOnConveyor(newItem, nextConveyorId, nextConveyor.dataset.direction);
+}
+
+function addToCart(item) {
+    const itemType = item.dataset.item;
+    const price = parseFloat(item.dataset.price);
+    const data = itemData[itemType];
+    
+    cartCount++;
+    cartValue += price;
+    
+    // Apply coupon if available
+    if (data && data.couponSavings > 0) {
+        totalSavings += data.couponSavings;
+        cartValue -= data.couponSavings;
+    }
+    
+    updateDisplay();
+    
+    // Remove item from conveyor
+    item.remove();
+    
+    // Add visual feedback
+    showCartAddition(itemType);
+}
+
+function updateDisplay() {
+    document.querySelector('.cart-counter').textContent = `${cartCount} items`;
+    document.getElementById('total-items').textContent = cartCount;
+    document.getElementById('cart-value').textContent = cartValue.toFixed(2);
+    document.getElementById('total-savings').textContent = totalSavings.toFixed(2);
+}
+
+function showCartAddition(itemType) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #4CAF50;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        font-size: 18px;
+        z-index: 10000;
+        animation: fadeInOut 2s ease-in-out;
+    `;
+    notification.textContent = `${getItemEmoji(itemType)} Added to Cart!`;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.remove(), 2000);
+}
+
+function showPriceComparison(e) {
+    e.preventDefault();
+    const itemType = this.dataset.item;
+    const data = itemData[itemType];
+    
+    if (!data) return;
+    
+    const panel = document.getElementById('price-panel');
+    const content = document.getElementById('price-content');
+    
+    let html = `
+        <h4>${this.textContent.trim()}</h4>
+        <p><strong>Our Price:</strong> $${data.basePrice}</p>
+    `;
+    
+    if (data.couponSavings > 0) {
+        html += `<div class="coupon-found">Coupon Available: Save $${data.couponSavings}</div>`;
+    }
+    
+    html += `<p><strong>Competitor Prices:</strong></p><ul>`;
+    data.competitors.forEach(comp => {
+        html += `<li>${comp}</li>`;
+    });
+    html += `</ul>`;
+    
+    content.innerHTML = html;
+    panel.classList.add('active');
+}
+
+function closePricePanel() {
+    document.getElementById('price-panel').classList.remove('active');
+}
+
+// Add CSS for fadeInOut animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+        20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>

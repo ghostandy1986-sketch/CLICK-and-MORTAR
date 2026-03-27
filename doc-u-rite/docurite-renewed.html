@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doc-U-Rite | Professional Document Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        :root {
+            --primary: #003366;
+            --primary-light: #005bb5;
+            --secondary: #3498db;
+            --accent: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --text: #333;
+            --background: #f4f4f9;
+            --white: #fff;
+            --gray: #7f8c8d;
+            --light-gray: #ecf0f1;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Navigation */
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 15px;
+            margin: 0 20px 20px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .content-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+
+        /* Document Grid */
+        .document-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .document-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .document-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+        }
+
+        .document-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .document-card.premium {
+            border-left-color: var(--warning);
+            background: linear-gradient(135deg, #fff 0%, #fff8e1 100%);
+        }
+
+        .document-card.unavailable {
+            opacity: 0.7;
+            border-left-color: var(--gray);
+        }
+
+        .document-card h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .document-card p {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .document-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-premium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-unavailable {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Print Options */
+        .print-options {
+            margin-bottom: 2rem;
+        }
+
+        .print-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 51, 102, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), #2980b9);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent), #27ae60);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-disabled {
+            background: var(--gray);
+            color: var(--white);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Package Cards */
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .package-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .package-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+        }
+
+        .package-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .package-card.featured {
+            border: 2px solid var(--warning);
+            background: linear-gradient(135deg, #fff 0%, #fff8e1 100%);
+        }
+
+        .package-card.featured::before {
+            background: linear-gradient(135deg, var(--warning), #d35400);
+        }
+
+        .package-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .package-title {
+            color: var(--primary);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .package-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .package-description {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .package-features {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .package-features li {
+            padding: 0.5rem 0;
+            position: relative;
+            padding-left: 25px;
+            font-size: 0.95rem;
+        }
+
+        .package-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--danger), #c0392b);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transform: rotate(5deg);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* Cart */
+        .cart-badge {
+            background: var(--danger);
+            color: var(--white);
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            padding: 2rem 0;
+            margin-top: 3rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Section Visibility */
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+
+            .package-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .document-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .print-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-container {
+                padding: 0 10px;
+            }
+
+            .content-wrapper {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Doc-U-Rite</h1>
+        <p>Professional Document Solutions & Print Services</p>
+    </header>
+
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-links">
+                <button class="btn btn-outline" onclick="showSection('documents')">Document Templates</button>
+                <button class="btn btn-outline" onclick="showSection('packages')">Business Packages</button>
+                <button class="btn btn-outline" onclick="showSection('print')">Print Services</button>
+                <button class="btn btn-outline" onclick="showSection('about')">About</button>
+            </div>
+            <button class="btn btn-primary" onclick="showCart()">
+                Cart <span class="cart-badge" id="cartCount">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div class="content-wrapper">
+            <!-- Documents Section -->
+            <section id="documents" class="section active">
+                <h2 style="text-align: center; color: var(--primary); margin-bottom: 2rem; font-size: 2.5rem;">Professional Document Templates</h2>
+                
+                <div class="document-grid" id="documents-grid">
+                    <!-- Invoice -->
+                    <div class="document-card">
+                        <div class="document-status status-available">Available</div>
+                        <h3>Professional Invoice</h3>
+                        <p>Comprehensive invoicing solution with automated calculations, tax compliance, and professional branding</p>
+                        <button class="btn btn-primary" onclick="viewDocument('invoice')">View Template</button>
+                    </div>
+
+                    <!-- Manual -->
+                    <div class="document-card">
+                        <div class="document-status status-available">Available</div>
+                        <h3>User Manual</h3>
+                        <p>Comprehensive documentation template with step-by-step instructions and troubleshooting guides</p>
+                        <button class="btn btn-primary" onclick="viewDocument('manual')">View Template</button>
+                    </div>
+
+                    <!-- Passport - Unavailable -->
+                    <div class="document-card unavailable">
+                        <div class="document-status status-unavailable">Restricted</div>
+                        <h3>Passport Template</h3>
+                        <p>Official government documents - not available for security reasons</p>
+                        <button class="btn btn-disabled" disabled>Restricted</button>
+                    </div>
+
+                    <!-- Purchase Order -->
+                    <div class="document-card">
+                        <div class="document-status status-available">Available</div>
+                        <h3>Purchase Order</h3>
+                        <p>Professional procurement document with vendor management and approval workflows</p>
+                        <button class="btn btn-primary" onclick="viewDocument('purchase-order')">View Template</button>
+                    </div>
+
+                    <!-- Bylaws -->
+                    <div class="document-card">
+                        <div class="document-status status-available">Available</div>
+                        <h3>Corporate Bylaws</h3>
+                        <p>Comprehensive governance document with legal compliance and organizational structure</p>
+                        <button class="btn btn-primary" onclick="viewDocument('bylaws')">View Template</button>
+                    </div>
+
+                    <!-- Form I-9 - Unavailable -->
+                    <div class="document-card unavailable">
+                        <div class="document-status status-unavailable">Restricted</div>
+                        <h3>Form I-9</h3>
+                        <p>Must use official USCIS version - not available for legal compliance</p>
+                        <button class="btn btn-disabled" disabled>Official Only</button>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <div class="document-card">
+                        <div class="document-status status-available">Available</div>
+                        <h3>Registration Form</h3>
+                        <p>Versatile registration template with data validation and payment integration</p>
+                        <button class="btn btn-primary" onclick="viewDocument('registration')">View Template</button>
+                    </div>
+
+                    <!-- Application Form -->
+                    <div class="document-card">
+                        <div class="document-status status-available">Available</div>
+                        <h3>Application Form</h3>
+                        <p>Comprehensive application template with evaluation criteria and workflows</p>
+                        <button class="btn btn-primary" onclick="viewDocument('application')">View Template</button>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="document-card">
+                        <div class="document-status status-available">Available</div>
+                        <h3>Contact Form</h3>
+                        <p>Professional contact solution with inquiry categorization and CRM integration</p>
+                        <button class="btn btn-primary" onclick="viewDocument('contact')">View Template</button>
+                    </div>
+
+                    <!-- Donation Form -->
+                    <div class="document-card">
+                        <div class="document-status status-available">Available</div>
+                        <h3>Donation Form</h3>
+                        <p>Secure donation platform with tax compliance and donor management features</p>
+                        <button class="btn btn-primary" onclick="viewDocument('donation')">View Template</button>
+                    </div>
+
+                    <!-- Feedback Form -->
+                    <div class="document-card">
+                        <div class="document-status status-available">Available</div>
+                        <h3>Feedback Form</h3>
+                        <p>Comprehensive feedback system with analytics and sentiment analysis</p>
+                        <button class="btn btn-primary" onclick="viewDocument('feedback')">View Template</button>
+                    </div>
+
+                    <!-- Digital Flyer -->
+                    <div class="document-card premium">
+                        <div class="document-status status-premium">Premium</div>
+                        <h3>Digital Flyer</h3>
+                        <p>Interactive marketing materials with social sharing and multimedia integration</p>
+                        <button class="btn btn-secondary" onclick="viewDocument('flyer')">View Template</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Packages Section -->
+            <section id="packages" class="section">
+                <h2 style="text-align: center; color: var(--primary); margin-bottom: 2rem; font-size: 2.5rem;">Business Document Packages</h2>
+                
+                <div class="package-grid">
+                    <!-- LLC Formation Package -->
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3 class="package-title">LLC Formation Package</h3>
+                            <div class="package-price">$199-299</div>
+                            <p class="package-description">Complete LLC setup documentation</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>Operating agreement template</li>
+                            <li>Member certificates</li>
+                            <li>Meeting minutes template</li>
+                            <li>Banking resolution forms</li>
+                            <li>EIN application guide</li>
+                            <li>Legal compliance checklist</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectPackage('llc-formation', 249)">Select Package</button>
+                    </div>
+
+                    <!-- HR Complete Package -->
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3 class="package-title">HR Complete Package</h3>
+                            <div class="package-price">$149-249</div>
+                            <p class="package-description">Comprehensive human resources toolkit</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>Employee handbook template</li>
+                            <li>Onboarding checklist</li>
+                            <li>Performance review templates</li>
+                            <li>Disciplinary action forms</li>
+                            <li>Termination procedures</li>
+                            <li>Policy templates</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectPackage('hr-complete', 199)">Select Package</button>
+                    </div>
+
+                    <!-- Business Contract Bundle -->
+                    <div class="package-card featured">
+                        <div class="popular-badge">Most Popular</div>
+                        <div class="package-header">
+                            <h3 class="package-title">Business Contract Bundle</h3>
+                            <div class="package-price">$299-499</div>
+                            <p class="package-description">Essential business contracts and agreements</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>Service agreements</li>
+                            <li>Independent contractor contracts</li>
+                            <li>Non-disclosure agreements</li>
+                            <li>Partnership agreements</li>
+                            <li>Sales contracts</li>
+                            <li>Legal review checklist</li>
+                        </ul>
+                        <button class="btn btn-success" onclick="selectPackage('contract-bundle', 399)">Select Package</button>
+                    </div>
+
+                    <!-- Estate Planning Package -->
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3 class="package-title">Estate Planning Package</h3>
+                            <div class="package-price">$199-399</div>
+                            <p class="package-description">Complete estate planning documentation</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>Last will and testament</li>
+                            <li>Living trust templates</li>
+                            <li>Power of attorney forms</li>
+                            <li>Healthcare directive</li>
+                            <li>Asset inventory sheets</li>
+                            <li>Estate planning guide</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectPackage('estate-planning', 299)">Select Package</button>
+                    </div>
+
+                    <!-- Real Estate Bundle -->
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3 class="package-title">Real Estate Bundle</h3>
+                            <div class="package-price">$249-449</div>
+                            <p class="package-description">Comprehensive real estate documentation</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>Lease agreements</li>
+                            <li>Property management forms</li>
+                            <li>Purchase agreements</li>
+                            <li>Inspection checklists</li>
+                            <li>Tenant screening forms</li>
+                            <li>Legal compliance guide</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectPackage('real-estate', 349)">Select Package</button>
+                    </div>
+
+                    <!-- Financial Planning Kit -->
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3 class="package-title">Financial Planning Kit</h3>
+                            <div class="package-price">$149-299</div>
+                            <p class="package-description">Personal financial management tools</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>Budget templates</li>
+                            <li>Investment trackers</li>
+                            <li>Retirement calculators</li>
+                            <li>Debt payoff planners</li>
+                            <li>Net worth trackers</li>
+                            <li>Financial goal worksheets</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectPackage('financial-planning', 199)">Select Package</button>
+                    </div>
+
+                    <!-- Small Business Financial Package -->
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3 class="package-title">Small Business Financial Package</h3>
+                            <div class="package-price">$199-399</div>
+                            <p class="package-description">Business financial management toolkit</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>Invoice templates</li>
+                            <li>Expense trackers</li>
+                            <li>Cash flow projections</li>
+                            <li>Profit & loss templates</li>
+                            <li>Financial statement forms</li>
+                            <li>Tax preparation guides</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectPackage('business-financial', 299)">Select Package</button>
+                    </div>
+
+                    <!-- Wedding Planning Bundle -->
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3 class="package-title">Wedding Planning Bundle</h3>
+                            <div class="package-price">$99-199</div>
+                            <p class="package-description">Complete wedding planning toolkit</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>Budget tracker</li>
+                            <li>Vendor contracts</li>
+                            <li>Timeline templates</li>
+                            <li>Guest management tools</li>
+                            <li>Checklist system</li>
+                            <li>Planning worksheets</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectPackage('wedding-planning', 149)">Select Package</button>
+                    </div>
+
+                    <!-- Project Management Kit -->
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3 class="package-title">Project Management Kit</h3>
+                            <div class="package-price">$149-299</div>
+                            <p class="package-description">Professional project management tools</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>Project charter templates</li>
+                            <li>Risk assessment forms</li>
+                            <li>Status report templates</li>
+                            <li>Resource allocation sheets</li>
+                            <li>Timeline templates</li>
+                            <li>Quality control checklists</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectPackage('project-management', 224)">Select Package</button>
+                    </div>
+
+                    <!-- Nonprofit Starter Pack -->
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3 class="package-title">Nonprofit Starter Pack</h3>
+                            <div class="package-price">$199-399</div>
+                            <p class="package-description">Essential nonprofit organization documents</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>Bylaws template</li>
+                            <li>Board meeting templates</li>
+                            <li>Donation tracking forms</li>
+                            <li>Volunteer management forms</li>
+                            <li>Grant application templates</li>
+                            <li>501(c)(3) compliance guide</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectPackage('nonprofit-starter', 299)">Select Package</button>
+                    </div>
+
+                    <!-- Complete Business Startup Kit -->
+                    <div class="package-card featured">
+                        <div class="popular-badge">Best Value</div>
+                        <div class="package-header">
+                            <h3 class="package-title">Complete Business Startup Kit</h3>
+                            <div class="package-price">$499-999</div>
+                            <p class="package-description">Everything you need to start your business</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>All business documents above</li>
+                            <li>Tax planning guides</li>
+                            <li>Marketing templates</li>
+                            <li>Business plan templates</li>
+                            <li>Compliance checklists</li>
+                            <li>Legal consultation guide</li>
+                        </ul>
+                        <button class="btn btn-success" onclick="selectPackage('complete-startup', 749)">Select Package</button>
+                    </div>
+
+                    <!-- Professional Service Provider Bundle -->
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3 class="package-title">Professional Service Provider Bundle</h3>
+                            <div class="package-price">$399-799</div>
+                            <p class="package-description">Comprehensive toolkit for service professionals</p>
+                        </div>
+                        <ul class="package-features">
+                            <li>Client onboarding forms</li>
+                            <li>Service agreements</li>
+                            <li>Billing templates</li>
+                            <li>Project scoping documents</li>
+                            <li>Client management forms</li>
+                            <li>Professional liability guides</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectPackage('professional-service', 599)">Select Package</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Print Services Section -->
+            <section id="print" class="section">
+                <h2 style="text-align: center; color: var(--primary); margin-bottom: 2rem; font-size: 2.5rem;">Professional Print Services</h2>
+                
+                <div class="print-grid">
+                    <div class="document-card">
+                        <h3>📄 Document Printing</h3>
+                        <p>Professional printing for all document types with various paper options and finishes</p>
+                        <ul style="list-style: none; margin: 1rem 0;">
+                            <li>• Standard & Premium Paper</li>
+                            <li>• Color & Black/White</li>
+                            <li>• Binding Options Available</li>
+                            <li>• Quick Turnaround</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="configurePrint('document')">Configure Printing</button>
+                    </div>
+                    
+                    <div class="document-card">
+                        <h3>🖼️ Banners & Posters</h3>
+                        <p>Large format printing services for marketing materials and presentations</p>
+                        <ul style="list-style: none; margin: 1rem 0;">
+                            <li>• Multiple Size Options</li>
+                            <li>• Weather Resistant Materials</li>
+                            <li>• Indoor & Outdoor Use</li>
+                            <li>• Professional Quality</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="configurePrint('banner')">Configure Printing</button>
+                    </div>
+                    
+                    <div class="document-card">
+                        <h3>📢 Marketing Materials</h3>
+                        <p>Flyers, brochures, business cards, and promotional materials</p>
+                        <ul style="list-style: none; margin: 1rem 0;">
+                            <li>• Business Cards</li>
+                            <li>• Brochures & Flyers</li>
+                            <li>• Postcards & Mailers</li>
+                            <li>• Custom Sizes Available</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="configurePrint('marketing')">Configure Printing</button>
+                    </div>
+
+                    <div class="document-card">
+                        <h3>📋 Forms & Legal Documents</h3>
+                        <p>Specialized printing for legal documents, contracts, and official forms</p>
+                        <ul style="list-style: none; margin: 1rem 0;">
+                            <li>• Legal Size Printing</li>
+                            <li>• Carbonless Forms</li>
+                            <li>• Notary Services</li>
+                            <li>• Confidential Handling</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="configurePrint('legal')">Configure Printing</button>
+                    </div>
+
+                    <div class="document-card">
+                        <h3>📚 Binding & Finishing</h3>
+                        <p>Professional binding and finishing services for presentations and reports</p>
+                        <ul style="list-style: none; margin: 1rem 0;">
+                            <li>• Spiral & Comb Binding</li>
+                            <li>• Lamination Services</li>
+                            <li>• Booklet Creation</li>
+                            <li>• Custom Covers</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="configurePrint('binding')">Configure Service</button>
+                    </div>
+
+                    <div class="document-card premium">
+                        <h3>⚡ Rush Services</h3>
+                        <p>Expedited printing services for urgent document needs</p>
+                        <ul style="list-style: none; margin: 1rem 0;">
+                            <li>• Same-Day Service</li>
+                            <li>• Priority Processing</li>
+                            <li>• 24/7 Availability</li>
+                            <li>• Guaranteed Delivery</li>
+                        </ul>
+                        <button class="btn btn-secondary" onclick="configurePrint('rush')">Request Rush Service</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section id="about" class="section">
+                <h2 style="text-align: center; color: var(--primary); margin-bottom: 2rem; font-size: 2.5rem;">About Doc-U-Rite</h2>
+                
+                <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                    <p style="font-size: 1.2rem; margin-bottom: 2rem; color: var(--gray);">
+                        Doc-U-Rite is your comprehensive solution for professional document creation, management, and printing services. We provide businesses, legal professionals, and individuals with high-quality templates and printing solutions.
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 3rem 0;">
+                        <div class="document-card" style="text-align: center;">
+                            <h3 style="color: var(--primary);">🎯 Professional Quality</h3>
+                            <p>All templates are professionally designed and legally compliant</p>
+                        </div>
+                        <div class="document-card" style="text-align: center;">
+                            <h3 style="color: var(--primary);">⚡ Fast Delivery</h3>
+                            <p>Quick turnaround times for both digital and print services</p>
+                        </div>
+                        <div class="document-card" style="text-align: center;">
+                            <h3 style="color: var(--primary);">🔒 Secure & Confidential</h3>
+                            <p>Your documents and information are handled with utmost security</p>
+                        </div>
+                        <div class="document-card" style="text-align: center;">
+                            <h3 style="color: var(--primary);">💼 Business Solutions</h3>
+                            <p>Comprehensive packages tailored for business needs</p>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--white); padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin: 2rem 0;">
+                        <h3 style="color: var(--primary); margin-bottom: 1rem;">Contact Information</h3>
+                        <p><strong>Phone:</strong> 1-800-DOC-URITE</p>
+                        <p><strong>Email:</strong> support@doc-u-rite.com</p>
+                        <p><strong>Hours:</strong> Monday-Friday 8AM-6PM EST</p>
+                        <p><strong>Emergency Services:</strong> 24/7 for rush orders</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title"></h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Doc-U-Rite Professional Document Solutions | All Rights Reserved</p>
+        <p>Legal Compliance • Professional Quality • Secure Processing</p>
+    </footer>
+
+    <script>
+        // Cart Management
+        let cart = [];
+        let cartTotal = 0;
+
+        // Document Data
+        const documents = {
+            invoice: {
+                title: 'Professional Invoice',
+                description: 'Comprehensive invoicing solution with automated calculations, tax compliance, and professional branding',
+                features: ['Auto-calculating totals', 'Tax compliance fields', 'Professional branding', 'Multi-currency support', 'Digital signatures'],
+                price: 29.99
+            },
+            manual: {
+                title: 'User Manual Template',
+                description: 'Comprehensive documentation template with step-by-step instructions and troubleshooting guides',
+                features: ['Structured content layout', 'Troubleshooting sections', 'Visual elements support', 'Mobile optimization'],
+                price: 39.99
+            },
+            'purchase-order': {
+                title: 'Purchase Order Template',
+                description: 'Professional procurement document with vendor management and approval workflows',
+                features: ['Vendor management', 'Approval workflows', 'Budget tracking', 'Order status tracking'],
+                price: 34.99
+            },
+            bylaws: {
+                title: 'Corporate Bylaws',
+                description: 'Comprehensive governance document with legal compliance and organizational structure',
+                features: ['Legal compliance', 'Governance structure', 'Meeting procedures', 'Amendment processes'],
+                price: 79.99
+            },
+            registration: {
+                title: 'Registration Form',
+                description: 'Versatile registration template with data validation and payment integration',
+                features: ['Data validation', 'Payment integration', 'Capacity management', 'Confirmation systems'],
+                price: 24.99
+            },
+            application: {
+                title: 'Application Form',
+                description: 'Comprehensive application template with evaluation criteria and workflows',
+                features: ['Evaluation criteria', 'Document uploads', 'Review workflows', 'Decision tracking'],
+                price: 29.99
+            },
+            contact: {
+                title: 'Contact Form',
+                description: 'Professional contact solution with inquiry categorization and CRM integration',
+                features: ['Inquiry categorization', 'Auto-responses', 'CRM integration', 'Analytics tracking'],
+                price: 19.99
+            },
+            donation: {
+                title: 'Donation Form',
+                description: 'Secure donation platform with tax compliance and donor management features',
+                features: ['Secure payments', 'Tax compliance', 'Donor management', 'Campaign tracking'],
+                price: 49.99
+            },
+            feedback: {
+                title: 'Feedback Form',
+                description: 'Comprehensive feedback system with analytics and sentiment analysis',
+                features: ['Multiple question types', 'Analytics dashboard', 'Sentiment analysis', 'Action tracking'],
+                price: 34.99
+            },
+            flyer: {
+                title: 'Digital Flyer',
+                description: 'Interactive marketing materials with social sharing and multimedia integration',
+                features: ['Interactive elements', 'Social sharing', 'Analytics tracking', 'Mobile optimization'],
+                price: 59.99
+            }
+        };
+
+        // Print Configuration Options
+        const printOptions = {
+            document: {
+                sizes: ['A4', 'Letter', 'Legal', 'A3'],
+                types: ['Standard White', 'Premium White', 'Recycled', 'Photo Quality'],
+                finishes: ['None', 'Matte', 'Glossy'],
+                binding: ['None', 'Stapled', 'Spiral Bound', 'Comb Bound']
+            },
+            banner: {
+                sizes: ['2x3ft', '3x6ft', '4x8ft', '6x10ft', 'Custom'],
+                materials: ['Vinyl', 'Fabric', 'Mesh', 'Canvas'],
+                finishes: ['Standard', 'UV Resistant', 'Laminated']
+            },
+            marketing: {
+                types: ['Business Cards', 'Flyers', 'Brochures', 'Postcards', 'Door Hangers'],
+                sizes: ['Standard', 'Oversized', 'Custom'],
+                finishes: ['Matte', 'Glossy', 'Soft Touch', 'Spot UV']
+            },
+            legal: {
+                sizes: ['Letter', 'Legal', 'A4'],
+                types: ['Standard White', 'Premium White', 'Security Paper'],
+                features: ['Standard', 'Carbonless Forms', 'Watermark', 'Notarization Ready']
+            },
+            binding: {
+                types: ['Spiral Binding', 'Comb Binding', 'Perfect Binding', 'Saddle Stitch'],
+                covers: ['Clear', 'Colored', 'Custom Design', 'Cardstock'],
+                sizes: ['Letter', 'Legal', 'A4', 'A3']
+            },
+            rush: {
+                services: ['Same Day', '4 Hour Rush', '2 Hour Rush', '1 Hour Rush'],
+                delivery: ['Pickup', 'Local Delivery', 'Express Mail', 'Digital Delivery']
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('documents');
+            updateCartDisplay();
+        });
+
+        // Section Management
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+            
+            // Update navigation buttons
+            document.querySelectorAll('.nav-links .btn').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+            });
+            
+            // Highlight active button
+            event.target.classList.remove('btn-outline');
+            event.target.classList.add('btn-primary');
+        }
+
+        // Document Viewing
+        function viewDocument(docId) {
+            const doc = documents[docId];
+            if (!doc) return;
+
+            const content = `
+                <div style="margin-bottom: 2rem;">
+                    <p style="font-size: 1.1rem; color: var(--gray); margin-bottom: 1.5rem;">${doc.description}</p>
+                    
+                    <h4 style="color: var(--primary); margin-bottom: 1rem;">Key Features:</h4>
+                    <ul style="margin-bottom: 2rem;">
+                        ${doc.features.map(feature => `<li style="margin-bottom: 0.5rem;">${feature}</li>`).join('')}
+                    </ul>
+                    
+                    <div style="background: var(--light-gray); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; text-align: center;">
+                        <h3 style="color: var(--primary); margin-bottom: 1rem;">Template Price: ${doc.price}</h3>
+                        <button class="btn btn-success" onclick="addToCart('${docId}', '${doc.title}', ${doc.price})">Add to Cart</button>
+                        <button class="btn btn-outline" onclick="previewDocument('${docId}')" style="margin-left: 1rem;">Live Preview</button>
+                    </div>
+                    
+                    <div style="background: #e8f4fd; padding: 1rem; border-radius: 8px; border-left: 4px solid var(--secondary);">
+                        <strong>✓ What's Included:</strong> Editable template, usage instructions, legal compliance notes, and lifetime updates
+                    </div>
+                </div>
+            `;
+            
+            openModal(doc.title, content);
+        }
+
+        // Package Selection
+        function selectPackage(packageId, price) {
+            const packageNames = {
+                'llc-formation': 'LLC Formation Package',
+                'hr-complete': 'HR Complete Package',
+                'contract-bundle': 'Business Contract Bundle',
+                'estate-planning': 'Estate Planning Package',
+                'real-estate': 'Real Estate Bundle',
+                'financial-planning': 'Financial Planning Kit',
+                'business-financial': 'Small Business Financial Package',
+                'wedding-planning': 'Wedding Planning Bundle',
+                'project-management': 'Project Management Kit',
+                'nonprofit-starter': 'Nonprofit Starter Pack',
+                'complete-startup': 'Complete Business Startup Kit',
+                'professional-service': 'Professional Service Provider Bundle'
+            };
+
+            const packageName = packageNames[packageId];
+            addToCart(packageId, packageName, price);
+            
+            const confirmationContent = `
+                <div style="text-align: center; padding: 2rem;">
+                    <h3 style="color: var(--accent); margin-bottom: 1rem;">✓ Package Added to Cart!</h3>
+                    <p style="font-size: 1.1rem; margin-bottom: 2rem;">${packageName} has been added to your cart for ${price}</p>
+                    <button class="btn btn-primary" onclick="showCart()">View Cart</button>
+                    <button class="btn btn-outline" onclick="closeModal()" style="margin-left: 1rem;">Continue Shopping</button>
+                </div>
+            `;
+            
+            openModal('Package Added', confirmationContent);
+        }
+
+        // Print Configuration
+        function configurePrint(type) {
+            const options = printOptions[type];
+            if (!options) return;
+
+            let content = `<h3 style="margin-bottom: 1.5rem;">Configure ${type.charAt(0).toUpperCase() + type.slice(1)} Printing</h3>`;
+            
+            for (const [key, values] of Object.entries(options)) {
+                content += `
+                    <div class="form-group">
+                        <label>${key.charAt(0).toUpperCase() + key.slice(1)}:</label>
+                        <select id="${key}Select">
+                            ${values.map(v => `<option value="${v}">${v}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+            
+            content += `
+                <div class="form-group">
+                    <label>Quantity:</label>
+                    <input type="number" id="quantityInput" min="1" value="1" style="width: 100px;">
+                </div>
+                
+                <div class="form-group">
+                    <label>Special Instructions:</label>
+                    <textarea id="instructionsInput" rows="3" placeholder="Any special requirements or instructions..."></textarea>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-success" onclick="addPrintToCart('${type}')">Add to Cart</button>
+                    <button class="btn btn-outline" onclick="getPrintQuote('${type}')" style="margin-left: 1rem;">Get Quote</button>
+                </div>
+            `;
+            
+            openModal(`${type.charAt(0).toUpperCase() + type.slice(1)} Configuration`, content);
+        }
+
+        // Cart Management
+        function addToCart(id, title, price) {
+            cart.push({ id, title, price, type: 'template' });
+            updateCartDisplay();
+            
+            // Show success message
+            showNotification(`${title} added to cart!`, 'success');
+        }
+
+        function addPrintToCart(type) {
+            const quantity = parseInt(document.getElementById('quantityInput').value) || 1;
+            const instructions = document.getElementById('instructionsInput').value;
+            
+            // Calculate base price (simplified pricing)
+            const basePrices = {
+                document: 0.15,
+                banner: 25.00,
+                marketing: 0.50,
+                legal: 0.25,
+                binding: 5.00,
+                rush: 50.00
+            };
+            
+            const price = (basePrices[type] || 1.00) * quantity;
+            
+            cart.push({ 
+                id: `print-${type}-${Date.now()}`, 
+                title: `${type.charAt(0).toUpperCase() + type.slice(1)} Printing (${quantity} qty)`, 
+                price: price,
+                type: 'print',
+                instructions: instructions
+            });
+            
+            updateCartDisplay();
+            closeModal();
+            showNotification('Print job added to cart!', 'success');
+        }
+
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+            cartCount.textContent = cart.length;
+        }
+
+        // Cart Display
+        function showCart() {
+            if (cart.length === 0) {
+                openModal('Shopping Cart', '<p style="text-align: center; padding: 2rem;">Your cart is empty</p>');
+                return;
+            }
+
+            let content = `
+                <div style="margin-bottom: 2rem;">
+                    ${cart.map((item, index) => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--light-gray);">
+                            <div>
+                                <h4 style="color: var(--primary);">${item.title}</h4>
+                                <small style="color: var(--gray);">${item.type === 'template' ? 'Digital Template' : 'Print Service'}</small>
+                                ${item.instructions ? `<br><small style="color: var(--gray);">Instructions: ${item.instructions}</small>` : ''}
+                            </div>
+                            <div style="text-align: right;">
+                                <strong>${item.price.toFixed(2)}</strong>
+                                <br>
+                                <button onclick="removeFromCart(${index})" style="color: var(--danger); background: none; border: none; cursor: pointer; font-size: 0.8rem;">Remove</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="text-align: center; background: var(--light-gray); padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: var(--primary);">Total: ${cartTotal.toFixed(2)}</h3>
+                    <button class="btn btn-success" onclick="checkout()" style="margin-top: 1rem;">Proceed to Checkout</button>
+                </div>
+            `;
+
+            openModal('Shopping Cart', content);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+            showCart(); // Refresh cart display
+        }
+
+        // Checkout Process
+        function checkout() {
+            const content = `
+                <div style="text-align: center; padding: 2rem;">
+                    <h3 style="color: var(--accent); margin-bottom: 1rem;">🎉 Checkout Complete!</h3>
+                    <p style="margin-bottom: 2rem;">Thank you for your order! Your total is ${cartTotal.toFixed(2)}</p>
+                    <p style="color: var(--gray); margin-bottom: 2rem;">You will receive an email confirmation with download links and delivery information within 5 minutes.</p>
+                    <button class="btn btn-primary" onclick="completeCheckout()">Continue</button>
+                </div>
+            `;
+            
+            openModal('Order Confirmation', content);
+        }
+
+        function completeCheckout() {
+            cart = [];
+            updateCartDisplay();
+            closeModal();
+            showNotification('Order completed successfully!', 'success');
+        }
+
+        // Utility Functions
+        function openModal(title, content) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-body').innerHTML = content;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--accent)' : 'var(--secondary)'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                z-index: 2000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function previewDocument(docId) {
+            showNotification('Opening live preview...', 'info');
+            // In a real implementation, this would open the actual template
+            setTimeout(() => {
+                closeModal();
+            }, 1000);
+        }
+
+        function getPrintQuote(type) {
+            showNotification('Generating custom quote...', 'info');
+            // In a real implementation, this would calculate detailed pricing
+        }
+
+        // Modal click outside to close
+        document.getElementById('modal').onclick = function(event) {
+            if (event.target === this) {
+                closeModal();
+            }
+        };
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

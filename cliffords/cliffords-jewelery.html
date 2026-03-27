@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clifford Jewelry Kiosk</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-props/1.6.17/easings.min.css">
+<style>
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: auto;
+}
+
+.kiosk-container {
+  position: relative;
+  background-image: url('jasmines kiosk.png');
+  background-repeat: no-repeat;
+  background-size: 3848px 4034px;
+  width: 3848px;
+  height: 4034px;
+  overflow: hidden;
+}
+
+.viewport {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.button {
+  position: absolute;
+  background-color: rgba(255, 0, 0, 0.2);
+  border: 2px solid rgba(255, 0, 0, 0.5);
+  cursor: pointer;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+.thumbnail-container {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 9;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.button.visible {
+  opacity: 1;
+}
+
+/* Keep visible even when interactionArea is left */
+.button.stay-visible {
+  opacity: 1;
+}
+
+.product-display {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+  z-index: 100;
+  transform: scale(0);
+  transition: transform 0.5s ease;
+  overflow: auto;
+  padding: 10px;
+  width: 150px;
+  height: 150px;
+}
+
+.product-display.active {
+  transform: scale(1.2); /* Zoom effect when active */
+  display: flex;
+}
+
+.product-display-content {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 5px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+.product-display.zoomed {
+  transform: scale(1.8);
+  z-index: 200;
+}
+
+.enlarged-display {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 10px;
+  padding: 20px;
+  display: none;
+  z-index: 300;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
+}
+
+.enlarged-display.active {
+  display: block;
+}
+
+.enlarged-image-container {
+  width: 400px;
+  height: 400px;
+  overflow: hidden;
+  position: relative;
+  cursor: zoom-in;
+}
+
+.enlarged-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.enlarged-image.zoomed {
+  transform: scale(2);
+}
+
+.magnifier-glass {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border: 3px solid gold;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 400;
+  background-repeat: no-repeat;
+  display: none;
+}
+
+.logo-screen {
+  position: absolute;
+  left: 107px;
+  top: 127px;
+  width: 911px;
+  height: 223px;
+}
+
+.tv-screen {
+  position: absolute;
+  left: 1097px;
+  top: 138px;
+  width: 687px;
+  height: 218px;
+  background-image: url('eyesright.png');
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.5s ease;
+}
+
+.interaction-area {
+  position: absolute;
+  left: 1932px;
+  top: 447px;
+  width: 566px;
+  height: 599px;
+}
+
+/* Magnifier cursor */
+.magnifier {
+  cursor: zoom-in !important;
+}
+
+/* Auto-scroll zones */
+.scroll-zone {
+  position: fixed;
+  top: 0;
+  height: 100%;
+  width: 100px;
+  z-index: 50;
+}
+
+.scroll-left {
+  left: 0;
+}
+
+.scroll-right {
+  right: 0;
+}
+
+/* IMPROVED Animation keyframes */
+@keyframes pulse {
+  0% { transform: scale(1); background-color: rgba(255, 0, 0, 0.3); }
+  50% { transform: scale(1.7); background-color: rgba(255, 0, 0, 0.8); border-color: rgba(255, 0, 0, 1); }
+  100% { transform: scale(1); background-color: rgba(255, 0, 0, 0.3); }
+}
+
+@keyframes glitch {
+  0% {
+    transform: skew(-25deg, 0deg) translate(-4px, 0);
+    filter: hue-rotate(0deg) brightness(2);
+    opacity: 0.8;
+    border-color: cyan;
+  }
+  25% {
+    transform: skew(25deg, 0deg) translate(4px, -4px);
+    filter: hue-rotate(90deg) brightness(3);
+    opacity: 1;
+    border-color: magenta;
+  }
+  50% {
+    transform: skew(-25deg, 0deg) translate(0, 4px);
+    filter: hue-rotate(180deg) brightness(2.5);
+    opacity: 0.9;
+    border-color: yellow;
+  }
+  75% {
+    transform: skew(15deg, 0deg) translate(-4px, 0);
+    filter: hue-rotate(270deg) brightness(3);
+    opacity: 1;
+    border-color: lime;
+  }
+  100% {
+    transform: skew(-25deg, 0deg) translate(-4px, 0);
+    filter: hue-rotate(360deg) brightness(2);
+    opacity: 0.8;
+    border-color: cyan;
+  }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 10px rgb(255, 0, 0); background-color: rgba(255, 0, 0, 0.3); }
+  50% { box-shadow: 0 0 60px rgb(255, 0, 0), 0 0 20px yellow; background-color: rgba(255, 0, 0, 0.8); }
+  100% { box-shadow: 0 0 10px rgb(255, 0, 0); background-color: rgba(255, 0, 0, 0.3); }
+}
+
+@keyframes tonyhawk {
+  0% { transform: rotate(0deg); background-color: rgba(255, 0, 0, 0.2); }
+  50% { transform: rotate(450deg); background-color: rgba(255, 0, 0, 0.9); box-shadow: 0 0 40px red; }
+  100% { transform: rotate(900deg); background-color: rgba(255, 0, 0, 0.2); }
+}
+
+/* Animation classes - but not applied by default */
+.anim-pulse {
+  animation: pulse 1200ms infinite;
+}
+
+.anim-glitch {
+  animation: glitch 500ms infinite;
+  background-color: rgba(0, 0, 255, 0.3);
+}
+
+.anim-glow {
+  animation: glow 800ms infinite;
+}
+
+.anim-tonyhawk {
+  animation: tonyhawk 1200ms infinite;
+}
+
+/* Clicked/active button state */
+button.paused {
+  background-color: rgba(0, 255, 0, 0.5) !important;
+  border-color: lime !important;
+  box-shadow: 0 0 15px lime !important;
+}
+
+/* Close button for enlarged display */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-weight: bold;
+  z-index: 310;
+}
+</style>
+</head>
+<body>
+<div class="viewport">
+  <div class="kiosk-container">
+    <!-- Logo Screen -->
+    <div class="logo-screen" id="logoScreen"></div>
+
+    <!-- TV Screen -->
+    <div class="tv-screen" id="tvScreen"></div>
+
+    <!-- Interaction Area -->
+    <div class="interaction-area" id="interactionArea"></div>
+
+    <!-- Thumbnails for each button -->
+    <div class="thumbnail-container" style="left: 165px; top: 464px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 1">
+    </div>
+    <div class="thumbnail-container" style="left: 407px; top: 463px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 2">
+    </div>
+    <div class="thumbnail-container" style="left: 647px; top: 467px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 3">
+    </div>
+    <div class="thumbnail-container" style="left: 888px; top: 462px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 4">
+    </div>
+    <div class="thumbnail-container" style="left: 1132px; top: 464px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 5">
+    </div>
+    <div class="thumbnail-container" style="left: 1373px; top: 463px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 6">
+    </div>
+    <div class="thumbnail-container" style="left: 1615px; top: 463px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 7">
+    </div>
+    <div class="thumbnail-container" style="left: 168px; top: 755px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 8">
+    </div>
+    <div class="thumbnail-container" style="left: 651px; top: 756px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 9">
+    </div>
+    <div class="thumbnail-container" style="left: 892px; top: 756px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 10">
+    </div>
+    <div class="thumbnail-container" style="left: 1133px; top: 756px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 11">
+    </div>
+    <div class="thumbnail-container" style="left: 1377px; top: 758px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 12">
+    </div>
+    <div class="thumbnail-container" style="left: 1621px; top: 759px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 13">
+    </div>
+    <div class="thumbnail-container" style="left: 400px; top: 756px;">
+      <img class="thumbnail" src="/api/placeholder/150/150" alt="Jewelry 14">
+    </div>
+
+    <!-- Row 1 Buttons -->
+    <button class="button" id="button1" style="left: 190px; top: 649px; width: 116px; height: 36px;" data-anim="glow">Button 1</button>
+    <button class="button" id="button2" style="left: 432px; top: 648px; width: 116px; height: 35px;" data-anim="glow">Button 2</button>
+    <button class="button" id="button3" style="left: 672px; top: 652px; width: 116px; height: 37px;" data-anim="glow">Button 3</button>
+    <button class="button" id="button4" style="left: 913px; top: 647px; width: 119px; height: 38px;" data-anim="glow">Button 4</button>
+    <button class="button" id="button5" style="left: 1157px; top: 649px; width: 119px; height: 40px;" data-anim="tonyhawk">Button 5</button>
+    <button class="button" id="button6" style="left: 1398px; top: 648px; width: 116px; height: 37px;" data-anim="pulse">Button 6</button>
+    <button class="button" id="button7" style="left: 1640px; top: 648px; width: 118px; height: 39px;" data-anim="">Button 7</button>
+
+    <!-- Row 2 Buttons -->
+    <button class="button" id="button8" style="left: 193px; top: 940px; width: 116px; height: 37px;" data-anim="glow">Button 8</button>
+    <button class="button" id="button9" style="left: 676px; top: 941px; width: 118px; height: 35px;" data-anim="glow">Button 9</button>
+    <button class="button" id="button10" style="left: 917px; top: 941px; width: 117px; height: 34px;" data-anim="tonyhawk">Button 10</button>
+    <button class="button" id="button11" style="left: 1158px; top: 941px; width: 119px; height: 37px;" data-anim="pulse">Button 11</button>
+    <button class="button" id="button12" style="left: 1402px; top: 943px; width: 119px; height: 35px;" data-anim="pulse">Button 12</button>
+    <button class="button" id="button13" style="left: 1646px; top: 944px; width: 118px; height: 31px;" data-anim="glitch">Button 13</button>
+    <button class="button" id="button14" style="left: 425px; top: 941px; width: 116px; height: 36px;" data-anim="">Button 14</button>
+
+    <!-- Product Displays with jewelry descriptions -->
+    <div class="product-display" id="product1" style="left: 140px; top: 544px;">
+      <div class="product-display-content">
+        Diamond Solitaire Ring - 1.5ct brilliant cut diamond in platinum setting. Classic elegance with exceptional clarity and fire.
+      </div>
+    </div>
+    <div class="product-display" id="product2" style="left: 382px; top: 543px;">
+      <div class="product-display-content">
+        Sapphire Pendant - 2.3ct Ceylon sapphire surrounded by pave diamonds on 18k white gold chain. Vibrant blue with excellent color saturation.
+      </div>
+    </div>
+    <div class="product-display" id="product3" style="left: 622px; top: 547px;">
+      <div class="product-display-content">
+        Pearl Earrings - 9mm South Sea pearls with diamond accents in 14k gold. Perfect luster with cream undertones.
+      </div>
+    </div>
+    <div class="product-display" id="product4" style="left: 863px; top: 542px;">
+      <div class="product-display-content">
+        Emerald Cut Bracelet - Channel-set emerald cut diamonds totaling 5.7ct in platinum. Sophisticated design with secure clasp.
+      </div>
+    </div>
+    <div class="product-display" id="product5" style="left: 1107px; top: 544px;">
+      <div class="product-display-content">
+        Ruby Eternity Band - Burmese rubies alternating with round brilliant diamonds in 18k rose gold. Vibrant color with excellent clarity.
+      </div>
+    </div>
+    <div class="product-display" id="product6" style="left: 1348px; top: 543px;">
+      <div class="product-display-content">
+        Art Deco Brooch - Vintage-inspired platinum piece featuring diamonds, onyx, and pearl accents. Intricate filigree detailing.
+      </div>
+    </div>
+    <div class="product-display" id="product7" style="left: 1590px; top: 543px;">
+      <div class="product-display-content">
+        Men's Signet Ring - Solid 18k gold with hand-engraved monogram option. Substantial weight with comfort fit interior.
+      </div>
+    </div>
+    <div class="product-display" id="product8" style="left: 143px; top: 835px;">
+      <div class="product-display-content">
+        Tanzanite Necklace - 4.2ct cushion cut tanzanite with diamond halo on 14k white gold chain. Exceptional violet-blue color.
+      </div>
+    </div>
+    <div class="product-display" id="product9" style="left: 626px; top: 836px;">
+      <div class="product-display-content">
+        Diamond Hoop Earrings - Inside-out pave set diamonds totaling 3.8ct in 18k white gold. Secure hinged closure.
+      </div>
+    </div>
+    <div class="product-display" id="product10" style="left: 867px; top: 836px;">
+      <div class="product-display-content">
+        Morganite Cocktail Ring - 5.7ct oval morganite surrounded by diamond pave in 14k rose gold. Blush pink with excellent clarity.
+      </div>
+    </div>
+    <div class="product-display" id="product11" style="left: 1108px; top: 836px;">
+      <div class="product-display-content">
+        Aquamarine Drop Earrings - 3.5ct pear-shaped aquamarines suspended from diamond studs in platinum. Ethereal sea blue color.
+      </div>
+    </div>
+    <div class="product-display" id="product12" style="left: 1352px; top: 838px;">
+      <div class="product-display-content">
+        Diamond Tennis Bracelet - 8.2ct of round brilliant diamonds in graduated sizing. Four-prong settings in 18k white gold.
+      </div>
+    </div>
+    <div class="product-display" id="product13" style="left: 1596px; top: 839px;">
+      <div class="product-display-content">
+        Black Opal Pendant - 2.8ct Australian black opal with vibrant play of color in custom 18k yellow gold setting. One-of-a-kind piece.
+      </div>
+    </div>
+    <div class="product-display" id="product14" style="left: 375px; top: 836px;">
+      <div class="product-display-content">
+        Peridot and Diamond Set - Matching ring, earrings, and pendant featuring brilliant peridots in 14k gold with diamond accents.
+      </div>
+    </div>
+
+    <!-- Enlarged product display for magnification -->
+    <div class="enlarged-display" id="enlargedDisplay">
+      <button class="close-button" id="closeEnlarged">X</button>
+      <div class="enlarged-image-container" id="enlargedImageContainer">
+        <img id="enlargedImage" class="enlarged-image" src="/api/placeholder/400/400" alt="Enlarged jewelry">
+      </div>
+    </div>
+
+    <!-- Magnifier glass element -->
+    <div class="magnifier-glass" id="magnifierGlass"></div>
+  </div>
+</div>
+
+<!-- Auto-scroll zones -->
+<div class="scroll-zone scroll-left" id="scrollLeft"></div>
+<div class="scroll-zone scroll-right" id="scrollRight"></div>
+
+<script>
+// Get all buttons and product displays
+const buttons = Array.from(document.querySelectorAll('.button'));
+const productDisplays = Array.from(document.querySelectorAll('.product-display'));
+const thumbnailContainers = Array.from(document.querySelectorAll('.thumbnail-container'));
+const interactionArea = document.getElementById('interactionArea');
+const viewport = document.querySelector('.viewport');
+const scrollLeftZone = document.getElementById('scrollLeft');
+const scrollRightZone = document.getElementById('scrollRight');
+const tvScreen = document.getElementById('tvScreen');
+const enlargedDisplay = document.getElementById('enlargedDisplay');
+const closeEnlargedBtn = document.getElementById('closeEnlarged');
+const enlargedImage = document.getElementById('enlargedImage');
+const enlargedImageContainer = document.getElementById('enlargedImageContainer');
+const magnifierGlass = document.getElementById('magnifierGlass');
+
+// Initial scroll position to show more of the kiosk
+window.addEventListener('load', () => {
+  // Scroll to show more of the kiosk initially
+  viewport.scrollLeft = 600;
+  viewport.scrollTop = 300;
+});
+
+// Auto-scrolling functionality
+let scrollInterval = null;
+const scrollSpeed = 10;
+
+scrollLeftZone.addEventListener('mouseenter', () => {
+  clearInterval(scrollInterval);
+  scrollInterval = setInterval(() => {
+    viewport.scrollLeft -= scrollSpeed;
+  }, 16);
+});
+
+scrollLeftZone.addEventListener('mouseleave', () => {
+  clearInterval(scrollInterval);
+});
+
+scrollRightZone.addEventListener('mouseenter', () => {
+  clearInterval(scrollInterval);
+  scrollInterval = setInterval(() => {
+    viewport.scrollLeft += scrollSpeed;
+  }, 16);
+});
+
+scrollRightZone.addEventListener('mouseleave', () => {
+  clearInterval(scrollInterval);
+});
+
+// Function to hide all product displays
+function hideAllProductDisplays() {
+  productDisplays.forEach(display => {
+    display.classList.remove('active');
+    display.classList.remove('zoomed');
+    display.classList.remove('magnifier');
+  });
+}
+
+// Initialize state
+let buttonsActivated = false;
+let eyesDirection = 'right';
+let clickedButtons = new Set(); // Track clicked buttons
+let animationsApplied = false; // Track if animations are currently applied
+
+// Function to toggle Clifford's eyes
+function toggleEyes() {
+  if (eyesDirection === 'right') {
+    tvScreen.style.backgroundImage = "url('eyesleft.png')";
+    eyesDirection = 'left';
+  } else {
+    tvScreen.style.backgroundImage = "url('eyesright.png')";
+    eyesDirection = 'right';
+  }
+}
+
+// Set up eye switching interval - every 3 seconds
+setInterval(toggleEyes, 3000);
+
+// Animation handling - only animate on hover of interaction area
+interactionArea.addEventListener('mouseenter', () => {
+  // Make buttons visible but don't animate yet
+  if (!buttonsActivated) {
+    buttonsActivated = true;
+    buttons.forEach(button => {
+      button.classList.add('stay-visible');
+    });
+  }
+
+  // Apply animations based on data-anim attribute
+  if (!animationsApplied) {
+    buttons.forEach(button => {
+      const animType = button.getAttribute('data-anim');
+      if (animType) {
+        button.classList.add(`anim-${animType}`);
+      }
+    });
+    animationsApplied = true;
+  }
+});
+
+// Set up button click events
+buttons.forEach((button, index) => {
+  button.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    // Toggle the clicked state of this button
+    if (clickedButtons.has(button)) {
+      clickedButtons.delete(button);
+      button.classList.remove('paused');
+
+      // Hide the corresponding product display
+      const productDisplay = document.getElementById(`product${index + 1}`);
+      if (productDisplay) {
+        productDisplay.classList.remove('active');
+        productDisplay.classList.remove('zoomed');
+      }
+    } else {
+      // Reset all buttons first
+      clickedButtons.forEach(btn => {
+        clickedButtons.delete(btn);
+        btn.classList.remove('paused');
+      });
+
+      // Then activate this one
+      clickedButtons.add(button);
+      button.classList.add('paused');
+
+      // Show the corresponding product display
+      hideAllProductDisplays();
+      const productDisplay = document.getElementById(`product${index + 1}`);
+      if (productDisplay) {
+        productDisplay.classList.add('active');
+      }
+    }
+  });
+});
+
+// Add magnifier cursor and zoom functionality to product displays
+productDisplays.forEach((display, index) => {
+  // Add magnifier cursor when hovering over display
+  display.addEventListener('mouseenter', () => {
+    if (display.classList.contains('active')) {
+      display.classList.add('magnifier');
+    }
+  });
+
+  display.addEventListener('mouseleave', () => {
+    if (!display.classList.contains('zoomed')) {
+      display.classList.remove('magnifier');
+    }
+  });
+
+  // Product display click - show zoomed view
+  display.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    if (display.classList.contains('active')) {
+      // First toggle preview zoom
+      display.classList.toggle('zoomed');
+      
+      // If it's now zoomed, also show the enlarged view with magnifier
+      if (display.classList.contains('zoomed')) {
+        // Set the enlarged image to the same as the thumbnail
+        const thumbnailSrc = thumbnailContainers[index].querySelector('img').src;
+        enlargedImage.src = thumbnailSrc;
+        
+        // Position the enlarged display near the product display
+        const rect = display.getBoundingClientRect();
+        enlargedDisplay.style.left = `${rect.left + viewport.scrollLeft + 200}px`;
+        enlargedDisplay.style.top = `${rect.top + viewport.scrollTop - 100}px`;
+        
+        // Show the enlarged display
+        enlargedDisplay.classList.add('active');
+      } else {
+        // Hide the enlarged display if unzooming
+        enlargedDisplay.classList.remove('active');
+      }
+    }
+  });
+});
+
+// Close enlarged display button
+closeEnlargedBtn.addEventListener('click', () => {
+  enlargedDisplay.classList.remove('active');
+  // Also remove zoomed state from any product displays
+  productDisplays.forEach(display => {
+    display.classList.remove('zoomed');
+  });
+});
+
+// Magnifier functionality
+enlargedImageContainer.addEventListener('mousemove', (e) => {
+  const rect = enlargedImageContainer.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  // Calculate magnification position
+  const magnifierRadius = 75; // Half of the magnifier width
+  
+  // Position magnifier
+  magnifierGlass.style.left = `${e.clientX - magnifierRadius}px`;
+  magnifierGlass.style.top = `${e.clientY - magnifierRadius}px`;
+  
+  // Calculate background position for magnifier
+  const bgX = (x / rect.width) * 100;
+  const bgY = (y / rect.height) * 100;
+  
+  // Set background for magnifier
+  magnifierGlass.style.backgroundImage = `url('${enlargedImage.src}')`;
+  magnifierGlass.style.backgroundSize = `${enlargedImage.width * 2}px ${enlargedImage.height * 2}px`;
+  magnifierGlass.style.backgroundPosition = `${bgX}% ${bgY}%`;
+  
+  // Show magnifier
+  magnifierGlass.style.display = 'block';
+});
+
+enlargedImageContainer.addEventListener('mouseleave', () => {
+  magnifierGlass.style.display = 'none';
+});
+
+enlargedImageContainer.addEventListener('click', () => {
+  // Toggle zoom on the image itself
+  enlargedImage.classList.toggle('zoomed');
+  // Update the cursor based on zoom state
+  enlargedImageContainer.style.cursor = enlargedImage.classList.contains('zoomed') ? 'zoom-out' : 'zoom-in';
+});
+
+// Click anywhere else to close product displays and restart all animations
+document.addEventListener('click', (e) => {
+  // Only process if clicking outside product displays, buttons, and enlarged display
+  if (!e.target.closest('.product-display') && !e.target.closest('.button') && !e.target.closest('.enlarged-display')) {
+    hideAllProductDisplays();
+    enlargedDisplay.classList.remove('active');
+    enlargedImage.classList.remove('zoomed');
+
+    // Clear clicked state for all buttons
+    clickedButtons.forEach(btn => {
+      clickedButtons.delete(btn);
+      btn.classList.remove('paused');
+    });
+  }
+});
+
+// Ensure buttons are visible by default
+setTimeout(() => {
+  buttons.forEach(button => {
+    button.classList.add('stay-visible');
+  });
+}, 500);
+</script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillShare University</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background: #1a3c5a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        nav {
+            background: #2e5d87;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .lecture-hall {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            background: url('university.png') no-repeat center/cover;
+            height: 600px;
+            position: relative;
+            transition: background 0.5s;
+        }
+        .lecture-hall.active {
+            background: none;
+        }
+        .viewport {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+        .viewport.active {
+            display: block;
+        }
+        .course-list, .degree-requirements, .shortcut-certifications {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .course-list h2, .degree-requirements h2, .shortcut-certifications h2 {
+            color: #1a3c5a;
+            border-bottom: 2px solid #2e5d87;
+            padding-bottom: 5px;
+        }
+        .course {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .course button {
+            background: #2e5d87;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .course button:hover {
+            background: #1a3c5a;
+        }
+        .purchase-options {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .purchase-options button {
+            background: #d9534f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin: 0 10px;
+            border-radius: 4px;
+        }
+        .purchase-options button:hover {
+            background: #c9302c;
+        }
+        footer {
+            background: #1a3c5a;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>C&M University</h1>
+        <p>Learn Skills, Earn Degrees, Master Your Future</p>
+    </header>
+    <nav>
+        <a href="#courses">Courses</a>
+        <a href="#degrees">Degree Requirements</a>
+        <a href="#certifications">Certifications Shortcut</a>
+    </nav>
+
+    <!-- Dynamic Lecture Hall -->
+    <div class="lecture-hall" id="lectureHall">
+        <iframe class="viewport" id="viewport" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <!-- Course List -->
+    <div class="course-list" id="courses">
+        <h2>Course Catalog</h2>
+        <div id="courseContainer">
+            <!-- Creativity -->
+            <div class="course">
+                <span>Digital Illustration Basics</span>
+                <button onclick="playCourse('https://www.youtube.com/embed/dQw4w9WgXcQ', 49)">Enroll ($49)</button>
+            </div>
+            <div class="course">
+                <span>Creative Writing Workshop</span>
+                <button onclick="playCourse('https://www.youtube.com/embed/dQw4w9WgXcQ', 59)">Enroll ($59)</button>
+            </div>
+            <!-- Technology -->
+            <div class="course">
+                <span>Web Development 101</span>
+                <button onclick="playCourse('https://www.youtube.com/embed/dQw4w9WgXcQ', 79)">Enroll ($79)</button>
+            </div>
+            <div class="course">
+                <span>Data Science Essentials</span>
+                <button onclick="playCourse('https://www.youtube.com/embed/dQw4w9WgXcQ', 89)">Enroll ($89)</button>
+            </div>
+            <!-- Business -->
+            <div class="course">
+                <span>Entrepreneurship Bootcamp</span>
+                <button onclick="playCourse('https://www.youtube.com/embed/dQw4w9WgXcQ', 69)">Enroll ($69)</button>
+            </div>
+            <div class="course">
+                <span>Marketing Strategies</span>
+                <button onclick="playCourse('https://www.youtube.com/embed/dQw4w9WgXcQ', 59)">Enroll ($59)</button>
+            </div>
+            <!-- Lifestyle -->
+            <div class="course">
+                <span>Cooking Masterclass</span>
+                <button onclick="playCourse('https://www.youtube.com/embed/dQw4w9WgXcQ', 39)">Enroll ($39)</button>
+            </div>
+            <div class="course">
+                <span>Photography Basics</span>
+                <button onclick="playCourse('https://www.youtube.com/embed/dQw4w9WgXcQ', 49)">Enroll ($49)</button>
+            </div>
+        </div>
+        <div class="purchase-options">
+            <button onclick="purchaseSemester()">Semester Pass ($299)</button>
+            <p id="purchaseMessage"></p>
+        </div>
+    </div>
+
+    <!-- Degree Requirements -->
+    <div class="degree-requirements" id="degrees">
+        <h2>Earn Your Degree</h2>
+        <p>Complete the required courses and pass assessments to earn a SkillShare University degree.</p>
+        <ul>
+            <li><strong>Bachelor of Creative Arts</strong>: Digital Illustration, Creative Writing, Photography (Pass 3/3 + Final Project)</li>
+            <li><strong>Bachelor of Technology</strong>: Web Development, Data Science (Pass 2/2 + Capstone)</li>
+            <li><strong>Bachelor of Business</strong>: Entrepreneurship, Marketing (Pass 2/2 + Business Plan)</li>
+        </ul>
+    </div>
+
+    <!-- Certifications Shortcut -->
+    <div class="shortcut-certifications" id="certifications">
+        <h2>Qualifications Shortcut</h2>
+        <p>Pass a test to earn certifications instantly—no coursework required!</p>
+        <div class="course">
+            <span>CPR Certification</span>
+            <button onclick="takeTest('CPR')">Take Test ($29)</button>
+        </div>
+        <div class="course">
+            <span>Mechanic Basics Certification</span>
+            <button onclick="takeTest('Mechanic')">Take Test ($49)</button>
+        </div>
+        <div class="course">
+            <span>GED Equivalent</span>
+            <button onclick="takeTest('GED')">Take Test ($99)</button>
+        </div>
+        <p id="certMessage"></p>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 SkillShare University. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Lecture Hall Video Player
+        function playCourse(videoUrl, price) {
+            const enrolled = confirm(`Enroll for $${price}?`);
+            if (enrolled) {
+                const hall = document.getElementById('lectureHall');
+                const viewport = document.getElementById('viewport');
+                hall.classList.add('active');
+                viewport.src = videoUrl;
+                viewport.classList.add('active');
+                alert('Enrollment successful! Enjoy your course.');
+            }
+        }
+
+        // Semester Purchase
+        function purchaseSemester() {
+            const confirmed = confirm('Purchase Semester Pass for $299? Access all courses for 4 months.');
+            if (confirmed) {
+                document.getElementById('purchaseMessage').innerText = 'Semester Pass purchased! All courses unlocked.';
+                document.querySelectorAll('.course button').forEach(btn => {
+                    btn.innerText = 'Watch Now';
+                    btn.onclick = () => playCourse('https://www.youtube.com/embed/dQw4w9WgXcQ', 0);
+                });
+            }
+        }
+
+        // Certification Test
+        function takeTest(certType) {
+            const prices = { CPR: 29, Mechanic: 49, GED: 99 };
+            const confirmed = confirm(`Take ${certType} test for $${prices[certType]}?`);
+            if (confirmed) {
+                const score = Math.floor(Math.random() * 100); // Simulated test
+                if (score >= 70) {
+                    document.getElementById('certMessage').innerText = `Congratulations! You passed the ${certType} test with ${score}%. Certificate issued.`;
+                } else {
+                    document.getElementById('certMessage').innerText = `Sorry, you scored ${score}%. Retake the ${certType} test for $${prices[certType]/2}.`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

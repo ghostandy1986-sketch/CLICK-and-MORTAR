@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Webitentiary - Strategic Consumer Intelligence Platform">
+    <title>Webitentiary - Ad Dungeon Intelligence</title>
+    <style>
+        :root {
+            --primary-cement: #B0B0B0;
+            --dungeon-gold: #FFD700;
+            --dungeon-dark: #2D2D2D;
+            --freedom-green: #4CAF50;
+            --sentence-red: #FF4444;
+            --shadow-deep: 0 8px 25px rgba(0, 0, 0, 0.3);
+            --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        /* Page 1 - Webitent Room Background */
+        .page-1 {
+            background: url('webitent room 1.png') center/cover no-repeat;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Page 2 - Webten Background */
+        .page-2 {
+            background: url('webten.png') center/cover no-repeat;
+            min-height: 100vh;
+            display: none;
+            padding: 100px 20px 100px;
+            position: relative;
+        }
+
+        .page-2.active {
+            display: block;
+            animation: fadeInPage 0.6s ease-out;
+        }
+
+        /* Overlay to ensure readability */
+        .page-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.3), rgba(45,45,45,0.4));
+            pointer-events: none;
+        }
+
+        /* Fixed Header - Sentence Display */
+        .sentence-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--dungeon-dark), #1a1a1a);
+            border-bottom: 4px solid var(--dungeon-gold);
+            z-index: 1000;
+            padding: 15px 20px;
+            box-shadow: var(--shadow-deep);
+        }
+
+        .sentence-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .sentence-details {
+            color: var(--dungeon-gold);
+            font-weight: bold;
+        }
+
+        .time-served {
+            color: var(--sentence-red);
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .offense-info {
+            background: rgba(255,68,68,0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--sentence-red);
+            color: var(--sentence-red);
+            font-size: 0.9em;
+        }
+
+        /* Page 1 Components Integration */
+        .shadow-menu {
+            position: absolute;
+            top: 120px;
+            left: 30px;
+            width: 200px;
+            height: 80px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(240,240,240,0.8));
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            box-shadow: var(--shadow-deep);
+            z-index: 10;
+        }
+
+        .shadow-menu:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .shadow-menu img {
+            width: 60px;
+            height: auto;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        .flip-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 450px;
+            perspective: 1500px;
+            z-index: 10;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            box-shadow: var(--shadow-deep);
+            border-radius: 15px;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .flip-card-front {
+            background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(240,240,240,0.9));
+            backdrop-filter: blur(15px);
+            color: #333;
+            border: 2px solid var(--dungeon-gold);
+        }
+
+        .flip-card-back {
+            background: linear-gradient(145deg, var(--freedom-green), #45a049);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .flip-card h2 {
+            font-size: 1.8em;
+            margin-bottom: 1rem;
+            color: var(--dungeon-gold);
+        }
+
+        .flip-card-back h2 {
+            color: white;
+        }
+
+        .icon {
+            position: absolute;
+            top: 120px;
+            right: 30px;
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            z-index: 10;
+        }
+
+        .icon:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .icon img {
+            width: 80px;
+            height: auto;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+        }
+
+        /* Dungeon Theme Elements for Page 1 */
+        .dungeon-chains {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, 
+                rgba(105,105,105,0.8) 0%, 
+                transparent 50%, 
+                rgba(105,105,105,0.8) 100%);
+            z-index: 5;
+            animation: sway 3s ease-in-out infinite;
+        }
+
+        .chain-left {
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .chain-right {
+            right: 10%;
+            animation-delay: 1.5s;
+        }
+
+        /* Prison Booking Report Integration */
+        .booking-report {
+            position: absolute;
+            bottom: 150px;
+            left: 30px;
+            right: 30px;
+            max-width: 400px;
+            background: linear-gradient(145deg, rgba(45,45,45,0.95), rgba(0,0,0,0.9));
+            backdrop-filter: blur(15px);
+            border: 2px solid var(--dungeon-gold);
+            border-radius: 15px;
+            padding: 20px;
+            color: var(--dungeon-gold);
+            box-shadow: var(--shadow-deep);
+            z-index: 10;
+        }
+
+        .booking-report h3 {
+            color: var(--sentence-red);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .booking-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .booking-info p {
+            margin: 5px 0;
+        }
+
+        .brand-betrayed {
+            color: var(--sentence-red);
+            font-weight: bold;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(135deg, var(--dungeon-dark), #1a1a1a);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            color: white;
+            font-size: 0.9rem;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+            border-top: 3px solid var(--dungeon-gold);
+            z-index: 100;
+        }
+
+        .navbar div {
+            cursor: pointer;
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all var(--transition-smooth);
+            text-align: center;
+            position: relative;
+        }
+
+        .navbar div:hover {
+            background: linear-gradient(135deg, var(--dungeon-gold), #e6c200);
+            color: black;
+            transform: translateY(-3px);
+        }
+
+        /* Page 2 - Advanced Ad Grid */
+        .ad-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .ad-cell {
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.2));
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--dungeon-gold);
+            border-radius: 15px;
+            min-height: 250px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            box-shadow: var(--shadow-deep);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ad-cell:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(255,215,0,0.3);
+            border-color: #fff;
+        }
+
+        /* Scrolling Ad */
+        .scrolling-ad {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .scroll-content {
+            position: absolute;
+            white-space: nowrap;
+            animation: scroll-horizontal 15s linear infinite;
+            font-size: 1.2em;
+            color: var(--dungeon-gold);
+            font-weight: bold;
+        }
+
+        /* Video Ad */
+        .video-ad {
+            position: relative;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 2em;
+            transition: all var(--transition-smooth);
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            background: var(--dungeon-gold);
+        }
+
+        /* Survey Cell */
+        .survey-cell {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .survey-form {
+            color: white;
+        }
+
+        .survey-form input,
+        .survey-form select,
+        .survey-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+
+        .survey-form input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .submit-btn {
+            background: var(--freedom-green);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all var(--transition-smooth);
+        }
+
+        .submit-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        /* Revenue Generation Cells */
+        .revenue-cell {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            text-align: center;
+        }
+
+        .crypto-miner {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .affiliate-link {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        /* Interactive Mini-Game */
+        .mini-game {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-button {
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+        }
+
+        .game-button:hover {
+            transform: scale(1.1);
+            background: var(--dungeon-gold);
+        }
+
+        /* Progress Tracking */
+        .progress-bar {
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255,215,0,0.3);
+            z-index: 99;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--dungeon-gold), #fff700);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Timer Display */
+        .timer-display {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: rgba(255,68,68,0.9);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            z-index: 500;
+            box-shadow: var(--shadow-deep);
+        }
+
+        /* Animations */
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            50% { transform: translateX(3px) rotate(1deg); }
+        }
+
+        @keyframes scroll-horizontal {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.3); }
+            50% { box-shadow: 0 0 30px rgba(255,215,0,0.6); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .flip-card {
+                width: 280px;
+                height: 380px;
+            }
+
+            .shadow-menu, .icon {
+                top: 100px;
+            }
+
+            .shadow-menu {
+                width: 160px;
+                height: 60px;
+                left: 20px;
+            }
+
+            .icon {
+                right: 20px;
+            }
+
+            .booking-report {
+                bottom: 120px;
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+
+            .booking-info {
+                grid-template-columns: 1fr;
+            }
+
+            .ad-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 0 15px;
+            }
+
+            .navbar {
+                font-size: 0.8rem;
+            }
+
+            .navbar div {
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sentence Header -->
+    <header class="sentence-header">
+        <div class="sentence-info">
+            <div class="sentence-details">
+                <span>WEBITENTIARY</span> | 
+                <span class="offense-info" id="offenseDisplay">1st Offense: 1 Hour</span>
+            </div>
+            <div class="time-served">
+                Time Served: <span id="timeCounter">00:00:00</span>
+            </div>
+            <button onclick="postBond()" style="background: var(--dungeon-gold); color: black; padding: 10px 20px; border: none; border-radius: 20px; font-weight: bold; cursor: pointer;">
+                Post Bond ($1.00)
+            </button>
+        </div>
+    </header>
+
+    <!-- Page 1 - Main Landing -->
+    <div class="page-1" id="page1">
+        <div class="page-overlay"></div>
+        
+        <!-- Dungeon Chains -->
+        <div class="dungeon-chains chain-left"></div>
+        <div class="dungeon-chains chain-right"></div>
+
+        <!-- Timer Display -->
+        <div class="timer-display" id="sentenceTimer">
+            Sentence: <span id="remainingTime">59:59</span>
+        </div>
+
+        <!-- Original Components -->
+        <div class="shadow-menu" onclick="showInsights()" role="button" aria-label="Consumer Insights">
+            <img src="3d_books.png" alt="Data Analytics" loading="lazy">
+        </div>
+
+        <div class="flip-card" role="button" aria-label="Assessment Portal">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <h2>Consumer Assessment</h2>
+                    <p>Your feedback shapes the market</p>
+                    <small>Hover to reveal your impact</small>
+                </div>
+                <div class="flip-card-back">
+                    <h2>Data Collection Hub</h2>
+                    <p>Every interaction provides valuable market intelligence that brands can't get elsewhere</p>
+                    <button onclick="startAssessment()" style="margin-top: 15px; padding: 10px 20px; background: white; color: var(--freedom-green); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                        Begin Assessment
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="icon" onclick="generateReport()" role="button" aria-label="Generate Strategic Report">
+            <img src="pencil.png" alt="Strategic Reporting" loading="lazy">
+        </div>
+
+        <!-- Booking Report -->
+        <div class="booking-report">
+            <h3>🔒 Detention Summary</h3>
+            <div class="booking-info">
+                <div>
+                    <p><strong>Violation:</strong> Brand Betrayal</p>
+                    <p><strong>Platform:</strong> <span id="sourceSite">FoodVFight</span></p>
+                    <p><strong>Sentence Level:</strong> <span id="sentenceLevel">Level 1</span></p>
+                </div>
+                <div>
+                    <p><strong>Brand:</strong> <span class="brand-betrayed" id="brandName">Burger Empire</span></p>
+                    <p><strong>Previous:</strong> <span id="priorOffenses">0 offenses</span></p>
+                    <p><strong>Release:</strong> Complete tasks or wait</p>
+                </div>
+            </div>
+            <button onclick="makePrisonCall()" style="width: 100%; margin-top: 15px; padding: 10px; background: var(--dungeon-gold); color: black; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                📞 Contact Brand Representative
+            </button>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div onclick="showBookingInfo()">📋 Booking</div>
+            <div onclick="goToTaskCenter()">🎯 Task Center</div>
+            <div onclick="viewProgress()">📊 Progress</div>
+            <div onclick="earnCredits()">💰 Earn</div>
+            <div onclick="contactSupport()">🆘 Help</div>
+            <div onclick="reviewFeedback()">⭐ Reviews</div>
+        </nav>
+    </div>
+
+    <!-- Page 2 - Advanced Task Center -->
+    <div class="page-2" id="page2">
+        <div class="page-overlay"></div>
+        
+        <div class="ad-grid">
+            <!-- Scrolling Advertisement -->
+            <div class="ad-cell scrolling-ad" onclick="interactWithAd('scroll')">
+                <h3 style="color: var(--dungeon-gold); margin-bottom: 15px;">📺 Brand Showcase</h3>
+                <div class="scroll-content">
+                    🍔 McDonald's New Menu • 🍕 Pizza Hut Deals • ☕ Starbucks Rewards • 🥤 Coca-Cola Classic • 🍟 Wendy's Fresh • 🌮 Taco Bell Specials
+                </div>
+                <p style="position: absolute; bottom: 10px; color: white; font-size: 0.9em;">
+                    Watch scrolling ads • Reduces sentence by 5 minutes
+                </p>
+            </div>
+
+            <!-- Video Advertisement -->
+            <div class="ad-cell video-ad" onclick="watchVideoAd()">
+                <h3 style="color: white; margin-bottom: 20px;">🎬 Premium Video Ad</h3>
+                <div class="play-button">▶️</div>
+                <p style="color: white; margin-top: 15px; text-align: center;">
+                    Watch 30-sec video<br>
+                    <strong>-10 minutes sentence</strong>
+                </p>
+            </div>
+
+            <!-- Strategic Survey -->
+            <div class="ad-cell survey-cell">
+                <h3 style="color: white; margin-bottom: 15px;">📋 Market Intelligence Survey</h3>
+                <div class="survey-form">
+                    <input type="text" placeholder="Your age range" id="ageRange">
+                    <select id="spendingHabits">
+                        <option>Monthly food budget</option>
+                        <option>Under $200</option>
+                        <option>$200-$500</option>
+                        <option>$500-$1000</option>
+                        <option>Over $1000</option>
+                    </select>
+                    <textarea placeholder="What influences your food choices most?" rows="3" id="influences"></textarea>
+                    <button class="submit-btn" onclick="submitStrategicSurvey()">
+                        Submit for 15 min reduction
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cryptocurrency Mining Simulation -->
+            <div class="ad-cell crypto-miner" onclick="startMining()">
+                <h3 style="color: white; text-align: center;">⛏️ Crypto Mining</h3>
+                <div style="text-align: center; margin: 20px 0;">
+                    <div style="font-size: 3em;">₿</div>
+                    <p style="color: white;">Mine cryptocurrency while serving time</p>
+                    <p style="color: var(--dungeon-gold); font-weight: bold;">Earn real revenue + reduce sentence</p>
+                </div>
+                <button class="game-button">Start Mining Session</button>
+            </div>
+
+            <!-- Affiliate Revenue Generator -->
+            <div class="ad-cell affiliate-link" onclick="exploreDeals()">
+                <h3 style="color: white; text-align: center;">🛒 Exclusive Deals</h3>
+                <div style="text-align: center; margin: 20px 0;">
+                    <div style="font-size: 2em;">🏪</div>
+                    <p style="color: white;">Shop through our links</p>
+                    <p style="color: white;">Get deals + reduce sentence</p>
+                    <p style="color: var(--dungeon-gold); font-weight: bold;">We earn commission, you save time!</p>
+                </div>
+                <button class="game-button">Browse Deals</button>
+            </div>
+
+            <!-- Interactive Mini-Game -->
+            <div class="ad-cell mini-game" onclick="launchGame()">
+                <h3 style="color: white;">🎮 Brand Memory Game</h3>
+                <div style="margin: 20px 0;">
+                    <div style="font-size: 3em;">🧠</div>
+                    <p style="color: white;">Test your brand knowledge</p>
+                    <p style="color: white;">High scores = big time reductions</p>
+                </div>
+                <button class="game-button">Play Now</button>
+            </div>
+
+            <!-- Audio Advertisement -->
+            <div class="ad-cell" style="background: linear-gradient(135deg, #ff9a9e, #fecfef);" onclick="playAudioAd()">
+                <h3 style="color: white; text-align: center;">🎵 Audio Experience</h3>
+                <div style="text-align: center; margin: 20px 0;">
+                    <div style="font-size: 3em;">🎧</div>
+                    <p style="color: white;">Listen to brand podcasts</p>
+                    <p style="color: white;">Background listening allowed</p>
+                </div>
+                <button class="game-button">Start Audio</button>
+            </div>
+
+            <!-- Opinion Poll -->
+            <div class="ad-cell" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">
+                <h3 style="color: #333; margin-bottom: 15px;">🗳️ Quick Opinion Poll</h3>
+                <div style="color: #333;">
+                    <p style="margin-bottom: 15px;">Which fast food innovation excites you most?</p>
+                    <div style="display: grid; gap: 8px;">
+                        <button onclick="submitOpinion('ai-ordering')" style="padding: 8px; border: none; border-radius: 5px; background: rgba(255,255,255,0.7); cursor: pointer;">🤖 AI Ordering</button>
+                        <button onclick="submitOpinion('drone-delivery')" style="padding: 8px; border: none; border-radius: 5px; background: rgba(255,255,255,0.7); cursor: pointer;">🚁 Drone Delivery</button>
+                        <button onclick="submitOpinion('virtual-kitchen')" style="padding: 8px; border: none; border-radius: 5px; background: rgba(255,255,255,0.7); cursor: pointer;">🍳 Virtual Kitchens</button>
+                        <button onclick="submitOpinion('personalized-menu')" style="padding: 8px; border: none; border-radius: 5px; background: rgba(255,255,255,0.7); cursor: pointer;">📋 Personal Menus</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multiple Choice Quiz -->
+            <div class="ad-cell" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);">
+                <h3 style="color: #333; margin-bottom: 15px;">🧭 Brand Navigation Quiz</h3>
+                <div style="color: #333;">
+                    <p style="margin-bottom: 10px;">When choosing a restaurant, what matters most?</p>
+                    <div style="display: grid; gap: 6px;">
+                        <label><input type="radio" name="priority" value="price"> 💰 Price</label>
+                        <label><input type="radio" name="priority" value="quality"> ⭐ Quality</label>
+                        <label><input type="radio" name="priority" value="speed"> ⚡ Speed</label>
+                        <label><input type="radio" name="priority" value="health"> 🥗 Health</label>
+                    </div>
+                    <button onclick="submitQuiz()" style="margin-top: 10px; padding: 8px 16px; border: none; border-radius: 5px; background: var(--freedom-green); color: white; cursor: pointer;">
+                        Submit (-8 minutes)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Return to Main -->
+        <button onclick="returnToMain()" style="position: fixed; top: 120px; left: 20px; background: var(--dungeon-gold); color: black; border: none; padding: 15px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; z-index: 500;">
+            ← Return to Cell
+        </button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <script>
+        // Core Variables
+        let currentPage = 1;
+        let sentenceTimeMinutes = 60; // Default 1 hour
+        let timeServedSeconds = 0;
+        let offenseCount = 1;
+        let currentBrand = "Burger Empire";
+        let sourceSite = "FoodVFight";
+        let userDataCollection = {};
+        let revenueGenerated = 0;
+        let completedTasks = [];
+
+        // Sentence Time Matrix
+        const sentenceMatrix = {
+            1: 60,    // 1 hour
+            2: 360,   // 6 hours  
+            3: 720,   // 12 hours
+            4: 1440   // 24 hours
+        };
+
+        // Initialize System
+        function initializeWebitentiary() {
+            updateSentenceDisplay();
+            startTimer();
+            loadUserSession();
+            trackUserEngagement();
+        }
+
+        // Timer System
+        function startTimer() {
+            setInterval(() => {
+                timeServedSeconds++;
+                updateTimerDisplay();
+                updateProgressBar();
+                checkReleaseConditions();
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const hours = String(Math.floor(timeServedSeconds / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((timeServedSeconds % 3600) / 60)).padStart(2, '0');
+            const seconds = String(timeServedSeconds % 60).padStart(2, '0');
+            
+            document.getElementById('timeCounter').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            const remainingSeconds = (sentenceTimeMinutes * 60) - timeServedSeconds;
+            const remHours = String(Math.floor(remainingSeconds / 3600)).padStart(2, '0');
+            const remMinutes = String(Math.floor((remainingSeconds % 3600) / 60)).padStart(2, '0');
+            
+            if (remainingSeconds > 0) {
+                document.getElementById('remainingTime').textContent = `${remHours}:${remMinutes}`;
+            } else {
+                document.getElementById('remainingTime').textContent = "FREEDOM!";
+            }
+        }
+
+        function updateProgressBar() {
+            const progress = (timeServedSeconds / (sentenceTimeMinutes * 60)) * 100;
+            document.getElementById('progressFill').style.width = `${Math.min(progress, 100)}%`;
+        }
+
+        function updateSentenceDisplay() {
+            const offenseText = `${offenseCount}${getOrdinalSuffix(offenseCount)} Offense: ${sentenceMatrix[offenseCount] / 60} Hour${sentenceMatrix[offenseCount] > 60 ? 's' : ''}`;
+            document.getElementById('offenseDisplay').textContent = offenseText;
+            document.getElementById('sentenceLevel').textContent = `Level ${offenseCount}`;
+            document.getElementById('brandName').textContent = currentBrand;
+            document.getElementById('sourceSite').textContent = sourceSite;
+            document.getElementById('priorOffenses').textContent = `${offenseCount - 1} offense${offenseCount > 2 ? 's' : ''}`;
+        }
+
+        function getOrdinalSuffix(num) {
+            const j = num % 10;
+            const k = num % 100;
+            if (j == 1 && k != 11) return "st";
+            if (j == 2 && k != 12) return "nd";
+            if (j == 3 && k != 13) return "rd";
+            return "th";
+        }
+
+        function checkReleaseConditions() {
+            if (timeServedSeconds >= sentenceTimeMinutes * 60) {
+                releaseUser();
+            }
+        }
+
+        function reduceTime(minutes) {
+            const reduction = minutes * 60;
+            timeServedSeconds += reduction;
+            showNotification(`Time reduced by ${minutes} minutes!`, 'success');
+            
+            // Track this interaction for analytics
+            userDataCollection.timeReductions = userDataCollection.timeReductions || [];
+            userDataCollection.timeReductions.push({
+                minutes: minutes,
+                timestamp: new Date(),
+                method: 'task_completion'
+            });
+        }
+
+        // Page Navigation
+        function goToTaskCenter() {
+            if (currentPage === 1) {
+                document.getElementById('page1').style.display = 'none';
+                document.getElementById('page2').classList.add('active');
+                currentPage = 2;
+                trackPageTransition('task_center');
+            }
+        }
+
+        function returnToMain() {
+            if (currentPage === 2) {
+                document.getElementById('page2').classList.remove('active');
+                document.getElementById('page2').style.display = 'none';
+                document.getElementById('page1').style.display = 'flex';
+                currentPage = 1;
+                trackPageTransition('main_cell');
+            }
+        }
+
+        // Strategic Data Collection Functions
+        function startAssessment() {
+            showNotification('Assessment portal activated', 'info');
+            userDataCollection.assessmentStarted = new Date();
+            // Track high-value user engagement
+            trackUserEngagement('assessment_started');
+        }
+
+        function submitStrategicSurvey() {
+            const ageRange = document.getElementById('ageRange').value;
+            const spendingHabits = document.getElementById('spendingHabits').value;
+            const influences = document.getElementById('influences').value;
+
+            if (ageRange && spendingHabits && influences) {
+                // Collect valuable demographic and psychographic data
+                userDataCollection.demographics = {
+                    ageRange: ageRange,
+                    monthlyFoodBudget: spendingHabits,
+                    primaryInfluences: influences,
+                    submissionTime: new Date()
+                };
+
+                reduceTime(15);
+                generateRevenueShare(2.50); // High-value survey data
+                completedTasks.push('strategic_survey');
+                showNotification('Strategic survey completed! Valuable data collected.', 'success');
+                
+                // Clear form
+                document.getElementById('ageRange').value = '';
+                document.getElementById('spendingHabits').selectedIndex = 0;
+                document.getElementById('influences').value = '';
+            } else {
+                showNotification('Please complete all fields for maximum data value', 'warning');
+            }
+        }
+
+        function submitOpinion(opinion) {
+            userDataCollection.opinions = userDataCollection.opinions || [];
+            userDataCollection.opinions.push({
+                topic: 'fast_food_innovation',
+                choice: opinion,
+                timestamp: new Date()
+            });
+
+            reduceTime(5);
+            generateRevenueShare(0.75);
+            showNotification('Opinion recorded! Market intelligence updated.', 'success');
+        }
+
+        function submitQuiz() {
+            const selectedPriority = document.querySelector('input[name="priority"]:checked');
+            if (selectedPriority) {
+                userDataCollection.priorities = userDataCollection.priorities || [];
+                userDataCollection.priorities.push({
+                    category: 'restaurant_selection',
+                    priority: selectedPriority.value,
+                    timestamp: new Date()
+                });
+
+                reduceTime(8);
+                generateRevenueShare(1.25);
+                showNotification('Quiz completed! Consumer preferences analyzed.', 'success');
+                selectedPriority.checked = false;
+            }
+        }
+
+        // Revenue Generation Functions
+        function startMining() {
+            showNotification('Crypto mining simulation started...', 'info');
+            
+            // Simulate mining process
+            setTimeout(() => {
+                const miningReward = Math.random() * 0.05 + 0.01; // $0.01-$0.06
+                generateRevenueShare(miningReward);
+                reduceTime(12);
+                userDataCollection.miningEngagement = (userDataCollection.miningEngagement || 0) + 1;
+                showNotification(`Mining completed! Earned ${miningReward.toFixed(3)} + time reduction`, 'success');
+            }, 3000);
+        }
+
+        function exploreDeals() {
+            const deals = [
+                { brand: 'McDonald\'s', discount: '20% off Big Mac', commission: 1.50 },
+                { brand: 'Pizza Hut', discount: 'Buy 1 Get 1 Free', commission: 2.25 },
+                { brand: 'Starbucks', discount: '$5 off $25+', commission: 1.75 },
+                { brand: 'Subway', discount: 'Free cookie with sub', commission: 0.85 }
+            ];
+
+            const randomDeal = deals[Math.floor(Math.random() * deals.length)];
+            
+            // Simulate affiliate link click
+            generateRevenueShare(randomDeal.commission);
+            reduceTime(10);
+            
+            userDataCollection.affiliateEngagement = userDataCollection.affiliateEngagement || [];
+            userDataCollection.affiliateEngagement.push({
+                brand: randomDeal.brand,
+                offer: randomDeal.discount,
+                timestamp: new Date()
+            });
+
+            showNotification(`${randomDeal.brand} deal explored! Commission earned + time reduced`, 'success');
+        }
+
+        function generateRevenueShare(amount) {
+            revenueGenerated += amount;
+            // Track revenue for advertiser reporting
+            userDataCollection.revenueContribution = (userDataCollection.revenueContribution || 0) + amount;
+        }
+
+        // Advertising Interaction Functions
+        function watchVideoAd() {
+            showNotification('Loading premium video advertisement...', 'info');
+            
+            // Simulate video viewing
+            setTimeout(() => {
+                reduceTime(10);
+                generateRevenueShare(0.50); // Standard video ad rate
+                userDataCollection.videoAdsWatched = (userDataCollection.videoAdsWatched || 0) + 1;
+                showNotification('Video advertisement completed! Time reduced.', 'success');
+                
+                // Collect viewing behavior data
+                userDataCollection.adEngagement = userDataCollection.adEngagement || {};
+                userDataCollection.adEngagement.videoComplete = (userDataCollection.adEngagement.videoComplete || 0) + 1;
+            }, 2000);
+        }
+
+        function interactWithAd(type) {
+            reduceTime(5);
+            generateRevenueShare(0.25);
+            
+            userDataCollection.adInteractions = userDataCollection.adInteractions || {};
+            userDataCollection.adInteractions[type] = (userDataCollection.adInteractions[type] || 0) + 1;
+            
+            showNotification('Advertisement interaction recorded!', 'success');
+        }
+
+        function playAudioAd() {
+            showNotification('Audio advertisement starting...', 'info');
+            
+            setTimeout(() => {
+                reduceTime(7);
+                generateRevenueShare(0.35);
+                userDataCollection.audioAdsCompleted = (userDataCollection.audioAdsCompleted || 0) + 1;
+                showNotification('Audio advertisement completed!', 'success');
+            }, 1500);
+        }
+
+        function launchGame() {
+            showNotification('Brand memory game launching...', 'info');
+            
+            // Simulate game interaction
+            setTimeout(() => {
+                const score = Math.floor(Math.random() * 100) + 50;
+                const timeReduction = Math.floor(score / 5); // Higher scores = more time reduction
+                
+                reduceTime(timeReduction);
+                generateRevenueShare(1.00);
+                
+                userDataCollection.gameScores = userDataCollection.gameScores || [];
+                userDataCollection.gameScores.push({
+                    score: score,
+                    timeReduction: timeReduction,
+                    timestamp: new Date()
+                });
+                
+                showNotification(`Game completed! Score: ${score} - Time reduced by ${timeReduction} minutes`, 'success');
+            }, 4000);
+        }
+
+        // System Functions
+        function postBond() {
+            if (confirm('Post bond for $1.00 to secure immediate release?')) {
+                generateRevenueShare(1.00);
+                userDataCollection.bondPosted = {
+                    amount: 1.00,
+                    timeRemaining: (sentenceTimeMinutes * 60) - timeServedSeconds,
+                    timestamp: new Date()
+                };
+                showNotification('Bond posted! Processing release...', 'success');
+                setTimeout(releaseUser, 2000);
+            }
+        }
+
+        function makePrisonCall() {
+            showNotification('Connecting to brand representative...', 'info');
+            
+            setTimeout(() => {
+                userDataCollection.brandContactAttempts = (userDataCollection.brandContactAttempts || 0) + 1;
+                showNotification(`Brand representative notified. Case under review by ${currentBrand}.`, 'info');
+                
+                // Small time reduction for brand engagement
+                reduceTime(3);
+            }, 2000);
+        }
+
+        function releaseUser() {
+            showNotification('🔓 RELEASE GRANTED! Returning to freedom...', 'success');
+            
+            // Generate final analytics report
+            generateFinalReport();
+            
+            setTimeout(() => {
+                // Simulate redirect to original site
+                alert('Thank you for your service! Returning to your original destination...');
+                // In actual implementation: window.location.href = originalSiteURL;
+            }, 3000);
+        }
+
+        // Analytics & Reporting
+        function trackUserEngagement(action) {
+            userDataCollection.engagementEvents = userDataCollection.engagementEvents || [];
+            userDataCollection.engagementEvents.push({
+                action: action,
+                timestamp: new Date(),
+                page: currentPage
+            });
+        }
+
+        function trackPageTransition(destination) {
+            userDataCollection.pageTransitions = userDataCollection.pageTransitions || [];
+            userDataCollection.pageTransitions.push({
+                from: currentPage === 1 ? 'main_cell' : 'task_center',
+                to: destination,
+                timestamp: new Date()
+            });
+        }
+
+        function generateFinalReport() {
+            const report = {
+                sessionSummary: {
+                    totalTimeServed: timeServedSeconds,
+                    sentenceLength: sentenceTimeMinutes * 60,
+                    offenseLevel: offenseCount,
+                    completedTasks: completedTasks.length,
+                    revenueGenerated: revenueGenerated
+                },
+                userProfile: {
+                    demographics: userDataCollection.demographics || {},
+                    preferences: userDataCollection.priorities || [],
+                    opinions: userDataCollection.opinions || [],
+                    brandInteractions: userDataCollection.brandContactAttempts || 0
+                },
+                engagementMetrics: {
+                    videoAdsWatched: userDataCollection.videoAdsWatched || 0,
+                    surveysCompleted: userDataCollection.strategicSurveys || 0,
+                    gameScores: userDataCollection.gameScores || [],
+                    affiliateClicks: userDataCollection.affiliateEngagement?.length || 0
+                },
+                valuableInsights: {
+                    spendingBehavior: userDataCollection.demographics?.monthlyFoodBudget || 'Unknown',
+                    decisionFactors: userDataCollection.demographics?.primaryInfluences || 'Unknown',
+                    brandLoyalty: analyzeBrandLoyalty(),
+                    pricesensitivity: analyzePriceSensitivity()
+                }
+            };
+
+            // This report would be sent to advertiser dashboard
+            console.log('STRATEGIC CONSUMER REPORT GENERATED:', report);
+            
+            // Store for advertiser access
+            localStorage.setItem('webitentiary_report_' + Date.now(), JSON.stringify(report));
+        }
+
+        function analyzeBrandLoyalty() {
+            // Analyze user's brand interaction patterns
+            if (userDataCollection.brandContactAttempts > 0) return 'High';
+            if (userDataCollection.affiliateEngagement?.length > 2) return 'Medium';
+            return 'Low';
+        }
+
+        function analyzePriceSensitivity() {
+            // Analyze user's price-related responses
+            const priorities = userDataCollection.priorities || [];
+            const priceImportance = priorities.filter(p => p.priority === 'price').length;
+            if (priceImportance > 0) return 'High';
+            return 'Medium';
+        }
+
+        // UI Helper Functions
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 1000;
+                animation: slideInRight 0.3s ease-out;
+                max-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+
+            switch(type) {
+                case 'success':
+                    notification.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+                    break;
+                case 'warning':
+                    notification.style.background = 'linear-gradient(135deg, #ff9800, #f57c00)';
+                    break;
+                case 'error':
+                    notification.style.background = 'linear-gradient(135deg, #f44336, #d32f2f)';
+                    break;
+                default:
+                    notification.style.background = 'linear-gradient(135deg, #2196F3, #1976D2)';
+            }
+
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Navigation Functions
+        function showBookingInfo() {
+            showNotification('Booking information displayed in report section', 'info');
+        }
+
+        function viewProgress() {
+            const progress = Math.floor((timeServedSeconds / (sentenceTimeMinutes * 60)) * 100);
+            showNotification(`Progress: ${progress}% complete | Tasks: ${completedTasks.length}`, 'info');
+        }
+
+        function earnCredits() {
+            showNotification(`Revenue earned: ${revenueGenerated.toFixed(2)} | Complete more tasks to earn more!`, 'info');
+        }
+
+        function contactSupport() {
+            showNotification('Support request logged. Response within 24 hours.', 'info');
+        }
+
+        function reviewFeedback() {
+            showNotification('Thank you for your feedback! It helps improve our consumer intelligence platform.', 'info');
+        }
+
+        function showInsights() {
+            showNotification('Consumer insights dashboard accessed', 'info');
+            trackUserEngagement('insights_viewed');
+        }
+
+        function generateReport() {
+            showNotification('Strategic report generation initiated...', 'info');
+            setTimeout(() => {
+                showNotification('Report generated and sent to advertiser dashboard', 'success');
+            }, 2000);
+        }
+
+        function loadUserSession() {
+            // Load any existing session data
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('offense')) {
+                offenseCount = parseInt(urlParams.get('offense')) || 1;
+                sentenceTimeMinutes = sentenceMatrix[offenseCount] || 60;
+            }
+            if (urlParams.get('brand')) {
+                currentBrand = urlParams.get('brand');
+            }
+            if (urlParams.get('source')) {
+                sourceSite = urlParams.get('source');
+            }
+        }
+
+        // Animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeWebitentiary);
+
+        // Prevent user from leaving during sentence (if implemented across sites)
+        window.addEventListener('beforeunload', function(e) {
+            if (timeServedSeconds < sentenceTimeMinutes * 60) {
+                e.preventDefault();
+                e.returnValue = 'Your sentence is not complete. Leaving will redirect you back here.';
+            }
+        });
+    </script>
+</body>
+</html>

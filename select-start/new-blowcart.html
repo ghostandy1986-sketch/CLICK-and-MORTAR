@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Buy, sell, and explore retro and new video games, consoles, accessories, and more. Featuring print-on-demand services and codes for every applicable game.">
+    <meta name="keywords" content="Retro Games, Sell Games, Buy Games, Video Game Consoles, Accessories, Cheat Codes, Manuals, Box Art, Posters">
+    <meta name="author" content="SelectStartBlowCart">
+    <title>SelectStartBlowCart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: url('https://source.unsplash.com/random/1920x1080?arcade') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: #ffffff;
+        }
+        header {
+            text-align: center;
+            background: #000000cc;
+            padding: 20px 0;
+        }
+        header img {
+            max-width: 150px;
+        }
+        header h1 {
+            font-size: 24px;
+            color: #ffc107;
+        }
+        nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: #333;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            transition: background 0.3s;
+        }
+        nav a:hover {
+            background: #ffc107;
+            color: #000;
+        }
+        .container {
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            background: #000000cc;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .section h2 {
+            color: #ffc107;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #444;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+        }
+        .card img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .card button, .card a {
+            display: block;
+            background: #ffc107;
+            color: #000;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            margin: 5px 0;
+        }
+        .card button:hover, .card a:hover {
+            background: #e0a800;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: #fff;
+        }
+        .category-button, .filter-button {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            font-size: 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .category-button:hover, .filter-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 5px 25px rgba(0, 0, 0, 0.5);
+        }
+        .console-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        .console-buttons button {
+            background-color: #444;
+            border: 1px solid #fff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        /* Pop-up Style */
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            color: #fff;
+        }
+        .popup img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .popup button {
+            margin-top: 10px;
+            background: #ffc107;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .popup button:hover {
+            background: #e0a800;
+        }
+	function closePopup(consoleType) {
+    	document.getElementById(`${consoleType}-popup`).style.display = 'none';
+	}
+    </style>
+</head>
+<body>
+
+    <audio autoplay loop>
+        <source src="https://example.com/nes_sound.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <header>
+        <img src="/path-to-your-logo.jpg" alt="SelectStartBlowCart Logo">
+        <h1>SelectStartBlowCart</h1>
+        <p>The ultimate destination for buying and selling retro and new video games!</p>
+    </header>
+
+    <nav>
+        <a href="#games">Games</a>
+        <a href="#consoles">Consoles</a>
+        <a href="#accessories">Accessories</a>
+        <a href="#upload">Sell Your Items</a>
+        <a href="#cheats">Game Codes</a>
+        <a href="#print-on-demand">Print on Demand</a>
+    </nav>
+
+    <div class="container">
+        <!-- Games Section -->
+        <div class="section" id="games">
+            <h2>New and Used Games</h2>
+            <div class="category-button" onclick="toggleConsoles()">Choose Console</div>
+            <div class="console-buttons" id="console-buttons" style="display: none;">
+                <button onclick="showPopup('n64')">N64</button>
+                <button onclick="showPopup('ps4')">PS4</button>
+                <button onclick="showPopup('xbox')">Xbox</button>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <img src="https://source.unsplash.com/random/200x200?game" alt="Game Cover">
+                    <h3>Super Mario Bros</h3>
+                    <p>$20.00</p>
+                    <button>Buy Now</button>
+                    <a href="#cheats">View Codes</a>
+                </div>
+                <div class="card">
+                    <img src="https://source.unsplash.com/random/200x200?retro-game" alt="Game Cover">
+                    <h3>The Legend of Zelda</h3>
+                    <p>$25.00</p>
+                    <button>Buy Now</button>
+                    <a href="#cheats">View Codes</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sell Items Section -->
+        <div class="section" id="upload">
+            <h2>Sell Your Items</h2>
+            <a href="sellitems.html"><button>Upload Item</button></a>
+        </div>
+
+        <!-- Game Codes Section -->
+        <div class="section" id="cheats">
+            <h2>Game Codes and Passwords</h2>
+            <p>Browse cheat codes and passwords for your favorite retro games!</p>
+        </div>
+
+        <!-- Print on Demand Section -->
+        <div class="section" id="print-on-demand">
+            <h2>Print On Demand</h2>
+            <p>Order manuals, box art, and posters for your favorite games!</p>
+            <button>Start Printing</button>
+        </div>
+
+        <!-- Blowcart Club Membership -->
+        <div class="section" id="blowcart-club">
+            <h2>Join Blowcart Club</h2>
+            <button onclick="showMembershipForm()">Sign Up for $5/month</button>
+        </div>
+
+        <!-- Arcade Section -->
+        <div class="section">
+            <h2>Arcade</h2>
+            <button onclick="openArcade()">Rent User-Created Games</button>
+	<div id="arcade-container"></div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2024 SelectStartBlowCart. All Rights Reserved.
+        <a href="arcade.html">Arcade</a> | <a href="blowcart-club.html">Join Blow Cart Club</a>
+    </footer>
+
+    <!-- Pop-up for N64 -->
+    <div class="popup" id="n64-popup">
+        <img src="1000003104.png" alt="N64">
+        <button onclick="closePopup('n64')">Close</button>
+    </div>
+
+    <!-- Pop-up for PS4 -->
+    <div class="popup" id="ps4-popup">
+        <img src="ps4-image.png" alt="PS4">
+        <button onclick="closePopup('ps4')">Close</button>
+    </div>
+
+    <!-- Pop-up for Xbox -->
+    <div class="popup" id="xbox-popup">
+        <img src="xbox-image.png" alt="Xbox">
+        <button onclick="closePopup('xbox')">Close</button>
+    </div>
+
+    <!-- Membership Form -->
+    <div class="popup" id="membership-form">
+        <h2>Blowcart Club Membership</h2>
+        <form action="submit-membership-form" method="POST">
+            <input type="text" name="name" placeholder="Enter your name" required>
+            <input type="email" name="email" placeholder="Enter your email" required>
+            <input type="password" name="password" placeholder="Enter your password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <button onclick="closePopup('membership-form')">Close</button>
+    </div>
+
+    <script>
+
+// =========================
+// POPUPS + MEMBERSHIP
+// =========================
+function showPopup(consoleType) {
+    document.getElementById(`${consoleType}-popup`).style.display = 'block';
+}
+
+function closePopup(consoleType) {
+    document.getElementById(`${consoleType}-popup`).style.display = 'none';
+}
+
+function showMembershipForm() {
+    document.getElementById('membership-form').style.display = 'block';
+}
+
+// =========================
+// FULL CONSOLE DATABASE
+// =========================
+const consoleGames = {
+NES: ["Super Mario Bros","Zelda","Metroid","Mega Man 2","Castlevania","Duck Hunt","Contra","Punch-Out","Kirby","Ninja Gaiden","Final Fantasy","Dragon Warrior","Excitebike","Ice Climber","Balloon Fight","Tetris","Double Dragon","Gradius","Kid Icarus","RC Pro Am","Blaster Master","Ghosts n Goblins","Gauntlet","Battletoads","Adventure Island"],
+
+SNES: ["Super Mario World","Chrono Trigger","Earthbound","Donkey Kong Country","Zelda ALTTP","Super Metroid","FF6","Secret of Mana","Star Fox","Mega Man X","Street Fighter 2","F-Zero","Pilotwings","ActRaiser","Contra 3","Kirby Dreamland 3","Harvest Moon","Illusion of Gaia","Terranigma","NBA Jam","Top Gear","Super Castlevania","Sunset Riders","Aladdin","Mario Kart"],
+
+N64: ["Mario 64","GoldenEye","Zelda OOT","Majoras Mask","Mario Kart","Star Fox 64","Banjo Kazooie","Perfect Dark","DK64","Wave Race","F-Zero X","Paper Mario","Pokemon Stadium","Conker","1080 Snowboarding","Mario Party","Excitebike 64","Turok","Blast Corps","Body Harvest","Pilotwings","Yoshi Story","Ogre Battle","Mischief Makers","Kirby 64"],
+
+PS1: ["FF7","Metal Gear Solid","Resident Evil","Crash Bandicoot","Gran Turismo","Silent Hill","Spyro","Tekken 3","Castlevania SOTN","Tomb Raider","Driver","Twisted Metal","Vagrant Story","Suikoden","Chrono Cross","Parasite Eve","Rayman","Bushido Blade","Oddworld","Dino Crisis","Medievil","Ape Escape","Legacy of Kain","Wipeout","Syphon Filter"],
+
+PS2: ["GTA San Andreas","Shadow Colossus","God of War","FFX","MGS2","RE4","Kingdom Hearts","Jak and Daxter","Ratchet Clank","Devil May Cry","Gran Turismo","Okami","Bully","Silent Hill 2","Tekken 5","Persona 4","Dragon Quest 8","SOCOM","TimeSplitters","Onimusha","Midnight Club","Killzone","Burnout 3","SSX","Dark Cloud"],
+
+Xbox: ["Halo","Fable","KOTOR","Ninja Gaiden","Jet Set Radio","Morrowind","Dead or Alive","Panzer Dragoon","Project Gotham","Crimson Skies","MechAssault","Forza","Riddick","Amped","Steel Battalion","Otogi","Jade Empire","Brute Force","Sudeki","Phantom Crash","Advent Rising","Blood Wake","Breakdown","Stubbs","Outrun"]
+};
+
+// =========================
+// TOGGLE CONSOLES
+// =========================
+function toggleConsoles() {
+    const container = document.getElementById("console-buttons");
+
+    if (container.style.display === "none") {
+        container.style.display = "flex";
+
+        container.innerHTML = Object.keys(consoleGames).map(c =>
+            `<button onclick="loadGames('${c}')">${c}</button>`
+        ).join("");
+
+    } else {
+        container.style.display = "none";
+    }
+}
+
+// =========================
+// LOAD GAMES
+// =========================
+function loadGames(console) {
+    const grid = document.querySelector("#games .grid");
+
+    grid.innerHTML = consoleGames[console].map(game => `
+        <div class="card">
+            <img src="https://source.unsplash.com/200x200/?video-game" />
+            <h3>${game}</h3>
+            <p>$${(Math.random()*40+10).toFixed(2)}</p>
+            <button onclick="buyGame('${game}')">Buy Now</button>
+            <a href="#cheats">View Codes</a>
+        </div>
+    `).join("");
+}
+
+// =========================
+// BUY
+// =========================
+function buyGame(game){
+    alert("Checkout system coming for: " + game);
+}
+
+// =========================
+// PRINT
+// =========================
+document.addEventListener("DOMContentLoaded", ()=>{
+    const btn = document.querySelector("#print-on-demand button");
+    if(btn){
+        btn.onclick = ()=>{
+            alert("Print Services:\nManuals\nPosters\nBox Art\nCartridge Labels\nShells");
+        };
+    }
+});
+
+// =========================
+// ARCADE (YOUR FILE)
+// =========================
+function openArcade(){
+    document.getElementById("arcade-container").innerHTML = `
+        <button onclick="closeArcade()">Close Arcade</button>
+        <iframe src="selectstartArcadeV1.html"
+        style="width:100%; height:600px; border:none; margin-top:10px;"></iframe>
+    `;
+}
+
+function closeArcade(){
+    document.getElementById("arcade-container").innerHTML = "";
+}
+
+</script>
+
+</body>
+</html>

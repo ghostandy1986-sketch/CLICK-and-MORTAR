@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Arcade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', monospace;
+            background: linear-gradient(45deg, #0a0a0a, #1a1a2e, #16213e);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .arcade-header {
+            text-align: center;
+            padding: 2rem 0;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            animation: rainbow 3s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes rainbow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.7rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+            background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+        }
+
+        .arcade-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 2rem;
+        }
+
+        .game-card {
+            background: linear-gradient(145deg, #2c2c54, #40407a);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) rotateY(5deg);
+            border-color: #feca57;
+            box-shadow: 0 15px 35px rgba(254, 202, 87, 0.3);
+        }
+
+        .game-title {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: #feca57;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .game-preview {
+            width: 100%;
+            height: 150px;
+            background: #000;
+            border: 3px solid #333;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-btn {
+            background: linear-gradient(45deg, #48CAE4, #0077B6);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.6rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .play-btn:hover {
+            background: linear-gradient(45deg, #0077B6, #023E8A);
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(72, 202, 228, 0.4);
+        }
+
+        .game-screen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .game-screen.active {
+            display: flex;
+        }
+
+        .game-header {
+            background: linear-gradient(90deg, #2c2c54, #40407a);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: #e74c3c;
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #c0392b;
+            transform: rotate(90deg);
+        }
+
+        .game-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .game-canvas {
+            border: 3px solid #feca57;
+            background: #000;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        /* Game-specific styles */
+        .pixel-art {
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            border-radius: 2px;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: linear-gradient(145deg, #4a4a4a, #2a2a2a);
+            border: 2px solid #666;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.6rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(145deg, #5a5a5a, #3a3a3a);
+            transform: translateY(-2px);
+        }
+
+        .control-btn:active {
+            transform: translateY(1px);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .score {
+            position: absolute;
+            top: 15px;
+            left: 45%;
+            font-size: 0.8rem;
+            color: #feca57;
+        }
+
+        @media (max-width: 768px) {
+            .arcade-container {
+                grid-template-columns: 1fr;
+                padding: 0 1rem 1rem;
+            }
+            
+            .filter-buttons {
+                padding: 0 1rem;
+            }
+            
+            .filter-btn {
+                font-size: 0.6rem;
+                padding: 0.6rem 1rem;
+            }
+            
+            .game-title {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="arcade-header">🕹️ Select.Start.Blow.Cart. ARCADE 🕹️</h1>
+    
+    <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">ALL GAMES</button>
+        <button class="filter-btn" data-filter="classic">CLASSIC</button>
+        <button class="filter-btn" data-filter="user">USER MADE</button>
+    </div>
+
+    <div class="arcade-container" id="gameContainer"></div>
+
+    <div class="game-screen" id="gameScreen">
+        <div class="game-header">
+            <div class="score" id="scoreDisplay">SCORE: 0</div>
+            <h2 id="currentGameTitle"></h2>
+            <button class="close-btn" onclick="closeGame()">&times;</button>
+        </div>
+        <div class="game-area">
+            <canvas class="game-canvas" id="gameCanvas" width="800" height="600"></canvas>
+            <div class="controls" id="gameControls"></div>
+        </div>
+    </div>
+
+    <script>
+        // Game definitions
+        const games = [
+            {
+                id: 'snake',
+                title: 'SNAKE CLASSIC',
+                type: 'classic',
+                preview: '🐍',
+                controls: ['↑', '↓', '←', '→']
+            },
+            {
+                id: 'pong',
+                title: 'PONG MASTER',
+                type: 'classic',
+                preview: '🏓',
+                controls: ['↑', '↓', 'SPACE']
+            },
+            {
+                id: 'asteroids',
+                title: 'ASTEROIDS',
+                type: 'classic',
+                preview: '🚀',
+                controls: ['↑', '←', '→', 'SPACE']
+            },
+            {
+                id: 'tetris',
+                title: 'BLOCK FALL',
+                type: 'classic',
+                preview: '🟦',
+                controls: ['↑', '↓', '←', '→']
+            },
+            {
+                id: 'shooter',
+                title: 'PIXEL SHOOTER',
+                type: 'user',
+                preview: '👾',
+                controls: ['←', '→', 'SPACE']
+            },
+            {
+                id: 'maze',
+                title: 'NEON MAZE',
+                type: 'user',
+                preview: '🌟',
+                controls: ['↑', '↓', '←', '→']
+            }
+        ];
+
+        let currentGame = null;
+        let gameState = {};
+        let gameLoop = null;
+        let keys = {};
+
+        // Initialize arcade
+        function initArcade() {
+            createGameCards();
+            setupFilters();
+            setupKeyboard();
+        }
+
+        function createGameCards() {
+            const container = document.getElementById('gameContainer');
+            container.innerHTML = '';
+
+            games.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.dataset.type = game.type;
+                
+                card.innerHTML = `
+                    <h3 class="game-title">${game.title}</h3>
+                    <div class="game-preview">
+                        <span style="font-size: 3rem;">${game.preview}</span>
+                    </div>
+                    <button class="play-btn" onclick="startGame('${game.id}')">PLAY GAME</button>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function setupFilters() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    filterGames(btn.dataset.filter);
+                });
+            });
+        }
+
+        function filterGames(type) {
+            const cards = document.querySelectorAll('.game-card');
+            cards.forEach(card => {
+                if (type === 'all' || card.dataset.type === type) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function setupKeyboard() {
+            document.addEventListener('keydown', (e) => {
+                keys[e.key] = true;
+                if (e.key === 'Escape') closeGame();
+            });
+            
+            document.addEventListener('keyup', (e) => {
+                keys[e.key] = false;
+            });
+        }
+
+        function startGame(gameId) {
+            const game = games.find(g => g.id === gameId);
+            if (!game) return;
+
+            currentGame = gameId;
+            document.getElementById('currentGameTitle').textContent = game.title;
+            document.getElementById('gameScreen').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Setup controls
+            const controlsDiv = document.getElementById('gameControls');
+            controlsDiv.innerHTML = game.controls.map(control => 
+                `<div class="control-btn">${control}</div>`
+            ).join('');
+
+            // Initialize game
+            initGame(gameId);
+        }
+
+        function closeGame() {
+            document.getElementById('gameScreen').classList.remove('active');
+            document.body.style.overflow = '';
+            if (gameLoop) {
+                clearInterval(gameLoop);
+                gameLoop = null;
+            }
+            currentGame = null;
+            gameState = {};
+        }
+
+        function initGame(gameId) {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            switch(gameId) {
+                case 'snake':
+                    initSnake(canvas, ctx);
+                    break;
+                case 'pong':
+                    initPong(canvas, ctx);
+                    break;
+                case 'asteroids':
+                    initAsteroids(canvas, ctx);
+                    break;
+                case 'tetris':
+                    initTetris(canvas, ctx);
+                    break;
+                case 'shooter':
+                    initShooter(canvas, ctx);
+                    break;
+                case 'maze':
+                    initMaze(canvas, ctx);
+                    break;
+            }
+        }
+
+        // Snake Game
+        function initSnake(canvas, ctx) {
+            gameState = {
+                snake: [{x: 400, y: 300}],
+                direction: {x: 20, y: 0},
+                food: {x: 200, y: 200},
+                score: 0
+            };
+
+            gameLoop = setInterval(() => updateSnake(canvas, ctx), 150);
+        }
+
+        function updateSnake(canvas, ctx) {
+            if (keys['ArrowUp'] && gameState.direction.y === 0) gameState.direction = {x: 0, y: -20};
+            if (keys['ArrowDown'] && gameState.direction.y === 0) gameState.direction = {x: 0, y: 20};
+            if (keys['ArrowLeft'] && gameState.direction.x === 0) gameState.direction = {x: -20, y: 0};
+            if (keys['ArrowRight'] && gameState.direction.x === 0) gameState.direction = {x: 20, y: 0};
+
+            const head = {
+                x: gameState.snake[0].x + gameState.direction.x,
+                y: gameState.snake[0].y + gameState.direction.y
+            };
+
+            // Wall collision
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+                clearInterval(gameLoop);
+                alert('Game Over! Score: ' + gameState.score);
+                return;
+            }
+
+            // Self collision
+            if (gameState.snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                clearInterval(gameLoop);
+                alert('Game Over! Score: ' + gameState.score);
+                return;
+            }
+
+            gameState.snake.unshift(head);
+
+            // Food collision
+            if (head.x === gameState.food.x && head.y === gameState.food.y) {
+                gameState.score += 10;
+                gameState.food = {
+                    x: Math.floor(Math.random() * (canvas.width / 20)) * 20,
+                    y: Math.floor(Math.random() * (canvas.height / 20)) * 20
+                };
+            } else {
+                gameState.snake.pop();
+            }
+
+            // Draw
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#4CAF50';
+            gameState.snake.forEach(segment => {
+                ctx.fillRect(segment.x, segment.y, 20, 20);
+            });
+
+            ctx.fillStyle = '#f44336';
+            ctx.fillRect(gameState.food.x, gameState.food.y, 20, 20);
+
+            document.getElementById('scoreDisplay').textContent = 'SCORE: ' + gameState.score;
+        }
+
+        // Pong Game
+        function initPong(canvas, ctx) {
+            gameState = {
+                paddle1: {x: 10, y: canvas.height / 2 - 50, width: 10, height: 100},
+                paddle2: {x: canvas.width - 20, y: canvas.height / 2 - 50, width: 10, height: 100},
+                ball: {x: canvas.width / 2, y: canvas.height / 2, vx: 5, vy: 3, size: 10},
+                score: {player: 0, ai: 0}
+            };
+
+            gameLoop = setInterval(() => updatePong(canvas, ctx), 16);
+        }
+
+        function updatePong(canvas, ctx) {
+            // Paddle movement
+            if (keys['ArrowUp'] && gameState.paddle1.y > 0) gameState.paddle1.y -= 8;
+            if (keys['ArrowDown'] && gameState.paddle1.y < canvas.height - gameState.paddle1.height) gameState.paddle1.y += 8;
+
+            // AI paddle
+            const paddleCenter = gameState.paddle2.y + gameState.paddle2.height / 2;
+            if (paddleCenter < gameState.ball.y - 35) gameState.paddle2.y += 6;
+            if (paddleCenter > gameState.ball.y + 35) gameState.paddle2.y -= 6;
+
+            // Ball movement
+            gameState.ball.x += gameState.ball.vx;
+            gameState.ball.y += gameState.ball.vy;
+
+            // Ball collision with walls
+            if (gameState.ball.y <= 0 || gameState.ball.y >= canvas.height - gameState.ball.size) {
+                gameState.ball.vy = -gameState.ball.vy;
+            }
+
+            // Ball collision with paddles
+            if (gameState.ball.x <= gameState.paddle1.x + gameState.paddle1.width &&
+                gameState.ball.y >= gameState.paddle1.y &&
+                gameState.ball.y <= gameState.paddle1.y + gameState.paddle1.height) {
+                gameState.ball.vx = -gameState.ball.vx;
+            }
+
+            if (gameState.ball.x >= gameState.paddle2.x - gameState.ball.size &&
+                gameState.ball.y >= gameState.paddle2.y &&
+                gameState.ball.y <= gameState.paddle2.y + gameState.paddle2.height) {
+                gameState.ball.vx = -gameState.ball.vx;
+            }
+
+            // Scoring
+            if (gameState.ball.x < 0) {
+                gameState.score.ai++;
+                resetBall();
+            }
+            if (gameState.ball.x > canvas.width) {
+                gameState.score.player++;
+                resetBall();
+            }
+
+            function resetBall() {
+                gameState.ball = {
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: Math.random() > 0.5 ? 5 : -5,
+                    vy: (Math.random() - 0.5) * 6,
+                    size: 10
+                };
+            }
+
+            // Draw
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(gameState.paddle1.x, gameState.paddle1.y, gameState.paddle1.width, gameState.paddle1.height);
+            ctx.fillRect(gameState.paddle2.x, gameState.paddle2.y, gameState.paddle2.width, gameState.paddle2.height);
+            ctx.fillRect(gameState.ball.x, gameState.ball.y, gameState.ball.size, gameState.ball.size);
+
+            // Draw center line
+            for (let i = 0; i < canvas.height; i += 20) {
+                ctx.fillRect(canvas.width / 2 - 2, i, 4, 10);
+            }
+
+            document.getElementById('scoreDisplay').textContent = `SCORE: ${gameState.score.player} - ${gameState.score.ai}`;
+        }
+
+        // Asteroids Game
+        function initAsteroids(canvas, ctx) {
+            gameState = {
+                ship: {
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    angle: 0,
+                    vx: 0,
+                    vy: 0,
+                    size: 10
+                },
+                bullets: [],
+                asteroids: [],
+                score: 0
+            };
+
+            // Create initial asteroids
+            for (let i = 0; i < 5; i++) {
+                gameState.asteroids.push(createAsteroid(canvas));
+            }
+
+            gameLoop = setInterval(() => updateAsteroids(canvas, ctx), 16);
+        }
+
+        function createAsteroid(canvas) {
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                size: 20 + Math.random() * 30,
+                angle: 0
+            };
+        }
+
+        function updateAsteroids(canvas, ctx) {
+            const ship = gameState.ship;
+
+            // Ship rotation
+            if (keys['ArrowLeft']) ship.angle -= 0.2;
+            if (keys['ArrowRight']) ship.angle += 0.2;
+
+            // Ship thrust
+            if (keys['ArrowUp']) {
+                ship.vx += Math.cos(ship.angle) * 0.5;
+                ship.vy += Math.sin(ship.angle) * 0.5;
+            }
+
+            // Shooting
+            if (keys[' '] && gameState.bullets.length < 4) {
+                gameState.bullets.push({
+                    x: ship.x,
+                    y: ship.y,
+                    vx: Math.cos(ship.angle) * 8,
+                    vy: Math.sin(ship.angle) * 8,
+                    life: 60
+                });
+                keys[' '] = false; // Prevent rapid fire
+            }
+
+            // Update ship position
+            ship.x += ship.vx;
+            ship.y += ship.vy;
+            ship.vx *= 0.98;
+            ship.vy *= 0.98;
+
+            // Wrap ship around screen
+            if (ship.x < 0) ship.x = canvas.width;
+            if (ship.x > canvas.width) ship.x = 0;
+            if (ship.y < 0) ship.y = canvas.height;
+            if (ship.y > canvas.height) ship.y = 0;
+
+            // Update bullets
+            gameState.bullets = gameState.bullets.filter(bullet => {
+                bullet.x += bullet.vx;
+                bullet.y += bullet.vy;
+                bullet.life--;
+                return bullet.life > 0 && bullet.x > 0 && bullet.x < canvas.width && bullet.y > 0 && bullet.y < canvas.height;
+            });
+
+            // Update asteroids
+            gameState.asteroids.forEach(asteroid => {
+                asteroid.x += asteroid.vx;
+                asteroid.y += asteroid.vy;
+                asteroid.angle += 0.02;
+
+                // Wrap around screen
+                if (asteroid.x < 0) asteroid.x = canvas.width;
+                if (asteroid.x > canvas.width) asteroid.x = 0;
+                if (asteroid.y < 0) asteroid.y = canvas.height;
+                if (asteroid.y > canvas.height) asteroid.y = 0;
+            });
+
+            // Collision detection
+            gameState.bullets.forEach((bullet, bulletIndex) => {
+                gameState.asteroids.forEach((asteroid, asteroidIndex) => {
+                    const dx = bullet.x - asteroid.x;
+                    const dy = bullet.y - asteroid.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < asteroid.size) {
+                        gameState.bullets.splice(bulletIndex, 1);
+                        gameState.asteroids.splice(asteroidIndex, 1);
+                        gameState.score += 10;
+
+                        // Create smaller asteroids
+                        if (asteroid.size > 25) {
+                            for (let i = 0; i < 2; i++) {
+                                gameState.asteroids.push({
+                                    x: asteroid.x,
+                                    y: asteroid.y,
+                                    vx: (Math.random() - 0.5) * 6,
+                                    vy: (Math.random() - 0.5) * 6,
+                                    size: asteroid.size / 2,
+                                    angle: 0
+                                });
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Check ship collision with asteroids
+            gameState.asteroids.forEach(asteroid => {
+                const dx = ship.x - asteroid.x;
+                const dy = ship.y - asteroid.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < asteroid.size + ship.size) {
+                    clearInterval(gameLoop);
+                    alert('Game Over! Score: ' + gameState.score);
+                    return;
+                }
+            });
+
+            // Spawn new asteroids if needed
+            if (gameState.asteroids.length === 0) {
+                for (let i = 0; i < 5; i++) {
+                    gameState.asteroids.push(createAsteroid(canvas));
+                }
+            }
+
+            // Draw
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw stars
+            ctx.fillStyle = '#fff';
+            for (let i = 0; i < 50; i++) {
+                const x = (i * 137.5) % canvas.width;
+                const y = (i * 47.3) % canvas.height;
+                ctx.fillRect(x, y, 1, 1);
+            }
+
+            // Draw ship
+            ctx.save();
+            ctx.translate(ship.x, ship.y);
+            ctx.rotate(ship.angle);
+            ctx.fillStyle = '#4CAF50';
+            ctx.beginPath();
+            ctx.moveTo(10, 0);
+            ctx.lineTo(-10, -7);
+            ctx.lineTo(-10, 7);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+
+            // Draw bullets
+            ctx.fillStyle = '#ffff00';
+            gameState.bullets.forEach(bullet => {
+                ctx.fillRect(bullet.x - 2, bullet.y - 2, 4, 4);
+            });
+
+            // Draw asteroids
+            ctx.fillStyle = '#888';
+            gameState.asteroids.forEach(asteroid => {
+                ctx.save();
+                ctx.translate(asteroid.x, asteroid.y);
+                ctx.rotate(asteroid.angle);
+                ctx.beginPath();
+                ctx.arc(0, 0, asteroid.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            document.getElementById('scoreDisplay').textContent = 'SCORE: ' + gameState.score;
+        }
+
+        // Simple Tetris-like game
+        function initTetris(canvas, ctx) {
+            const BLOCK_SIZE = 30;
+            const GRID_WIDTH = Math.floor(canvas.width / BLOCK_SIZE);
+            const GRID_HEIGHT = Math.floor(canvas.height / BLOCK_SIZE);
+
+            gameState = {
+                grid: Array(GRID_HEIGHT).fill().map(() => Array(GRID_WIDTH).fill(0)),
+                currentPiece: null,
+                score: 0,
+                dropTime: 0
+            };
+
+            const pieces = [
+                [[1,1,1,1]], // I
+                [[1,1],[1,1]], // O
+                [[1,1,1],[0,1,0]], // T
+                [[1,1,1],[1,0,0]], // L
+                [[1,1,1],[0,0,1]], // J
+                [[1,1,0],[0,1,1]], // S
+                [[0,1,1],[1,1,0]]  // Z
+            ];
+
+            function createPiece() {
+                const piece = pieces[Math.floor(Math.random() * pieces.length)];
+                return {
+                    shape: piece,
+                    x: Math.floor(GRID_WIDTH / 2) - Math.floor(piece[0].length / 2),
+                    y: 0,
+                    color: Math.floor(Math.random() * 7) + 1
+                };
+            }
+
+            gameState.currentPiece = createPiece();
+
+            gameLoop = setInterval(() => updateTetris(canvas, ctx), 16);
+        }
+
+        function updateTetris(canvas, ctx) {
+            const BLOCK_SIZE = 30;
+            const GRID_WIDTH = Math.floor(canvas.width / BLOCK_SIZE);
+            const GRID_HEIGHT = Math.floor(canvas.height / BLOCK_SIZE);
+
+            gameState.dropTime++;
+
+            // Handle input
+            if (keys['ArrowLeft'] && canMove(-1, 0)) {
+                gameState.currentPiece.x--;
+                keys['ArrowLeft'] = false;
+            }
+            if (keys['ArrowRight'] && canMove(1, 0)) {
+                gameState.currentPiece.x++;
+                keys['ArrowRight'] = false;
+            }
+            if (keys['ArrowDown'] && canMove(0, 1)) {
+                gameState.currentPiece.y++;
+                keys['ArrowDown'] = false;
+            }
+            if (keys['ArrowUp']) {
+                rotatePiece();
+                keys['ArrowUp'] = false;
+            }
+
+            // Auto drop
+            if (gameState.dropTime > 30) {
+                if (canMove(0, 1)) {
+                    gameState.currentPiece.y++;
+                } else {
+                    placePiece();
+                    clearLines();
+                    gameState.currentPiece = createPiece();
+                    if (!canMove(0, 0)) {
+                        clearInterval(gameLoop);
+                        alert('Game Over! Score: ' + gameState.score);
+                        return;
+                    }
+                }
+                gameState.dropTime = 0;
+            }
+
+            function canMove(dx, dy) {
+                const piece = gameState.currentPiece;
+                for (let y = 0; y < piece.shape.length; y++) {
+                    for (let x = 0; x < piece.shape[y].length; x++) {
+                        if (piece.shape[y][x]) {
+                            const newX = piece.x + x + dx;
+                            const newY = piece.y + y + dy;
+                            if (newX < 0 || newX >= GRID_WIDTH || newY >= GRID_HEIGHT ||
+                                (newY >= 0 && gameState.grid[newY][newX])) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+
+            function rotatePiece() {
+                const piece = gameState.currentPiece;
+                const rotated = piece.shape[0].map((_, i) => 
+                    piece.shape.map(row => row[i]).reverse()
+                );
+                const oldShape = piece.shape;
+                piece.shape = rotated;
+                if (!canMove(0, 0)) {
+                    piece.shape = oldShape;
+                }
+            }
+
+            function placePiece() {
+                const piece = gameState.currentPiece;
+                for (let y = 0; y < piece.shape.length; y++) {
+                    for (let x = 0; x < piece.shape[y].length; x++) {
+                        if (piece.shape[y][x]) {
+                            const gridY = piece.y + y;
+                            const gridX = piece.x + x;
+                            if (gridY >= 0) {
+                                gameState.grid[gridY][gridX] = piece.color;
+                            }
+                        }
+                    }
+                }
+            }
+
+            function clearLines() {
+                let linesCleared = 0;
+                for (let y = GRID_HEIGHT - 1; y >= 0; y--) {
+                    if (gameState.grid[y].every(cell => cell !== 0)) {
+                        gameState.grid.splice(y, 1);
+                        gameState.grid.unshift(Array(GRID_WIDTH).fill(0));
+                        linesCleared++;
+                        y++;
+                    }
+                }
+                gameState.score += linesCleared * 100;
+            }
+
+            function createPiece() {
+                const pieces = [
+                    [[1,1,1,1]], // I
+                    [[1,1],[1,1]], // O
+                    [[1,1,1],[0,1,0]], // T
+                    [[1,1,1],[1,0,0]], // L
+                    [[1,1,1],[0,0,1]], // J
+                    [[1,1,0],[0,1,1]], // S
+                    [[0,1,1],[1,1,0]]  // Z
+                ];
+                const piece = pieces[Math.floor(Math.random() * pieces.length)];
+                return {
+                    shape: piece,
+                    x: Math.floor(GRID_WIDTH / 2) - Math.floor(piece[0].length / 2),
+                    y: 0,
+                    color: Math.floor(Math.random() * 7) + 1
+                };
+            }
+
+            // Draw
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const colors = ['#000', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff'];
+
+            // Draw grid
+            for (let y = 0; y < GRID_HEIGHT; y++) {
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    if (gameState.grid[y][x]) {
+                        ctx.fillStyle = colors[gameState.grid[y][x]];
+                        ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+                    }
+                }
+            }
+
+            // Draw current piece
+            const piece = gameState.currentPiece;
+            for (let y = 0; y < piece.shape.length; y++) {
+                for (let x = 0; x < piece.shape[y].length; x++) {
+                    if (piece.shape[y][x]) {
+                        ctx.fillStyle = colors[piece.color];
+                        ctx.fillRect((piece.x + x) * BLOCK_SIZE, (piece.y + y) * BLOCK_SIZE, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+                    }
+                }
+            }
+
+            document.getElementById('scoreDisplay').textContent = 'SCORE: ' + gameState.score;
+        }
+
+        // Space Shooter Game
+        function initShooter(canvas, ctx) {
+            gameState = {
+                player: {x: canvas.width / 2, y: canvas.height - 50, width: 40, height: 30},
+                bullets: [],
+                enemies: [],
+                score: 0,
+                enemySpawnTime: 0
+            };
+
+            gameLoop = setInterval(() => updateShooter(canvas, ctx), 16);
+        }
+
+        function updateShooter(canvas, ctx) {
+            // Player movement
+            if (keys['ArrowLeft'] && gameState.player.x > 0) gameState.player.x -= 8;
+            if (keys['ArrowRight'] && gameState.player.x < canvas.width - gameState.player.width) gameState.player.x += 8;
+
+            // Shooting
+            if (keys[' ']) {
+                if (gameState.bullets.length === 0 || gameState.bullets[gameState.bullets.length - 1].y < canvas.height - 100) {
+                    gameState.bullets.push({
+                        x: gameState.player.x + gameState.player.width / 2,
+                        y: gameState.player.y,
+                        width: 4,
+                        height: 10,
+                        speed: 10
+                    });
+                }
+            }
+
+            // Update bullets
+            gameState.bullets = gameState.bullets.filter(bullet => {
+                bullet.y -= bullet.speed;
+                return bullet.y > 0;
+            });
+
+            // Spawn enemies
+            gameState.enemySpawnTime++;
+            if (gameState.enemySpawnTime > 60) {
+                gameState.enemies.push({
+                    x: Math.random() * (canvas.width - 30),
+                    y: -30,
+                    width: 30,
+                    height: 30,
+                    speed: 2 + Math.random() * 3
+                });
+                gameState.enemySpawnTime = 0;
+            }
+
+            // Update enemies
+            gameState.enemies = gameState.enemies.filter(enemy => {
+                enemy.y += enemy.speed;
+                return enemy.y < canvas.height + 30;
+            });
+
+            // Collision detection - bullets vs enemies
+            gameState.bullets.forEach((bullet, bulletIndex) => {
+                gameState.enemies.forEach((enemy, enemyIndex) => {
+                    if (bullet.x < enemy.x + enemy.width &&
+                        bullet.x + bullet.width > enemy.x &&
+                        bullet.y < enemy.y + enemy.height &&
+                        bullet.y + bullet.height > enemy.y) {
+                        gameState.bullets.splice(bulletIndex, 1);
+                        gameState.enemies.splice(enemyIndex, 1);
+                        gameState.score += 10;
+                    }
+                });
+            });
+
+            // Collision detection - player vs enemies
+            gameState.enemies.forEach(enemy => {
+                if (gameState.player.x < enemy.x + enemy.width &&
+                    gameState.player.x + gameState.player.width > enemy.x &&
+                    gameState.player.y < enemy.y + enemy.height &&
+                    gameState.player.y + gameState.player.height > enemy.y) {
+                    clearInterval(gameLoop);
+                    alert('Game Over! Score: ' + gameState.score);
+                    return;
+                }
+            });
+
+            // Draw
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw stars
+            ctx.fillStyle = '#fff';
+            for (let i = 0; i < 100; i++) {
+                const x = (i * 137.5 + Date.now() * 0.1) % canvas.width;
+                const y = (i * 47.3 + Date.now() * 0.05) % canvas.height;
+                ctx.fillRect(x, y, 1, 1);
+            }
+
+            // Draw player
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(gameState.player.x, gameState.player.y, gameState.player.width, gameState.player.height);
+            ctx.fillStyle = '#8BC34A';
+            ctx.fillRect(gameState.player.x + 5, gameState.player.y - 5, 30, 10);
+
+            // Draw bullets
+            ctx.fillStyle = '#ffff00';
+            gameState.bullets.forEach(bullet => {
+                ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+            });
+
+            // Draw enemies
+            ctx.fillStyle = '#f44336';
+            gameState.enemies.forEach(enemy => {
+                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                ctx.fillStyle = '#e57373';
+                ctx.fillRect(enemy.x + 5, enemy.y + 5, 20, 20);
+                ctx.fillStyle = '#f44336';
+            });
+
+            document.getElementById('scoreDisplay').textContent = 'SCORE: ' + gameState.score;
+        }
+
+        // Neon Maze Game
+        function initMaze(canvas, ctx) {
+            const CELL_SIZE = 20;
+            const MAZE_WIDTH = Math.floor(canvas.width / CELL_SIZE);
+            const MAZE_HEIGHT = Math.floor(canvas.height / CELL_SIZE);
+
+            // Generate maze
+            const maze = generateMaze(MAZE_WIDTH, MAZE_HEIGHT);
+
+            gameState = {
+                maze: maze,
+                player: {x: 1, y: 1},
+                goal: {x: MAZE_WIDTH - 2, y: MAZE_HEIGHT - 2},
+                score: 0,
+                startTime: Date.now()
+            };
+
+            gameLoop = setInterval(() => updateMaze(canvas, ctx), 100);
+        }
+
+        function generateMaze(width, height) {
+            const maze = Array(height).fill().map(() => Array(width).fill(1));
+            
+            function carvePath(x, y) {
+                maze[y][x] = 0;
+                const directions = [[0, 2], [2, 0], [0, -2], [-2, 0]];
+                directions.sort(() => Math.random() - 0.5);
+                
+                for (const [dx, dy] of directions) {
+                    const nx = x + dx;
+                    const ny = y + dy;
+                    if (nx > 0 && nx < width - 1 && ny > 0 && ny < height - 1 && maze[ny][nx] === 1) {
+                        maze[y + dy/2][x + dx/2] = 0;
+                        carvePath(nx, ny);
+                    }
+                }
+            }
+            
+            carvePath(1, 1);
+            return maze;
+        }
+
+        function updateMaze(canvas, ctx) {
+            const CELL_SIZE = 20;
+            const oldX = gameState.player.x;
+            const oldY = gameState.player.y;
+
+            // Player movement
+            if (keys['ArrowUp'] && gameState.maze[gameState.player.y - 1] && 
+                gameState.maze[gameState.player.y - 1][gameState.player.x] === 0) {
+                gameState.player.y--;
+                keys['ArrowUp'] = false;
+            }
+            if (keys['ArrowDown'] && gameState.maze[gameState.player.y + 1] && 
+                gameState.maze[gameState.player.y + 1][gameState.player.x] === 0) {
+                gameState.player.y++;
+                keys['ArrowDown'] = false;
+            }
+            if (keys['ArrowLeft'] && gameState.maze[gameState.player.y][gameState.player.x - 1] === 0) {
+                gameState.player.x--;
+                keys['ArrowLeft'] = false;
+            }
+            if (keys['ArrowRight'] && gameState.maze[gameState.player.y][gameState.player.x + 1] === 0) {
+                gameState.player.x++;
+                keys['ArrowRight'] = false;
+            }
+
+            // Check for goal
+            if (gameState.player.x === gameState.goal.x && gameState.player.y === gameState.goal.y) {
+                const time = Math.floor((Date.now() - gameState.startTime) / 1000);
+                gameState.score = Math.max(0, 1000 - time * 10);
+                clearInterval(gameLoop);
+                alert(`Maze Complete! Score: ${gameState.score} (${time} seconds)`);
+                return;
+            }
+
+            // Draw
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw maze
+            for (let y = 0; y < gameState.maze.length; y++) {
+                for (let x = 0; x < gameState.maze[y].length; x++) {
+                    if (gameState.maze[y][x] === 1) {
+                        ctx.fillStyle = '#00ffff';
+                        ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                        ctx.fillStyle = '#008888';
+                        ctx.fillRect(x * CELL_SIZE + 2, y * CELL_SIZE + 2, CELL_SIZE - 4, CELL_SIZE - 4);
+                    }
+                }
+            }
+
+            // Draw goal
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillRect(gameState.goal.x * CELL_SIZE + 2, gameState.goal.y * CELL_SIZE + 2, CELL_SIZE - 4, CELL_SIZE - 4);
+
+            // Draw player
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(gameState.player.x * CELL_SIZE + 2, gameState.player.y * CELL_SIZE + 2, CELL_SIZE - 4, CELL_SIZE - 4);
+
+            const time = Math.floor((Date.now() - gameState.startTime) / 1000);
+            document.getElementById('scoreDisplay').textContent = `TIME: ${time}s`;
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initArcade);
+    </script>
+
+    <!-- External loading functionality -->
+    <script>
+        // Function to load arcade from external website
+        window.loadRetroArcade = function(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.error('Container not found:', containerId);
+                return;
+            }
+            
+            // Create iframe for isolated arcade experience
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '100vh';
+            iframe.style.border = 'none';
+            iframe.style.borderRadius = '10px';
+            
+            // You would replace this with the actual URL where this HTML file is hosted
+            iframe.src = 'data:text/html;base64,' + btoa(document.documentElement.outerHTML);
+            
+            container.innerHTML = '';
+            container.appendChild(iframe);
+        };
+
+        // Alternative method: Direct injection
+        window.injectRetroArcade = function(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.error('Container not found:', containerId);
+                return;
+            }
+            
+            // Clone the entire arcade content
+            const arcadeContent = document.body.cloneNode(true);
+            container.innerHTML = '';
+            container.appendChild(arcadeContent);
+            
+            // Reinitialize the arcade
+            initArcade();
+        };
+    </script>
+</body>
+</html>

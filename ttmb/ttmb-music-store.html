@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TTMB Music Store — Time Traveller's Music Box</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Rajdhani',sans-serif;background:#1a1a2e;color:#fff;overflow-x:hidden;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:#222;border:2px solid #7c3aed;
+  border-radius:10px;padding:14px 22px;font-family:'Orbitron',monospace;font-size:0.7rem;
+  color:#a78bfa;box-shadow:0 0 20px #7c3aed66;transform:translateX(200%);transition:transform .4s;max-width:280px;}
+.toast.show{transform:translateX(0);}
+
+/* ════════════════════════════════════
+   TOP BAR
+════════════════════════════════════ */
+.top-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(90deg,#2d6a2d,#4a9a4a,#2d6a2d);
+  padding:6px 16px;border-bottom:2px solid #1a4a1a;
+  position:sticky;top:0;z-index:500;
+}
+.top-bar-left{display:flex;gap:6px;}
+.tb-btn{
+  padding:5px 14px;font-family:'Rajdhani',sans-serif;font-weight:700;
+  font-size:0.85rem;border:2px solid rgba(255,255,255,0.5);border-radius:3px;
+  background:rgba(255,255,255,0.15);color:#fff;cursor:pointer;transition:all .2s;
+}
+.tb-btn:hover,.tb-btn.active{background:rgba(255,255,255,0.35);border-color:#fff;}
+.tb-btn.buy-now{background:rgba(0,0,0,0.4);border-color:#ff0;color:#ff0;font-weight:900;}
+.tb-btn.buy-now:hover{background:#ff0;color:#000;}
+.search-wrap{display:flex;align-items:center;gap:6px;}
+.search-wrap input{
+  padding:5px 10px;border-radius:3px 0 0 3px;border:2px solid #888;background:#fff;
+  color:#000;font-size:0.85rem;width:180px;outline:none;
+}
+.search-wrap button{
+  padding:5px 10px;background:#555;border:2px solid #888;border-left:none;
+  border-radius:0 3px 3px 0;cursor:pointer;color:#fff;font-size:0.85rem;
+}
+.cart-btn{
+  padding:5px 12px;background:rgba(0,0,0,0.4);border:2px solid #888;border-radius:3px;
+  color:#fff;cursor:pointer;font-size:0.85rem;position:relative;
+}
+.cart-count{
+  position:absolute;top:-6px;right:-6px;background:#ff0;color:#000;
+  border-radius:50%;width:18px;height:18px;font-size:0.6rem;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ── LOGO ── */
+.logo-band{
+  background:linear-gradient(180deg,#3a8a3a 0%,#2d6a2d 100%);
+  text-align:center;padding:10px 0;border-bottom:3px solid #1a4a1a;
+}
+.logo-band img{max-width:480px;width:90%;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.6));}
+
+/* ── SECONDARY NAV ── */
+.sec-nav{
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  background:linear-gradient(90deg,#2d6a2d,#4a9a4a,#2d6a2d);
+  padding:8px 16px;border-bottom:2px solid #1a4a1a;
+}
+.sec-nav-btn{
+  padding:7px 18px;font-weight:700;font-size:0.9rem;
+  border:2px solid rgba(255,255,255,0.5);border-radius:5px;
+  background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;transition:all .2s;
+}
+.sec-nav-btn:hover{background:rgba(255,255,255,0.35);border-color:#fff;}
+.sec-nav-spacer{flex:1;}
+.sec-nav-search{
+  padding:6px 12px;border-radius:5px;border:2px solid #888;
+  background:#fff;color:#000;font-size:0.85rem;width:160px;
+}
+.sec-nav-go{
+  padding:6px 14px;background:#555;border:2px solid #888;border-left:none;
+  border-radius:0 5px 5px 0;cursor:pointer;color:#fff;
+}
+
+/* ── FEATURED MUSIC ── */
+.featured-section{
+  background:linear-gradient(180deg,#4a9a4a,#3a8a3a);
+  padding:16px;border-bottom:3px solid #1a4a1a;
+}
+.featured-inner{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.featured-title{
+  font-family:'Press Start 2P',monospace;font-size:1.1rem;color:#fff;
+  text-shadow:2px 2px 0 #000,0 0 10px rgba(255,255,255,0.3);
+  background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:5px;
+  border:2px solid rgba(255,255,255,0.3);min-width:160px;text-align:center;
+}
+.featured-albums{display:flex;gap:10px;flex:1;justify-content:center;}
+.feat-album{
+  width:120px;height:120px;background:linear-gradient(135deg,#b0b0b0,#d0d0d0);
+  border:3px solid #888;border-radius:4px;cursor:pointer;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;font-size:2.5rem;
+  transition:all .25s;position:relative;
+}
+.feat-album:hover{transform:scale(1.06);border-color:#ff0;box-shadow:0 0 15px #ff0a;}
+.feat-album .play-icon{
+  position:absolute;inset:0;background:rgba(0,0,0,0.5);display:none;
+  align-items:center;justify-content:center;font-size:2rem;
+}
+.feat-album:hover .play-icon{display:flex;}
+
+.local-music-box{
+  background:#000;border:3px solid #00ff00;border-radius:5px;padding:12px 16px;
+  min-width:180px;text-align:center;
+}
+.local-music-box h3{
+  font-family:'Press Start 2P',monospace;font-size:0.85rem;color:#00ff00;
+  text-shadow:0 0 8px #00ff00;margin-bottom:10px;
+}
+.zip-row{display:flex;gap:0;}
+.zip-row input{
+  flex:1;padding:8px;border:2px solid #00ff00;background:#001100;color:#00ff00;
+  font-size:0.9rem;font-family:'Press Start 2P',monospace;outline:none;font-size:0.7rem;
+}
+.zip-row button{
+  padding:8px 12px;background:#00ff00;border:2px solid #00ff00;color:#000;
+  font-weight:900;cursor:pointer;font-size:1rem;
+}
+.zip-row button:hover{background:#00cc00;}
+
+/* ── BUY NOW BAR ── */
+.buy-bar{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  background:#000;padding:10px 14px;border-bottom:3px solid #333;
+}
+.buy-bar-label{
+  font-family:'Press Start 2P',monospace;font-size:1rem;
+  color:#ffff00;text-shadow:0 0 8px #ff0,2px 2px 0 #880;
+  background:#1a1a00;border:3px solid #ff0;padding:8px 14px;border-radius:4px;
+  cursor:pointer;white-space:nowrap;
+}
+.buy-bar-label:hover{background:#ff0;color:#000;box-shadow:0 0 20px #ff0;}
+.cat-pills{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+.cat-pill{
+  padding:7px 16px;border-radius:20px;background:#7c3aed;border:none;
+  color:#fff;font-weight:700;font-size:0.85rem;cursor:pointer;transition:all .2s;
+  font-family:'Rajdhani',sans-serif;
+}
+.cat-pill:hover,.cat-pill.active{background:#a855f7;box-shadow:0 0 12px #a855f7aa;transform:scale(1.05);}
+.sell-stuff-btn{
+  font-family:'Press Start 2P',monospace;font-size:0.8rem;
+  background:linear-gradient(135deg,#7c3aed,#4c1d95);border:3px solid #a855f7;
+  color:#fff;padding:8px 16px;cursor:pointer;border-radius:5px;
+  box-shadow:0 0 10px #7c3aedaa;white-space:nowrap;
+}
+.sell-stuff-btn:hover{background:linear-gradient(135deg,#a855f7,#7c3aed);box-shadow:0 0 20px #a855f7;}
+
+/* ── CATEGORY GRID ── */
+.cat-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:0;
+  background:#b8d4f0;border-bottom:3px solid #7aa;
+}
+@media(max-width:768px){.cat-grid{grid-template-columns:repeat(3,1fr);}}
+.cat-card{
+  padding:0;cursor:pointer;position:relative;overflow:hidden;aspect-ratio:1;
+  background:linear-gradient(135deg,#6cc,#8af,#a6c);
+  border:1px solid rgba(255,255,255,0.3);transition:all .25s;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+}
+.cat-card:hover{transform:scale(1.04);z-index:10;box-shadow:0 0 20px rgba(0,0,0,0.5);}
+.cat-card-bg{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:4rem;opacity:0.7;
+}
+.cat-card-label{
+  position:relative;z-index:2;width:100%;
+  background:rgba(0,0,0,0.6);padding:8px;
+  display:flex;align-items:center;gap:6px;
+}
+.cat-card-label .dot{width:10px;height:10px;border-radius:50%;background:#a855f7;flex-shrink:0;}
+.cat-card-label span{font-weight:700;font-size:0.9rem;}
+
+/* ── INFO BOXES ── */
+.info-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  background:#e8e8e8;border-top:3px solid #ccc;border-bottom:3px solid #ccc;
+}
+@media(max-width:600px){.info-row{grid-template-columns:1fr;}}
+.info-box{
+  padding:18px 20px;border-right:2px solid #ccc;cursor:pointer;transition:background .2s;
+  background:#f0f0f0;
+}
+.info-box:last-child{border-right:none;}
+.info-box:hover{background:#e0e0ff;}
+.info-box h3{font-size:1rem;font-weight:700;color:#333;margin-bottom:6px;}
+.info-box p{font-size:0.85rem;color:#555;}
+
+/* ── FEATURED LISTING (PURPLE) ── */
+.listing-band{
+  background:linear-gradient(135deg,#6b21a8,#7c3aed,#4c1d95);
+  padding:20px;min-height:120px;display:flex;align-items:center;justify-content:flex-end;
+  border-top:3px solid #a855f7;border-bottom:3px solid #a855f7;
+  position:relative;gap:16px;
+}
+.listing-card{
+  background:#fff;border-radius:6px;padding:12px 16px;min-width:180px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);cursor:pointer;
+  transition:transform .2s;border-left:4px solid #7c3aed;
+}
+.listing-card:hover{transform:scale(1.04);}
+.listing-card .lc-cat{font-size:0.7rem;color:#888;margin-bottom:3px;}
+.listing-card .lc-title{font-weight:900;font-size:1rem;color:#222;margin-bottom:3px;}
+.listing-card .lc-price{font-size:1.1rem;font-weight:700;color:#7c3aed;}
+.listing-card .lc-by{font-size:0.75rem;color:#999;}
+.listing-card .lc-buy{
+  display:block;width:100%;margin-top:8px;padding:7px;background:#7c3aed;
+  color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:700;
+  font-size:0.85rem;transition:background .2s;
+}
+.listing-card .lc-buy:hover{background:#a855f7;}
+
+/* ── ALBUM CAROUSEL ── */
+.carousel-band{
+  background:linear-gradient(180deg,#4a9a4a,#3a8a3a);
+  padding:16px;border-top:3px solid #1a4a1a;border-bottom:3px solid #1a4a1a;
+}
+.carousel-track{
+  display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;scroll-behavior:smooth;
+}
+.carousel-track::-webkit-scrollbar{height:5px;}
+.carousel-track::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
+.carousel-track::-webkit-scrollbar-thumb{background:#7c3aed;border-radius:3px;}
+.album-thumb{
+  width:100px;height:100px;flex-shrink:0;border-radius:4px;overflow:hidden;cursor:pointer;
+  border:3px solid transparent;transition:all .2s;position:relative;
+  background:linear-gradient(135deg,#333,#555);
+  display:flex;align-items:center;justify-content:center;font-size:2.5rem;
+}
+.album-thumb:hover{border-color:#ff0;transform:scale(1.08);box-shadow:0 0 15px #ff0a;}
+.carousel-dots{display:flex;justify-content:center;gap:8px;margin-top:10px;}
+.cdot{
+  width:16px;height:16px;border-radius:50%;background:rgba(0,0,0,0.4);
+  border:2px solid rgba(255,255,255,0.5);cursor:pointer;transition:all .2s;
+}
+.cdot.active{background:#7c3aed;border-color:#a855f7;box-shadow:0 0 8px #a855f7;}
+
+/* ════════════════════════════════════
+   STORE ROOM HERO — the big image
+   Buttons are absolutely positioned
+   to match where they appear in the image
+════════════════════════════════════ */
+.store-room-hero{
+  position:relative;width:100%;
+  background:url('ttmbEDIT.png') center top/cover no-repeat;
+  /* height matches the room image section ~ 60% of the full image */
+  min-height:520px;
+  border-top:3px solid #333;
+  overflow:hidden;
+}
+/* Dark overlay so buttons are readable */
+.store-room-hero::before{
+  content:'';position:absolute;inset:0;
+  background:rgba(0,0,0,0.18);pointer-events:none;z-index:1;
+}
+/* ── Overlay Buttons — positions match visual elements in image ── */
+.hero-btn{
+  position:absolute;z-index:5;cursor:pointer;border-radius:6px;
+  font-family:'Press Start 2P',monospace;text-align:center;
+  transition:all .25s;text-shadow:1px 1px 0 #000;
+  border:3px solid;
+}
+.hero-btn:hover{transform:scale(1.08);filter:brightness(1.3);}
+
+/* VINTAGE — top left poster area */
+.hb-vintage{
+  top:8%;left:4%;width:13%;padding:10px 6px;
+  background:rgba(0,0,0,0.7);border-color:#ffffff;color:#fff;
+  font-size:clamp(0.45rem,1.2vw,0.75rem);
+}
+/* NEW RELEASES — top center-left */
+.hb-new{
+  top:8%;left:18%;width:14%;padding:10px 6px;
+  background:rgba(150,0,200,0.8);border-color:#e879f9;color:#fff;
+  font-size:clamp(0.4rem,1vw,0.65rem);
+}
+/* VINTAGE VINYL — left mid */
+.hb-vinyl{
+  top:32%;left:2%;width:13%;padding:12px 6px;
+  background:rgba(0,80,0,0.85);border-color:#4ade80;color:#4ade80;
+  font-size:clamp(0.4rem,1vw,0.65rem);
+}
+/* DIGITAL DOWNLOADS — left lower */
+.hb-digital{
+  top:52%;left:2%;width:13%;padding:12px 6px;
+  background:rgba(0,60,120,0.85);border-color:#38bdf8;color:#38bdf8;
+  font-size:clamp(0.4rem,1vw,0.65rem);
+}
+/* TTMB center logo area — open store */
+.hb-ttmb{
+  top:28%;left:44%;transform:translateX(-50%);width:16%;padding:14px 8px;
+  background:rgba(0,0,0,0.75);border-color:#ffd700;color:#ffd700;
+  font-size:clamp(0.4rem,1vw,0.6rem);
+}
+/* TRY ENTER TimeWarp — center */
+.hb-timewarp{
+  top:52%;left:44%;transform:translateX(-50%);width:18%;padding:10px 6px;
+  background:rgba(0,0,0,0.8);border-color:#00e5ff;color:#00e5ff;
+  font-size:clamp(0.35rem,0.9vw,0.55rem);
+}
+/* BUY NOW — bottom left */
+.hb-buynow{
+  bottom:22%;left:3%;width:19%;padding:14px 8px;
+  background:rgba(180,140,0,0.9);border-color:#ffd700;color:#fff;
+  font-size:clamp(0.5rem,1.3vw,0.9rem);
+}
+/* SELL YOUR STUFF — right side */
+.hb-sell-your{
+  top:28%;right:4%;width:13%;padding:12px 6px;
+  background:rgba(0,0,0,0.8);border-color:#f97316;color:#f97316;
+  font-size:clamp(0.4rem,1vw,0.6rem);
+}
+/* SELL STUFF — bottom right */
+.hb-sellstuff{
+  bottom:22%;right:3%;width:19%;padding:14px 8px;
+  background:rgba(80,0,140,0.9);border-color:#c026d3;color:#fff;
+  font-size:clamp(0.5rem,1.3vw,0.9rem);
+}
+/* ARROW LEFT */
+.hb-arrow-l{
+  top:50%;left:1%;transform:translateY(-50%);width:4%;padding:12px 4px;
+  background:rgba(0,0,0,0.6);border-color:#888;color:#fff;
+  font-size:clamp(0.8rem,1.5vw,1.2rem);
+}
+/* ARROW RIGHT */
+.hb-arrow-r{
+  top:50%;right:1%;transform:translateY(-50%);width:4%;padding:12px 4px;
+  background:rgba(0,0,0,0.6);border-color:#888;color:#fff;
+  font-size:clamp(0.8rem,1.5vw,1.2rem);
+}
+
+/* ── FOOTER ── */
+.store-footer{
+  background:linear-gradient(180deg,#3a8a3a,#2d6a2d);
+  padding:24px;text-align:center;border-top:3px solid #1a4a1a;
+}
+.sub-box{
+  background:rgba(0,0,0,0.3);border-radius:8px;padding:20px;
+  max-width:500px;margin:0 auto 16px;
+}
+.sub-box p{margin-bottom:12px;font-size:1rem;color:#fff;}
+.sub-btn{
+  display:inline-block;padding:10px 32px;background:#7c3aed;border:none;
+  border-radius:20px;color:#fff;font-weight:700;font-size:1rem;
+  cursor:pointer;transition:all .2s;margin:6px;
+}
+.sub-btn:hover{background:#a855f7;box-shadow:0 0 15px #a855f7;}
+.donate-btn{
+  display:inline-block;padding:10px 32px;background:#7c3aed;border:none;
+  border-radius:20px;color:#fff;font-weight:700;font-size:1rem;
+  cursor:pointer;transition:all .2s;margin:6px;
+}
+.donate-btn:hover{background:#a855f7;}
+.footer-copy{font-size:0.8rem;color:rgba(255,255,255,0.6);margin-top:12px;}
+
+/* ════════ MODALS ════════ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.85);
+  display:none;align-items:center;justify-content:center;z-index:2000;
+  padding:20px;overflow-y:auto;
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:linear-gradient(135deg,#1a0d2e,#0d1a2e);
+  border:2px solid #7c3aed;border-radius:14px;
+  padding:30px;max-width:700px;width:100%;
+  position:relative;max-height:90vh;overflow-y:auto;
+}
+.modal-close{
+  position:absolute;top:12px;right:16px;background:none;border:none;
+  color:#aaa;font-size:1.6rem;cursor:pointer;
+}
+.modal-close:hover{color:#fff;}
+.modal h2{
+  font-family:'Press Start 2P',monospace;font-size:1rem;
+  color:#a855f7;margin-bottom:20px;
+  text-shadow:0 0 10px #a855f7;
+}
+
+/* Product grid in modal */
+.prod-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;
+}
+.prod-card{
+  background:rgba(255,255,255,0.05);border:1px solid rgba(124,58,237,0.4);
+  border-radius:10px;overflow:hidden;cursor:pointer;transition:all .25s;
+}
+.prod-card:hover{border-color:#a855f7;transform:translateY(-4px);box-shadow:0 8px 24px rgba(168,85,247,0.3);}
+.prod-img{
+  height:130px;display:flex;align-items:center;justify-content:center;
+  font-size:3.5rem;background:linear-gradient(135deg,#1a0533,#0d1a3e);
+}
+.prod-body{padding:12px;}
+.prod-title{font-weight:700;font-size:0.9rem;color:#e2e8f0;margin-bottom:4px;}
+.prod-artist{font-size:0.75rem;color:#94a3b8;margin-bottom:6px;}
+.prod-price{font-size:1rem;font-weight:900;color:#a855f7;margin-bottom:8px;}
+.prod-btns{display:flex;gap:6px;}
+.prod-btn{
+  flex:1;padding:7px;border:none;border-radius:6px;cursor:pointer;
+  font-weight:700;font-size:0.75rem;transition:all .2s;
+}
+.btn-buy{background:#7c3aed;color:#fff;}
+.btn-buy:hover{background:#a855f7;}
+.btn-cart{background:rgba(255,215,0,0.2);color:#ffd700;border:1px solid #ffd700;}
+.btn-cart:hover{background:#ffd700;color:#000;}
+
+/* Sell form */
+.sell-form .form-group{margin-bottom:14px;}
+.sell-form label{display:block;font-size:0.8rem;color:#94a3b8;margin-bottom:4px;font-family:'Orbitron',monospace;}
+.sell-form input,.sell-form select,.sell-form textarea{
+  width:100%;padding:10px;background:rgba(255,255,255,0.07);
+  border:1px solid rgba(124,58,237,0.5);border-radius:7px;
+  color:#fff;font-size:0.95rem;font-family:'Rajdhani',sans-serif;outline:none;
+}
+.sell-form input:focus,.sell-form select:focus,.sell-form textarea:focus{border-color:#a855f7;}
+.sell-form select option{background:#1a0d2e;}
+.submit-btn{
+  width:100%;padding:14px;background:linear-gradient(135deg,#7c3aed,#4c1d95);
+  border:2px solid #a855f7;border-radius:8px;color:#fff;font-weight:900;
+  font-size:1rem;cursor:pointer;transition:all .3s;margin-top:6px;
+}
+.submit-btn:hover{background:linear-gradient(135deg,#a855f7,#7c3aed);box-shadow:0 0 20px #a855f7;}
+
+/* Cart sidebar */
+.cart-sidebar{
+  position:fixed;top:0;right:-380px;width:360px;height:100vh;
+  background:#1a0d2e;border-left:2px solid #7c3aed;z-index:1500;
+  transition:right .35s;overflow-y:auto;
+}
+.cart-sidebar.open{right:0;}
+.cart-header{
+  padding:18px;background:#2d1052;border-bottom:1px solid #7c3aed;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.cart-header h3{font-family:'Orbitron',monospace;font-size:0.85rem;color:#a855f7;}
+.cart-close{background:none;border:none;color:#aaa;font-size:1.4rem;cursor:pointer;}
+.cart-item{
+  display:flex;align-items:center;gap:12px;padding:14px;
+  border-bottom:1px solid rgba(124,58,237,0.2);
+}
+.cart-item-icon{font-size:2rem;flex-shrink:0;}
+.cart-item-info{flex:1;}
+.cart-item-title{font-weight:700;font-size:0.9rem;}
+.cart-item-price{color:#a855f7;font-size:0.9rem;}
+.remove-item{background:none;border:none;color:#ef4444;cursor:pointer;font-size:1.1rem;}
+.cart-footer{padding:18px;border-top:1px solid #7c3aed;}
+.cart-total{font-family:'Orbitron',monospace;font-size:1rem;color:#ffd700;margin-bottom:14px;}
+.checkout-btn{
+  width:100%;padding:14px;background:#7c3aed;border:none;border-radius:8px;
+  color:#fff;font-weight:900;font-size:1rem;cursor:pointer;transition:all .2s;
+}
+.checkout-btn:hover{background:#a855f7;box-shadow:0 0 20px #a855f7;}
+.cart-empty{padding:30px;text-align:center;color:#94a3b8;font-size:0.9rem;}
+
+/* Upload/login form */
+.login-form .form-group{margin-bottom:14px;}
+.login-form label{display:block;font-size:0.8rem;color:#94a3b8;margin-bottom:4px;font-family:'Orbitron',monospace;}
+.login-form input{
+  width:100%;padding:10px;background:rgba(255,255,255,0.07);
+  border:1px solid rgba(124,58,237,0.5);border-radius:7px;
+  color:#fff;font-size:0.95rem;outline:none;
+}
+.tabs{display:flex;gap:0;margin-bottom:20px;border:2px solid #7c3aed;border-radius:8px;overflow:hidden;}
+.tab{
+  flex:1;padding:12px;text-align:center;cursor:pointer;
+  background:rgba(124,58,237,0.1);font-weight:700;font-size:0.9rem;
+  transition:all .2s;
+}
+.tab.active,.tab:hover{background:#7c3aed;color:#fff;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* Young artists section */
+.artist-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;
+}
+.artist-card{
+  background:rgba(255,255,255,0.05);border:1px solid rgba(124,58,237,0.3);
+  border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all .25s;
+}
+.artist-card:hover{border-color:#a855f7;transform:translateY(-3px);}
+.artist-avatar{font-size:3rem;margin-bottom:8px;}
+.artist-name{font-weight:700;font-size:0.9rem;margin-bottom:4px;}
+.artist-genre{font-size:0.75rem;color:#94a3b8;margin-bottom:8px;}
+.artist-follow{
+  width:100%;padding:7px;background:#7c3aed;border:none;border-radius:5px;
+  color:#fff;font-weight:700;cursor:pointer;transition:background .2s;
+}
+.artist-follow:hover{background:#a855f7;}
+
+/* Zip result */
+.zip-results{margin-top:16px;}
+.zip-event{
+  background:rgba(255,255,255,0.05);border:1px solid rgba(74,222,128,0.3);
+  border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer;
+}
+.zip-event:hover{border-color:#4ade80;}
+.zip-event h4{font-size:0.9rem;color:#4ade80;}
+.zip-event p{font-size:0.8rem;color:#94a3b8;margin-top:3px;}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- CART SIDEBAR -->
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <h3>🛒 YOUR CART</h3>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div id="cart-items-list"><div class="cart-empty">Your cart is empty.<br>Start shopping!</div></div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-total" id="cart-total-display">Total: $0.00</div>
+    <button class="checkout-btn" onclick="checkout()">⚡ CHECKOUT NOW</button>
+  </div>
+</div>
+
+<!-- ══ TOP BAR ══ -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <button class="tb-btn active" onclick="showToast('🏠 Home')">Home</button>
+    <button class="tb-btn" onclick="openModal('login-modal')">Login</button>
+    <button class="tb-btn buy-now" onclick="openModal('buy-modal','all')">Buy Now</button>
+  </div>
+  <div class="search-wrap">
+    <input type="text" id="main-search" placeholder="Search music, gear..." onkeydown="if(event.key==='Enter')doSearch()">
+    <button onclick="doSearch()">🔍</button>
+  </div>
+  <button class="cart-btn" onclick="openCart()">
+    🛒 Cart <span class="cart-count" id="cart-count">0</span>
+  </button>
+</div>
+
+<!-- ══ LOGO ══ -->
+<div class="logo-band">
+  <img src="ttmb_160_x_160.png" alt="TTMB — Time Traveller's Music Box" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div style="display:none;font-family:'Press Start 2P',monospace;font-size:1.8rem;color:#ffd700;text-shadow:0 0 20px #ffd700;padding:20px">TTMB</div>
+</div>
+
+<!-- ══ SECONDARY NAV ══ -->
+<div class="sec-nav">
+  <button class="sec-nav-btn" onclick="openModal('login-modal')">Login</button>
+  <button class="sec-nav-btn" onclick="openModal('upload-modal')">Upload Your Music</button>
+  <button class="sec-nav-btn" onclick="openModal('young-artists-modal')">Young Artists</button>
+  <button class="sec-nav-btn" onclick="openModal('buy-modal','used')">Used Equipment</button>
+  <div class="sec-nav-spacer"></div>
+  <input type="text" class="sec-nav-search" placeholder="Quick search..." id="sec-search" onkeydown="if(event.key==='Enter')doSearch()">
+  <button class="sec-nav-go" onclick="doSearch()">Go</button>
+</div>
+
+<!-- ══ FEATURED MUSIC ══ -->
+<div class="featured-section">
+  <div class="featured-inner">
+    <div class="featured-title">Featured<br>Music</div>
+    <div class="featured-albums">
+      <div class="feat-album" style="background:linear-gradient(135deg,#333,#666)" onclick="openModal('buy-modal','vinyl')">
+        🎵<div class="play-icon">▶</div>
+      </div>
+      <div class="feat-album" style="background:linear-gradient(135deg,#1a0d2e,#3d1060)" onclick="openModal('buy-modal','cd')">
+        💿<div class="play-icon">▶</div>
+      </div>
+      <div class="feat-album" style="background:linear-gradient(135deg,#0d2e1a,#106030)" onclick="openModal('buy-modal','digital')">
+        🎧<div class="play-icon">▶</div>
+      </div>
+    </div>
+    <div class="local-music-box">
+      <h3>LOCAL MUSIC</h3>
+      <div class="zip-row">
+        <input type="text" id="zip-input" placeholder="ZIP CODE" maxlength="5">
+        <button onclick="findLocalMusic()">🔍</button>
+      </div>
+      <div id="zip-results" style="display:none;margin-top:10px;font-size:0.75rem;color:#4ade80;text-align:left"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BUY NOW BAR ══ -->
+<div class="buy-bar">
+  <div class="buy-bar-label" onclick="openModal('buy-modal','all')">BUY NOW</div>
+  <div class="cat-pills">
+    <button class="cat-pill" onclick="openModal('buy-modal','vinyl')">🎵 Vinyl</button>
+    <button class="cat-pill" onclick="openModal('buy-modal','cd')">💿 CDs</button>
+    <button class="cat-pill" onclick="openModal('buy-modal','cassette')">📼 Cassettes</button>
+    <button class="cat-pill" onclick="openModal('buy-modal','digital')">⚡ Digital</button>
+    <button class="cat-pill" onclick="openModal('buy-modal','instruments')">🎸 Instruments</button>
+    <button class="cat-pill" onclick="openModal('buy-modal','merch')">👕 Merchandise</button>
+    <button class="cat-pill active" onclick="openModal('sell-modal')">💰 Sell Items</button>
+  </div>
+  <button class="sell-stuff-btn" onclick="openModal('sell-modal')">SELL STUFF</button>
+</div>
+
+<!-- ══ CATEGORY GRID ══ -->
+<div class="cat-grid">
+  <div class="cat-card" style="background:linear-gradient(135deg,#1a4a8a,#2a6acc,#6cc)" onclick="openModal('buy-modal','cd')">
+    <div class="cat-card-bg">💿</div>
+    <div class="cat-card-label"><div class="dot"></div><span>CDs</span></div>
+  </div>
+  <div class="cat-card" style="background:linear-gradient(135deg,#6cc,#8af,#2a6acc)" onclick="openModal('buy-modal','digital')">
+    <div class="cat-card-bg">⚡</div>
+    <div class="cat-card-label"><div class="dot" style="background:#38bdf8"></div><span>Digital</span></div>
+  </div>
+  <div class="cat-card" style="background:linear-gradient(135deg,#4a1a8a,#7c3aed,#a6c)" onclick="openModal('buy-modal','instruments')">
+    <div class="cat-card-bg">🎸</div>
+    <div class="cat-card-label"><div class="dot" style="background:#c084fc"></div><span>Instruments</span></div>
+  </div>
+  <div class="cat-card" style="background:linear-gradient(135deg,#8a4a1a,#cc7a2a,#fa8)" onclick="openModal('buy-modal','merch')">
+    <div class="cat-card-bg">👕</div>
+    <div class="cat-card-label"><div class="dot" style="background:#fb923c"></div><span>Merchandise</span></div>
+  </div>
+  <div class="cat-card" style="background:linear-gradient(135deg,#1a4a8a,#2a6acc,#6bf)" onclick="openModal('buy-modal','vinyl')">
+    <div class="cat-card-bg">🎵</div>
+    <div class="cat-card-label"><div class="dot" style="background:#60a5fa"></div><span>Vinyl</span></div>
+  </div>
+  <div class="cat-card" style="background:linear-gradient(135deg,#2a8a4a,#3aac6a,#6ca)" onclick="openModal('buy-modal','cassette')">
+    <div class="cat-card-bg">📼</div>
+    <div class="cat-card-label"><div class="dot" style="background:#34d399"></div><span>Cassettes</span></div>
+  </div>
+</div>
+
+<!-- ══ INFO BOXES ══ -->
+<div class="info-row">
+  <div class="info-box" onclick="openModal('young-artists-modal')">
+    <h3>🌟 Support Young Artists</h3>
+    <p>Discover and support emerging talent!</p>
+  </div>
+  <div class="info-box" onclick="openModal('buy-modal','all')">
+    <h3>🤝 Affiliate Products</h3>
+    <p>Check out the latest music gear from our partners!</p>
+  </div>
+  <div class="info-box" onclick="openModal('buy-modal','used')">
+    <h3>🎺 Used Musical Equipment</h3>
+    <p>Find pre-loved musical gear at great prices!</p>
+  </div>
+</div>
+
+<!-- ══ FEATURED LISTING (PURPLE) ══ -->
+<div class="listing-band">
+  <div style="flex:1;padding-left:20px">
+    <h2 style="font-family:'Press Start 2P',monospace;font-size:0.9rem;color:#ffd700;text-shadow:0 0 15px #ffd700;margin-bottom:8px">✨ FEATURED LISTING</h2>
+    <p style="color:rgba(255,255,255,0.7);font-size:0.9rem">Hand-picked deals updated daily</p>
+  </div>
+  <div class="listing-card">
+    <div class="lc-cat">Vintage Record</div>
+    <div class="lc-title">Vintage Record</div>
+    <div class="lc-price">$24.99</div>
+    <div class="lc-by">by Vinyl Enthusiast</div>
+    <button class="lc-buy" onclick="addToCart('Vintage Record','$24.99','🎵')">Add to Cart</button>
+  </div>
+  <div class="listing-card">
+    <div class="lc-cat">Digital Download</div>
+    <div class="lc-title">Time Warp Beats</div>
+    <div class="lc-price">$8.99</div>
+    <div class="lc-by">by TTMB</div>
+    <button class="lc-buy" onclick="addToCart('Time Warp Beats','$8.99','⚡')">Add to Cart</button>
+  </div>
+  <div class="listing-card">
+    <div class="lc-cat">Cassette</div>
+    <div class="lc-title">Future Sound Vol.1</div>
+    <div class="lc-price">$14.99</div>
+    <div class="lc-by">by Chrome Records</div>
+    <button class="lc-buy" onclick="addToCart('Future Sound Vol.1','$14.99','📼')">Add to Cart</button>
+  </div>
+</div>
+
+<!-- ══ ALBUM CAROUSEL ══ -->
+<div class="carousel-band">
+  <div class="carousel-track" id="album-carousel">
+    <div class="album-thumb" onclick="openModal('buy-modal','vinyl')">🎵</div>
+    <div class="album-thumb" onclick="openModal('buy-modal','cd')" style="background:linear-gradient(135deg,#1a0533,#3d1060)">💿</div>
+    <div class="album-thumb" onclick="openModal('buy-modal','digital')" style="background:linear-gradient(135deg,#0d1a3e,#1a3a6e)">🎧</div>
+    <div class="album-thumb" onclick="openModal('buy-modal','cassette')" style="background:linear-gradient(135deg,#0d2e1a,#1a5a33)">📼</div>
+    <div class="album-thumb" onclick="openModal('buy-modal','vinyl')" style="background:linear-gradient(135deg,#2e0d0d,#5a1a1a)">🎵</div>
+    <div class="album-thumb" onclick="openModal('buy-modal','cd')" style="background:linear-gradient(135deg,#1a2e0d,#3a5a1a)">💿</div>
+    <div class="album-thumb" onclick="openModal('buy-modal','instruments')" style="background:linear-gradient(135deg,#2e2e0d,#5a5a1a)">🎸</div>
+  </div>
+  <div class="carousel-dots">
+    <div class="cdot active" onclick="scrollCarousel(0)"></div>
+    <div class="cdot" onclick="scrollCarousel(1)"></div>
+    <div class="cdot" onclick="scrollCarousel(2)"></div>
+    <div class="cdot" onclick="scrollCarousel(3)"></div>
+    <div class="cdot" onclick="scrollCarousel(4)"></div>
+  </div>
+</div>
+
+<!-- ══ STORE ROOM HERO (the big image with overlay buttons) ══ -->
+<div class="store-room-hero" id="store-room">
+
+  <!-- VINTAGE -->
+  <button class="hero-btn hb-vintage" onclick="openModal('buy-modal','vinyl')">
+    🕰<br>VINTAGE
+  </button>
+
+  <!-- NEW RELEASES -->
+  <button class="hero-btn hb-new" onclick="openModal('buy-modal','all')">
+    🆕<br>NEW<br>RELEASES
+  </button>
+
+  <!-- VINTAGE VINYL -->
+  <button class="hero-btn hb-vinyl" onclick="openModal('buy-modal','vinyl')">
+    🎵<br>VINTAGE<br>VINYL
+  </button>
+
+  <!-- DIGITAL DOWNLOADS -->
+  <button class="hero-btn hb-digital" onclick="openModal('buy-modal','digital')">
+    ⬇<br>DIGITAL<br>DOWNLOADS
+  </button>
+
+  <!-- TTMB CENTER -->
+  <button class="hero-btn hb-ttmb" onclick="openModal('buy-modal','all')">
+    ⏱<br>TTMB<br>SHOP NOW
+  </button>
+
+  <!-- TIMEWARP DRIVE -->
+  <button class="hero-btn hb-timewarp" onclick="showToast('⏱ Opening TimeWarp Editor...');window.location.href=\'TTMB_Website.html\'">
+    ⚡ TIMEWARP<br>DRIVE EDITOR<br>▶ TRY NOW
+  </button>
+
+  <!-- BUY NOW -->
+  <button class="hero-btn hb-buynow" onclick="openModal('buy-modal','all')">
+    🛒 BUY NOW
+  </button>
+
+  <!-- SELL YOUR STUFF -->
+  <button class="hero-btn hb-sell-your" onclick="openModal('sell-modal')">
+    💰<br>SELL YOUR<br>STUFF
+  </button>
+
+  <!-- SELL STUFF -->
+  <button class="hero-btn hb-sellstuff" onclick="openModal('sell-modal')">
+    💸 SELL STUFF
+  </button>
+
+  <!-- ARROWS -->
+  <button class="hero-btn hb-arrow-l" onclick="scrollCarousel(-1)">◀</button>
+  <button class="hero-btn hb-arrow-r" onclick="scrollCarousel(1)">▶</button>
+
+</div>
+
+<!-- ══ FOOTER ══ -->
+<div class="store-footer">
+  <div class="sub-box">
+    <p>Subscribe for <strong>$10/year</strong> for exclusive content!</p>
+    <button class="sub-btn" onclick="subscribe()">Subscribe</button>
+    <p style="margin-top:12px">Support us with donations to keep our community thriving!</p>
+    <button class="donate-btn" onclick="donate()">Donate 💜</button>
+  </div>
+  <div class="footer-copy">© 2025 TTMB Music Box. All rights reserved.</div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     MODALS
+═══════════════════════════════════ -->
+
+<!-- BUY MODAL -->
+<div class="modal-overlay" id="buy-modal">
+  <div class="modal" style="max-width:780px">
+    <button class="modal-close" onclick="closeModal('buy-modal')">✕</button>
+    <h2 id="buy-modal-title">🛒 SHOP</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+      <button class="cat-pill active" onclick="filterBuy('all',this)">ALL</button>
+      <button class="cat-pill" onclick="filterBuy('vinyl',this)">🎵 Vinyl</button>
+      <button class="cat-pill" onclick="filterBuy('cd',this)">💿 CDs</button>
+      <button class="cat-pill" onclick="filterBuy('cassette',this)">📼 Cassettes</button>
+      <button class="cat-pill" onclick="filterBuy('digital',this)">⚡ Digital</button>
+      <button class="cat-pill" onclick="filterBuy('instruments',this)">🎸 Instruments</button>
+      <button class="cat-pill" onclick="filterBuy('merch',this)">👕 Merch</button>
+      <button class="cat-pill" onclick="filterBuy('used',this)">🔧 Used</button>
+      <button class="cat-pill" onclick="filterBuy('beats',this)">🎤 Beats</button>
+    </div>
+    <div class="prod-grid" id="prod-grid"></div>
+  </div>
+</div>
+
+<!-- SELL MODAL -->
+<div class="modal-overlay" id="sell-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('sell-modal')">✕</button>
+    <h2>💰 SELL YOUR STUFF</h2>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('sell','new-listing')">List Item</div>
+      <div class="tab" onclick="switchTab('sell','my-listings')">My Listings</div>
+      <div class="tab" onclick="switchTab('sell','sell-digital')">Sell Digital</div>
+    </div>
+    <div class="tab-content active sell-tab" id="sell-new-listing">
+      <form class="sell-form" onsubmit="submitListing(event)">
+        <div class="form-group"><label>ITEM TITLE</label><input type="text" placeholder="e.g. Fender Stratocaster 1974" required></div>
+        <div class="form-group"><label>CATEGORY</label>
+          <select required>
+            <option value="">Select category...</option>
+            <option>Vinyl</option><option>CD</option><option>Cassette</option>
+            <option>Digital Download</option><option>Guitar</option><option>Bass</option>
+            <option>Keyboard/Piano</option><option>Drums</option><option>Brass/Wind</option>
+            <option>Strings</option><option>Recording Gear</option><option>Merchandise</option>
+            <option>Beats / Production</option><option>Other</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group"><label>PRICE ($)</label><input type="number" min="0.01" step="0.01" placeholder="24.99" required></div>
+          <div class="form-group"><label>CONDITION</label>
+            <select><option>Mint</option><option>Excellent</option><option>Good</option><option>Fair</option><option>For Parts</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>DESCRIPTION</label><textarea rows="3" placeholder="Describe your item..."></textarea></div>
+        <div class="form-group"><label>YOUR EMAIL</label><input type="email" placeholder="seller@email.com" required></div>
+        <button type="submit" class="submit-btn">🚀 LIST ITEM FOR SALE</button>
+      </form>
+    </div>
+    <div class="tab-content sell-tab" id="sell-my-listings">
+      <div style="padding:20px;text-align:center;color:#94a3b8">
+        <div style="font-size:3rem;margin-bottom:10px">📦</div>
+        <p>No active listings yet.<br>Create your first listing to get started!</p>
+        <button class="submit-btn" style="margin-top:16px;width:auto;padding:10px 24px" onclick="switchTab('sell','new-listing')">+ Create Listing</button>
+      </div>
+    </div>
+    <div class="tab-content sell-tab" id="sell-sell-digital">
+      <form class="sell-form" onsubmit="submitDigital(event)">
+        <div class="form-group"><label>TRACK / BEAT TITLE</label><input type="text" placeholder="e.g. Deep Space Loop Vol.1" required></div>
+        <div class="form-group"><label>TYPE</label>
+          <select><option>Beat / Instrumental</option><option>Full Track</option><option>Stem Pack</option><option>Sample Pack</option><option>Preset Pack</option></select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group"><label>PRICE ($)</label><input type="number" min="0.99" step="0.01" placeholder="9.99" required></div>
+          <div class="form-group"><label>LICENSE</label>
+            <select><option>Non-Exclusive</option><option>Exclusive</option><option>Free Download</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>UPLOAD FILE (MP3/WAV)</label>
+          <input type="file" accept="audio/*" style="padding:8px;cursor:pointer">
+        </div>
+        <div class="form-group"><label>YOUR EMAIL</label><input type="email" placeholder="producer@email.com" required></div>
+        <button type="submit" class="submit-btn">⚡ PUBLISH DIGITAL PRODUCT</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('login-modal')">✕</button>
+    <h2>👤 ACCOUNT</h2>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login','login-tab')">Login</div>
+      <div class="tab" onclick="switchTab('login','signup-tab')">Sign Up</div>
+    </div>
+    <div class="tab-content active login-tab" id="login-login-tab">
+      <form class="login-form" onsubmit="doLogin(event)">
+        <div class="form-group"><label>EMAIL</label><input type="email" placeholder="you@email.com" required></div>
+        <div class="form-group"><label>PASSWORD</label><input type="password" placeholder="••••••••" required></div>
+        <button type="submit" class="submit-btn">🔐 SIGN IN</button>
+        <p style="text-align:center;margin-top:12px;font-size:0.8rem;color:#94a3b8">
+          <a href="#" style="color:#a855f7">Forgot password?</a>
+        </p>
+      </form>
+    </div>
+    <div class="tab-content login-tab" id="login-signup-tab">
+      <form class="login-form" onsubmit="doSignup(event)">
+        <div class="form-group"><label>USERNAME</label><input type="text" placeholder="TimeTraveller88" required></div>
+        <div class="form-group"><label>EMAIL</label><input type="email" placeholder="you@email.com" required></div>
+        <div class="form-group"><label>PASSWORD</label><input type="password" placeholder="••••••••" required></div>
+        <div class="form-group"><label>ROLE</label>
+          <select style="width:100%;padding:10px;background:rgba(255,255,255,0.07);border:1px solid rgba(124,58,237,0.5);border-radius:7px;color:#fff">
+            <option>Music Fan / Buyer</option>
+            <option>Artist / Seller</option>
+            <option>Producer / Beat Maker</option>
+            <option>Gear Dealer</option>
+          </select>
+        </div>
+        <button type="submit" class="submit-btn">🚀 CREATE ACCOUNT</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-overlay" id="upload-modal">
+  <div class="modal" style="max-width:500px">
+    <button class="modal-close" onclick="closeModal('upload-modal')">✕</button>
+    <h2>🎵 UPLOAD YOUR MUSIC</h2>
+    <form class="sell-form" onsubmit="uploadMusic(event)">
+      <div class="form-group"><label>TRACK TITLE</label><input type="text" placeholder="My Amazing Track" required></div>
+      <div class="form-group"><label>GENRE</label>
+        <select>
+          <option>Electronic</option><option>Hip Hop</option><option>Rock</option>
+          <option>Jazz</option><option>Classical</option><option>Country</option>
+          <option>R&B / Soul</option><option>Pop</option><option>Experimental</option>
+          <option>World Music</option><option>Time Warp (TTMB Original)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>AUDIO FILE (MP3/WAV/FLAC)</label>
+        <input type="file" accept="audio/*" style="padding:8px;cursor:pointer">
+      </div>
+      <div class="form-group"><label>ALBUM ART (JPG/PNG)</label>
+        <input type="file" accept="image/*" style="padding:8px;cursor:pointer">
+      </div>
+      <div class="form-group"><label>AVAILABILITY</label>
+        <select>
+          <option>Free Stream Only</option>
+          <option>Free Download</option>
+          <option>Paid Download</option>
+          <option>Exclusive License</option>
+        </select>
+      </div>
+      <div class="form-group"><label>PRICE (if paid)</label><input type="number" min="0" step="0.01" placeholder="0.00"></div>
+      <button type="submit" class="submit-btn">📤 UPLOAD TO TTMB</button>
+    </form>
+  </div>
+</div>
+
+<!-- YOUNG ARTISTS MODAL -->
+<div class="modal-overlay" id="young-artists-modal">
+  <div class="modal" style="max-width:700px">
+    <button class="modal-close" onclick="closeModal('young-artists-modal')">✕</button>
+    <h2>🌟 YOUNG ARTISTS</h2>
+    <p style="color:#94a3b8;margin-bottom:20px;font-size:0.9rem">Discover and support the next generation of musicians</p>
+    <div class="artist-grid">
+      <div class="artist-card"><div class="artist-avatar">🎤</div><div class="artist-name">Nova Beats</div><div class="artist-genre">Electronic / Future Bass</div><button class="artist-follow" onclick="followArtist('Nova Beats')">Follow</button></div>
+      <div class="artist-card"><div class="artist-avatar">🎸</div><div class="artist-name">Zara Flux</div><div class="artist-genre">Indie Rock</div><button class="artist-follow" onclick="followArtist('Zara Flux')">Follow</button></div>
+      <div class="artist-card"><div class="artist-avatar">🥁</div><div class="artist-name">Tempo Kid</div><div class="artist-genre">Hip Hop / Trap</div><button class="artist-follow" onclick="followArtist('Tempo Kid')">Follow</button></div>
+      <div class="artist-card"><div class="artist-avatar">🎹</div><div class="artist-name">Luna Keys</div><div class="artist-genre">Lo-Fi / Jazz</div><button class="artist-follow" onclick="followArtist('Luna Keys')">Follow</button></div>
+      <div class="artist-card"><div class="artist-avatar">🎻</div><div class="artist-name">Rex Strings</div><div class="artist-genre">Classical Fusion</div><button class="artist-follow" onclick="followArtist('Rex Strings')">Follow</button></div>
+      <div class="artist-card"><div class="artist-avatar">🎺</div><div class="artist-name">Brass Echo</div><div class="artist-genre">Jazz / Soul</div><button class="artist-follow" onclick="followArtist('Brass Echo')">Follow</button></div>
+    </div>
+    <div style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(124,58,237,0.3)">
+      <button class="submit-btn" onclick="openModal('upload-modal');closeModal('young-artists-modal')">🎵 Submit Your Music as a Young Artist</button>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH RESULTS MODAL -->
+<div class="modal-overlay" id="search-modal">
+  <div class="modal" style="max-width:700px">
+    <button class="modal-close" onclick="closeModal('search-modal')">✕</button>
+    <h2>🔍 SEARCH RESULTS</h2>
+    <p id="search-query-display" style="color:#94a3b8;margin-bottom:16px;font-size:0.9rem"></p>
+    <div class="prod-grid" id="search-results-grid"></div>
+  </div>
+</div>
+
+<!-- POSTER / MERCH MODAL (part of buy flow) -->
+
+<script>
+// ════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════
+const allProducts = [
+  // Vinyl
+  {id:1,title:"Dark Side of the Moon",artist:"Pink Floyd",price:34.99,cat:"vinyl",icon:"🎵",badge:"HOT"},
+  {id:2,title:"Rumours",artist:"Fleetwood Mac",price:39.99,cat:"vinyl",icon:"🎵",badge:"CLASSIC"},
+  {id:3,title:"Kind of Blue",artist:"Miles Davis",price:29.99,cat:"vinyl",icon:"🎵"},
+  {id:4,title:"Led Zeppelin IV",artist:"Led Zeppelin",price:32.99,cat:"vinyl",icon:"🎵",badge:"VINTAGE"},
+  {id:5,title:"Purple Rain",artist:"Prince",price:34.99,cat:"vinyl",icon:"🎵"},
+  // CDs
+  {id:6,title:"Random Access Memories",artist:"Daft Punk",price:19.99,cat:"cd",icon:"💿",badge:"NEW"},
+  {id:7,title:"Abbey Road",artist:"The Beatles",price:18.99,cat:"cd",icon:"💿",badge:"CLASSIC"},
+  {id:8,title:"Thriller",artist:"Michael Jackson",price:16.99,cat:"cd",icon:"💿"},
+  {id:9,title:"OK Computer",artist:"Radiohead",price:17.99,cat:"cd",icon:"💿"},
+  // Cassettes
+  {id:10,title:"Synthwave Essentials",artist:"Various Artists",price:12.99,cat:"cassette",icon:"📼"},
+  {id:11,title:"Future Sound Vol.1",artist:"Chrome Records",price:14.99,cat:"cassette",icon:"📼",badge:"NEW"},
+  {id:12,title:"Lo-Fi Chronicles",artist:"TTMB",price:11.99,cat:"cassette",icon:"📼"},
+  // Digital
+  {id:13,title:"Time Warp Stems Pack",artist:"TTMB",price:9.99,cat:"digital",icon:"⚡",badge:"SALE"},
+  {id:14,title:"Lo-Fi Beats Bundle",artist:"Various",price:14.99,cat:"digital",icon:"🎧"},
+  {id:15,title:"Deep Space Loops",artist:"TTMB",price:7.99,cat:"digital",icon:"⚡"},
+  {id:16,title:"Future Bass Presets",artist:"SynthWave Lab",price:19.99,cat:"digital",icon:"🎛"},
+  // Instruments
+  {id:17,title:"Fender Strat '72",artist:"Vintage Guitar",price:2400,cat:"instruments",icon:"🎸",badge:"VINTAGE"},
+  {id:18,title:"Gibson Les Paul '18",artist:"Used",price:1799,cat:"instruments",icon:"🎸"},
+  {id:19,title:"Rhodes Mark I Stage 73",artist:"Vintage Keys",price:1800,cat:"instruments",icon:"🎹",badge:"VINTAGE"},
+  {id:20,title:"Ludwig Classic Maple 5pc",artist:"Used Drums",price:1100,cat:"instruments",icon:"🥁"},
+  {id:21,title:"Bach Stradivarius Trumpet",artist:"Used Brass",price:1200,cat:"instruments",icon:"🎺"},
+  // Merch
+  {id:22,title:"TTMB T-Shirt",artist:"Print on Demand",price:24.99,cat:"merch",icon:"👕"},
+  {id:23,title:"Time Warp Hoodie",artist:"Print on Demand",price:44.99,cat:"merch",icon:"🧥"},
+  {id:24,title:"TTMB Poster 18x24",artist:"Print on Demand",price:19.99,cat:"merch",icon:"🎨",badge:"NEW"},
+  {id:25,title:"TTMB Coffee Mug",artist:"Print on Demand",price:14.99,cat:"merch",icon:"☕"},
+  {id:26,title:"Phone Case",artist:"Print on Demand",price:19.99,cat:"merch",icon:"📱"},
+  // Used
+  {id:27,title:"Vintage Vinyl — Stax Soul",artist:"Vinyl Enthusiast",price:24.99,cat:"used",icon:"🎵"},
+  {id:28,title:"Casio CZ-101 Synth",artist:"Retro Gear",price:350,cat:"used",icon:"🎹"},
+  {id:29,title:"Fuzz Pedal Bundle",artist:"Pedal Collector",price:180,cat:"used",icon:"⚡"},
+  // Beats
+  {id:30,title:"Dark Trap Bundle",artist:"BeatMaker X",price:19.99,cat:"beats",icon:"🎤"},
+  {id:31,title:"Chill Lofi Pack",artist:"LoungeBeats",price:12.99,cat:"beats",icon:"🎧"},
+  {id:32,title:"Boom Bap Classics",artist:"RetroBeats",price:15.99,cat:"beats",icon:"🥁"},
+];
+
+// ════════════════════════════════════════
+// CART
+// ════════════════════════════════════════
+let cart = [];
+
+function addToCart(title, priceStr, icon){
+  const price = parseFloat(priceStr.replace('$',''));
+  cart.push({title, price, icon, id: Date.now()});
+  updateCartUI();
+  showToast('🛒 Added: '+title);
+}
+function addProductToCart(prod){
+  cart.push({title:prod.title, price:prod.price, icon:prod.icon, id:Date.now()});
+  updateCartUI();
+  showToast('🛒 Added: '+prod.title);
+}
+function removeFromCart(id){
+  cart = cart.filter(i=>i.id!==id);
+  updateCartUI();
+}
+function updateCartUI(){
+  document.getElementById('cart-count').textContent = cart.length;
+  const list = document.getElementById('cart-items-list');
+  const footer = document.getElementById('cart-footer');
+  if(cart.length===0){
+    list.innerHTML='<div class="cart-empty">Your cart is empty.<br>Start shopping!</div>';
+    footer.style.display='none'; return;
+  }
+  footer.style.display='block';
+  list.innerHTML = cart.map(item=>`
+    <div class="cart-item">
+      <div class="cart-item-icon">${item.icon}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-title">${item.title}</div>
+        <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+      </div>
+      <button class="remove-item" onclick="removeFromCart(${item.id})">✕</button>
+    </div>`).join('');
+  const total = cart.reduce((s,i)=>s+i.price,0);
+  document.getElementById('cart-total-display').textContent = 'Total: $'+total.toFixed(2);
+}
+function openCart(){ document.getElementById('cart-sidebar').classList.add('open'); }
+function closeCart(){ document.getElementById('cart-sidebar').classList.remove('open'); }
+function checkout(){ showToast('💳 Opening secure checkout...'); closeCart(); }
+
+// ════════════════════════════════════════
+// PRODUCT DISPLAY
+// ════════════════════════════════════════
+function renderProducts(filter){
+  const prods = filter==='all' ? allProducts : allProducts.filter(p=>p.cat===filter);
+  const grid = document.getElementById('prod-grid');
+  grid.innerHTML = prods.map(p=>`
+    <div class="prod-card">
+      <div class="prod-img">${p.icon}${p.badge?`<span style="position:absolute;top:8px;right:8px;background:#7c3aed;font-size:0.55rem;padding:3px 6px;border-radius:10px;font-family:Orbitron,monospace">${p.badge}</span>`:''}</div>
+      <div class="prod-body">
+        <div class="prod-title">${p.title}</div>
+        <div class="prod-artist">${p.artist}</div>
+        <div class="prod-price">$${p.price.toFixed(2)}</div>
+        <div class="prod-btns">
+          <button class="prod-btn btn-buy" onclick="addProductToCart(${JSON.stringify(p).replace(/"/g,"'")})">Buy</button>
+          <button class="prod-btn btn-cart" onclick="addProductToCart(${JSON.stringify(p).replace(/"/g,"'")})">🛒</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterBuy(cat, btn){
+  renderProducts(cat);
+  document.querySelectorAll('#buy-modal .cat-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const titles = {all:'🛒 ALL PRODUCTS',vinyl:'🎵 VINYL RECORDS',cd:'💿 CDs',cassette:'📼 CASSETTES',digital:'⚡ DIGITAL DOWNLOADS',instruments:'🎸 INSTRUMENTS',merch:'👕 MERCHANDISE',used:'🔧 USED GEAR',beats:'🎤 BEATS & PRODUCTION'};
+  document.getElementById('buy-modal-title').textContent = titles[cat]||'🛒 SHOP';
+}
+
+// ════════════════════════════════════════
+// MODALS
+// ════════════════════════════════════════
+function openModal(id, cat){
+  document.getElementById(id).classList.add('open');
+  if(id==='buy-modal'){
+    const c = cat||'all';
+    renderProducts(c);
+    const btn = document.querySelector(`#buy-modal .cat-pill[onclick*="'${c}'"]`);
+    document.querySelectorAll('#buy-modal .cat-pill').forEach(b=>b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    const titles = {all:'🛒 ALL PRODUCTS',vinyl:'🎵 VINYL RECORDS',cd:'💿 CDs',cassette:'📼 CASSETTES',digital:'⚡ DIGITAL DOWNLOADS',instruments:'🎸 INSTRUMENTS',merch:'👕 MERCHANDISE',used:'🔧 USED GEAR',beats:'🎤 BEATS & PRODUCTION'};
+    document.getElementById('buy-modal-title').textContent = titles[c]||'🛒 SHOP';
+  }
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+
+// ════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════
+function switchTab(group, id){
+  document.querySelectorAll(`.${group}-tab`).forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll(`[id^="${group}-"] .tab`).forEach(t=>t.classList.remove('active'));
+  document.getElementById(`${group}-${id}`).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════
+function showToast(msg,dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+// ════════════════════════════════════════
+// FORMS
+// ════════════════════════════════════════
+function doLogin(e){ e.preventDefault(); showToast('🔐 Logged in!'); closeModal('login-modal'); }
+function doSignup(e){ e.preventDefault(); showToast('🚀 Account created! Welcome to TTMB!'); closeModal('login-modal'); }
+function submitListing(e){ e.preventDefault(); showToast('✅ Item listed! We\'ll notify you of offers.'); closeModal('sell-modal'); }
+function submitDigital(e){ e.preventDefault(); showToast('⚡ Digital product published!'); closeModal('sell-modal'); }
+function uploadMusic(e){ e.preventDefault(); showToast('📤 Music uploaded! Under review.'); closeModal('upload-modal'); }
+function followArtist(n){ showToast('🌟 Following '+n+'!'); event.target.textContent='✓ Following'; event.target.style.background='#4ade80'; event.target.style.color='#000'; }
+function subscribe(){ showToast('💜 Subscribed for $10/year! Check your email.'); }
+function donate(){ showToast('💜 Thank you for your donation!'); }
+
+// ════════════════════════════════════════
+// SEARCH
+// ════════════════════════════════════════
+function doSearch(){
+  const q = (document.getElementById('main-search').value || document.getElementById('sec-search').value).toLowerCase().trim();
+  if(!q){ showToast('⚠ Enter something to search'); return; }
+  const results = allProducts.filter(p=>p.title.toLowerCase().includes(q)||p.artist.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q));
+  document.getElementById('search-query-display').textContent = `Results for "${q}" — ${results.length} found`;
+  const grid = document.getElementById('search-results-grid');
+  grid.innerHTML = results.length ? results.map(p=>`
+    <div class="prod-card">
+      <div class="prod-img">${p.icon}</div>
+      <div class="prod-body">
+        <div class="prod-title">${p.title}</div>
+        <div class="prod-artist">${p.artist}</div>
+        <div class="prod-price">$${p.price.toFixed(2)}</div>
+        <div class="prod-btns">
+          <button class="prod-btn btn-buy" onclick="addProductToCart(${JSON.stringify(p).replace(/"/g,"'")})">Buy</button>
+          <button class="prod-btn btn-cart" onclick="addProductToCart(${JSON.stringify(p).replace(/"/g,"'")})">🛒</button>
+        </div>
+      </div>
+    </div>`).join('') : '<div style="color:#94a3b8;text-align:center;padding:30px;grid-column:1/-1">No results found. Try another search term.</div>';
+  openModal('search-modal');
+}
+
+// ════════════════════════════════════════
+// LOCAL MUSIC
+// ════════════════════════════════════════
+function findLocalMusic(){
+  const zip = document.getElementById('zip-input').value.trim();
+  if(zip.length!==5||isNaN(zip)){ showToast('⚠ Enter a valid 5-digit ZIP code'); return; }
+  const res = document.getElementById('zip-results');
+  res.style.display='block';
+  res.innerHTML=`<div style="color:#4ade80;font-family:Orbitron,monospace;font-size:0.65rem">📍 Local Events near ${zip}:<br><br>
+    🎵 Open Mic Night — Friday 8PM<br>
+    🎸 Vinyl Swap Meet — Saturday 10AM<br>
+    🎹 Live Jazz — Sunday 7PM</div>`;
+  showToast('📍 Found local events near '+zip+'!');
+}
+
+// ════════════════════════════════════════
+// CAROUSEL
+// ════════════════════════════════════════
+function scrollCarousel(idx){
+  const track = document.getElementById('album-carousel');
+  if(typeof idx === 'number' && idx >= 0){
+    track.scrollLeft = idx * 220;
+    document.querySelectorAll('.cdot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  } else {
+    track.scrollLeft += idx * 110;
+  }
+}
+</script>
+</body>
+</html>

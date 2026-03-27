@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EZ Auto | Premium Auto Care</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --secondary: #E74C3C;
+            --accent: #3498DB;
+            --success: #2ECC71;
+            --warning: #F1C40F;
+            --light: #ECF0F1;
+            --dark: #2C3E50;
+            --gray: #95A5A6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: var(--dark);
+            background: #f8fafc;
+        }
+
+        .navbar {
+            background: var(--primary);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--warning);
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                        url('/api/placeholder/1400/600');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .feature-section {
+            background: white;
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary);
+            font-size: 2.5em;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+
+        .stat-card h3 {
+            color: var(--secondary);
+            font-size: 2.5em;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 2rem;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        .chart-container {
+            height: 300px;
+            margin: 2rem 0;
+        }
+
+        .testimonial {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            font-style: italic;
+        }
+
+        .investment-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .investment-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .investment-card h3 {
+            color: var(--secondary);
+            font-size: 2em;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">EZ Auto</a>
+            <div class="nav-links">
+                <a href="#services">Services</a>
+                <a href="#innovations">Innovations</a>
+                <a href="#marketplace">Marketplace</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Welcome to the Future of Auto Care</h1>
+        <p style="font-size: 1.2em; margin-bottom: 30px;">Innovative Solutions for Modern Vehicles</p>
+        <button class="btn btn-primary" onclick="window.open('andyautogreatness.html', '_blank')">Discover the Opportunity</button>
+    </div>
+
+    <section class="feature-section" id="services">
+        <div class="container">
+            <h2 class="section-title">Our Premium Services</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Digital Vehicle Health</h3>
+                    <p>24/7 monitoring and diagnostics</p>
+                    <ul style="margin: 1rem 0;">
+                        <li>Real-time alerts</li>
+                        <li>Predictive maintenance</li>
+                        <li>Custom health reports</li>
+                    </ul>
+                    <button class="btn btn-primary">Learn More</button>
+                </div>
+                <div class="card">
+                    <h3>Virtual Consultations</h3>
+                    <p>Expert advice at your fingertips</p>
+                    <ul style="margin: 1rem 0;">
+                        <li>Video diagnostics</li>
+                        <li>Remote inspections</li>
+                        <li>Expert guidance</li>
+                    </ul>
+                    <button class="btn btn-primary">Book Now</button>
+                </div>
+                <div class="card">
+                    <h3>Parts Marketplace</h3>
+                    <p>Quality parts at wholesale prices</p>
+                    <ul style="margin: 1rem 0;">
+                        <li>Verified suppliers</li>
+                        <li>Bulk discounts</li>
+                        <li>Next-day delivery</li>
+                    </ul>
+                    <button class="btn btn-primary">Shop Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="feature-section" style="background: var(--light);">
+        <div class="container">
+            <h2 class="section-title">Business Performance</h2>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <h3>95%</h3>
+                    <p>Customer Satisfaction</p>
+</div>
+<div class="stat-card">
+<h3>$10M+</h3>
+<p>Revenue Generated</p>
+</div>
+<div class="stat-card">
+<h3>50+</h3>
+<p>Global Partnerships</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="innovations" class="container">
+    <h2 class="section-title">Innovations</h2>
+    <div class="investment-stats">
+        <div class="investment-card">
+            <h3>AI-Driven Maintenance</h3>
+            <p>Leverage artificial intelligence for predictive maintenance.</p>
+            <button class="btn btn-secondary">Explore AI</button>
+        </div>
+        <div class="investment-card">
+            <h3>Remote Diagnostics</h3>
+            <p>Connect with experts for diagnostics anywhere, anytime.</p>
+            <button class="btn btn-secondary">Start Consultation</button>
+        </div>
+        <div class="investment-card">
+            <h3>Autonomous Vehicles</h3>
+            <p>Invest in the future of self-driving technology.</p>
+            <button class="btn btn-secondary">Learn More</button>
+        </div>
+    </div>
+</section>
+
+<section class="container" style="background-color: var(--light);">
+    <h2 class="section-title">Customer Testimonials</h2>
+    <div class="testimonial">
+        <p>"EZ Auto changed the way I approach car maintenance. The service is fast, reliable, and I love the convenience, but i knew there was something more i could provide to make us both multi-millionaires!!!"</p>
+        <footer>- Andrew Standal.</footer>
+    </div>
+    <div class="testimonial">
+        <p>"Their parts marketplace saved me so much time and money. I found everything I needed in one place."</p>
+        <footer>- Gail Z.</footer>
+    </div>
+</section>
+
+<footer class="navbar" id="contact" style="background: var(--dark); color: white; padding: 2rem 0;">
+    <div class="container">
+        <p>&copy; 2025 EZ Auto | Premium Auto Care</p>
+    </div>
+</footer>
+
+<div class="modal" id="stats-modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">×</span>
+        <h2>Growth Statistics</h2>
+        <div class="chart-container">
+            <canvas id="growthChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('growthChart').getContext('2d');
+    const growthChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+            datasets: [{
+                label: 'Revenue Growth',
+                data: [12000, 15000, 17000, 21000],
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        }
+    });
+
+    function closeModal() {
+        document.getElementById('stats-modal').style.display = 'none';
+    }
+</script>

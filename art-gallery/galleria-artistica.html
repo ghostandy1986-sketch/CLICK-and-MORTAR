@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artistica Galleria - Premier Art Marketplace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gold: #D4AF37;
+            --deep-gold: #B8860B;
+            --accent-bronze: #CD7F32;
+            --marble-white: #F8F8FF;
+            --charcoal: #2C2C2C;
+            --soft-black: #1A1A1A;
+            --pearl: #F5F5DC;
+            --shadow-gold: rgba(212, 175, 55, 0.3);
+            --shadow-dark: rgba(0, 0, 0, 0.15);
+            --gradient-vault: linear-gradient(180deg, #F8F8FF 0%, #F0F0F0 30%, #E8E8E8 70%, #DCDCDC 100%);
+            --gradient-marble: linear-gradient(135deg, #FFFFFF 0%, #F8F8FF 25%, #F0F0F0 50%, #E8E8E8 75%, #DCDCDC 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--charcoal);
+            background: var(--gradient-vault);
+            overflow-x: hidden;
+        }
+
+        /* Premium Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(248, 248, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-marble);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-gold);
+            border: 2px solid var(--primary-gold);
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--charcoal);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--charcoal);
+            font-weight: 500;
+            font-size: 1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px var(--shadow-gold);
+            width: 350px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--charcoal);
+            opacity: 0.6;
+        }
+
+        .premium-btn {
+            background: linear-gradient(135deg, var(--primary-gold), var(--deep-gold));
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--shadow-gold);
+        }
+
+        .premium-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow-gold);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('/api/placeholder/1920/1080');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 70%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 20px rgba(0,0,0,0.5);
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            letter-spacing: 0.05em;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, var(--primary-gold), var(--deep-gold));
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(212, 175, 55, 0.6);
+        }
+
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 1rem 2.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-3px);
+        }
+
+        /* Horizontal Gallery */
+        .horizontal-gallery {
+            padding: 4rem 0;
+            background: var(--marble-white);
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 0 2rem;
+        }
+
+        .gallery-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--charcoal);
+            margin-bottom: 1rem;
+        }
+
+        .gallery-subtitle {
+            font-size: 1.2rem;
+            color: var(--charcoal);
+            opacity: 0.7;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .gallery-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 2rem;
+            padding: 2rem;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .gallery-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .artwork-card {
+            min-width: 350px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .artwork-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .artwork-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .artwork-card:hover .artwork-image {
+            transform: scale(1.05);
+        }
+
+        .artwork-info {
+            padding: 1.5rem;
+        }
+
+        .artwork-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 0.5rem;
+        }
+
+        .artwork-artist {
+            color: var(--primary-gold);
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .artwork-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .artwork-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--charcoal);
+        }
+
+        .rating {
+            display: flex;
+            gap: 2px;
+        }
+
+        .star {
+            color: var(--primary-gold);
+            font-size: 0.9rem;
+        }
+
+        .artwork-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-bid {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-gold), var(--deep-gold));
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-bid:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow-gold);
+        }
+
+        .btn-favorite, .btn-share {
+            background: var(--marble-white);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--charcoal);
+            padding: 0.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-favorite:hover, .btn-share:hover {
+            background: var(--primary-gold);
+            color: white;
+        }
+
+        /* Filter & Search Section */
+        .filter-section {
+            background: white;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 0.7rem 1rem;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            background: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px var(--shadow-gold);
+        }
+
+        /* Main Gallery Grid */
+        .main-gallery {
+            padding: 4rem 2rem;
+            background: var(--gradient-vault);
+        }
+
+        .gallery-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 3rem;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 6rem 2rem;
+            background: var(--gradient-marble);
+        }
+
+        .services-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--charcoal);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.3rem;
+            color: var(--charcoal);
+            opacity: 0.7;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-gold), var(--deep-gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .service-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 1rem;
+        }
+
+        .service-description {
+            color: var(--charcoal);
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* Subscription Section */
+        .subscription {
+            background: linear-gradient(135deg, var(--charcoal), var(--soft-black));
+            color: white;
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subscription::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--primary-gold) 0%, transparent 70%);
+            opacity: 0.05;
+            animation: rotate 30s linear infinite;
+        }
+
+        .subscription-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .subscription-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-gold), var(--deep-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subscription-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-align: left;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        /* Music Player */
+        .music-player {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 60px;
+            padding: 1rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-gold), var(--deep-gold));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .volume-control {
+            width: 100px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: hidden;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--charcoal);
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: var(--marble-white);
+        }
+
+        .modal-body {
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+            max-height: 70vh;
+            overflow: auto;
+        }
+
+        .modal-image {
+            flex: 1;
+            max-width: 60%;
+        }
+
+        .modal-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .modal-details {
+            flex: 1;
+            max-width: 40%;
+        }
+
+        /* Upload Form */
+        .upload-section {
+            background: white;
+            padding: 4rem 2rem;
+        }
+
+        .upload-form {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--marble-white);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px var(--shadow-gold);
+        }
+
+        .file-upload {
+            border: 2px dashed rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 2rem;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--soft-black);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-gold);
+        }
+
+        .footer-section p, .footer-section li {
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-gold);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-image">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <div class="logo-text">Artistica</div>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#sculptures">Sculptures</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#subscription">Painters Club</a></li>
+                <li><a href="#upload">Showcase</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search artworks, artists...">
+                </div>
+                <button class="premium-btn">Join Club</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Where Art Transcends Time</h1>
+            <p class="hero-subtitle">Discover extraordinary masterpieces from visionary artists around the world</p>
+            <div class="cta-buttons">
+                <a href="#gallery" class="cta-primary">Explore Collection</a>
+                <a href="#upload" class="cta-secondary">Become an Artist</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Horizontal Gallery -->
+    <section class="horizontal-gallery" id="gallery">
+        <div class="gallery-header">
+            <h2 class="gallery-title">Featured Masterpieces</h2>
+            <p class="gallery-subtitle">Curated selection of our most coveted artworks</p>
+        </div>
+        
+        <div class="gallery-scroll" id="featuredGallery">
+            <!-- Artwork cards will be dynamically generated -->
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="filter-container">
+            <div class="filter-group">
+                <label>Category:</label>
+                <select class="filter-select" id="categoryFilter">
+                    <option value="all">All Categories</option>
+                    <option value="paintings">Paintings</option>
+                    <option value="sculptures">Sculptures</option>
+                    <option value="photography">Photography</option>
+                    <option value="digital">Digital Art</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>Price Range:</label>
+                <select class="filter-select" id="priceFilter">
+                    <option value="all">All Prices</option>
+                    <option value="under-1000">Under $1,000</option>
+                    <option value="1000-5000">$1,000 - $5,000</option>
+                    <option value="5000-10000">$5,000 - $10,000</option>
+                    <option value="over-10000">Over $10,000</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>Sort by:</label>
+                <select class="filter-select" id="sortFilter">
+                    <option value="featured">Featured</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="newest">Newest First</option>
+                    <option value="rating">Highest Rated</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>Artist:</label>
+                <select class="filter-select" id="artistFilter">
+                    <option value="all">All Artists</option>
+                    <option value="verified">Verified Artists</option>
+                    <option value="emerging">Emerging Artists</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Gallery Grid -->
+    <section class="main-gallery">
+        <div class="gallery-grid" id="mainGallery">
+            <!-- Main gallery items will be dynamically generated -->
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="services-container">
+            <div class="section-header">
+                <h2 class="section-title">Premium Services</h2>
+                <p class="section-subtitle">Comprehensive art services tailored to collectors, artists, and enthusiasts</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-print"></i>
+                    </div>
+                    <h3 class="service-title">Museum-Quality Prints</h3>
+                    <p class="service-description">Archival-quality reproductions using premium materials and advanced printing techniques.</p>
+                    <button class="premium-btn">Explore Prints</button>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-frame"></i>
+                    </div>
+                    <h3 class="service-title">Custom Framing</h3>
+                    <p class="service-description">Bespoke framing solutions with conservation-grade materials and expert craftsmanship.</p>
+                    <button class="premium-btn">Get Quote</button>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="service-title">Master Classes</h3>
+                    <p class="service-description">Learn from renowned artists through exclusive workshops and personalized instruction.</p>
+                    <button class="premium-btn">View Courses</button>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    <h3 class="service-title">Live Auctions</h3>
+                    <p class="service-description">Participate in curated auction events featuring exceptional and rare artworks.</p>
+                    <button class="premium-btn">Join Auction</button>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3 class="service-title">Art Rental & Staging</h3>
+                    <p class="service-description">Professional art rental services for homes, offices, and special events.</p>
+                    <button class="premium-btn">Rent Artwork</button>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3 class="service-title">Authentication</h3>
+                    <p class="service-description">Expert art authentication and appraisal services by certified professionals.</p>
+                    <button class="premium-btn">Learn More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subscription Section -->
+    <section class="subscription" id="subscription">
+        <div class="subscription-content">
+            <h2 class="subscription-title">The Painters Club</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Join our exclusive community of art enthusiasts and unlock premium benefits</p>
+            
+            <div class="subscription-features">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div>
+                        <h4>Live Masterclasses</h4>
+                        <p>Weekly sessions with master artists</p>
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div>
+                        <h4>Monthly Art Kit</h4>
+                        <p>Curated supplies delivered to your door</p>
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div>
+                        <h4>Early Access</h4>
+                        <p>First preview of new collections</p>
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div>
+                        <h4>Member Discounts</h4>
+                        <p>15% off all purchases and services</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 3rem;">
+                <div style="font-size: 3rem; font-weight: 700; margin-bottom: 1rem;">$10<span style="font-size: 1.5rem; opacity: 0.7;">/month</span></div>
+                <button class="premium-btn" style="font-size: 1.2rem; padding: 1.2rem 3rem;">Join The Club</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="upload-section" id="upload">
+        <div class="section-header">
+            <h2 class="section-title">Showcase Your Art</h2>
+            <p class="section-subtitle">Share your masterpiece with our global community of art lovers</p>
+        </div>
+        
+        <form class="upload-form" id="uploadForm">
+            <div class="form-group">
+                <label class="form-label">Artwork Title</label>
+                <input type="text" class="form-input" placeholder="Enter your artwork title" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-select" required>
+                    <option value="">Select Category</option>
+                    <option value="painting">Painting</option>
+                    <option value="sculpture">Sculpture</option>
+                    <option value="photography">Photography</option>
+                    <option value="digital">Digital Art</option>
+                    <option value="mixed-media">Mixed Media</option>
+                </select>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Price ($)</label>
+                    <input type="number" class="form-input" placeholder="0.00" min="0" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Dimensions</label>
+                    <input type="text" class="form-input" placeholder="e.g. 24x36 inches">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-textarea" rows="4" placeholder="Describe your artwork, inspiration, and technique..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Upload Images</label>
+                <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary-gold); margin-bottom: 1rem;"></i>
+                    <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Click to upload or drag and drop</p>
+                    <p style="opacity: 0.7;">PNG, JPG up to 10MB each</p>
+                    <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" style="margin-right: 0.5rem;">
+                        Available for auction
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" style="margin-right: 0.5rem;">
+                        Available for rental
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="premium-btn" style="width: 100%; font-size: 1.1rem; padding: 1.2rem;">Submit Artwork</button>
+        </form>
+    </section>
+
+    <!-- Music Player -->
+    <div class="music-player" id="musicPlayer">
+        <div class="music-controls">
+            <button class="play-btn" id="playBtn">
+                <i class="fas fa-play"></i>
+            </button>
+            <input type="range" class="volume-control" id="volumeControl" min="0" max="100" value="50">
+            <span style="font-size: 0.9rem; opacity: 0.7;">Classical Mix</span>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="artworkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Artwork Details</h2>
+                <button class="close-modal" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modalImage" src="" alt="Artwork">
+                </div>
+                <div class="modal-details">
+                    <div id="modalContent">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Artistica Galleria</h3>
+                <p>Premier destination for discovering, collecting, and showcasing exceptional art from around the world.</p>
+                <div style="margin-top: 1.5rem;">
+                    <a href="#" style="margin-right: 1rem; font-size: 1.5rem;"><i class="fab fa-instagram"></i></a>
+                    <a href="#" style="margin-right: 1rem; font-size: 1.5rem;"><i class="fab fa-facebook"></i></a>
+                    <a href="#" style="margin-right: 1rem; font-size: 1.5rem;"><i class="fab fa-twitter"></i></a>
+                    <a href="#" style="font-size: 1.5rem;"><i class="fab fa-pinterest"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#services">Art Sales</a></li>
+                    <li><a href="#services">Custom Framing</a></li>
+                    <li><a href="#services">Print Services</a></li>
+                    <li><a href="#services">Art Rental</a></li>
+                    <li><a href="#services">Authentication</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Artist Support</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Art District, New York, NY 10001</p>
+                <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                <p><i class="fas fa-envelope"></i> hello@artisticagalleria.com</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Artistica Galleria. All rights reserved. | Privacy Policy | Terms of Service</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample artwork data
+        const artworks = [
+            {
+                id: 1,
+                title: "Ethereal Dreams",
+                artist: "Isabella Martinez",
+                price: 3200,
+                image: "/api/placeholder/400/500",
+                category: "painting",
+                rating: 5,
+                views: 1250,
+                description: "A mesmerizing oil painting that captures the essence of dreams through flowing brushstrokes and vibrant colors.",
+                dimensions: "36x48 inches",
+                medium: "Oil on Canvas",
+                year: 2024,
+                available: true,
+                forAuction: true
+            },
+            {
+                id: 2,
+                title: "Urban Reflections",
+                artist: "Marcus Chen",
+                price: 2800,
+                image: "/api/placeholder/400/500",
+                category: "photography",
+                rating: 4.8,
+                views: 890,
+                description: "A stunning photograph capturing the interplay of light and shadow in modern architecture.",
+                dimensions: "24x32 inches",
+                medium: "Digital Photography",
+                year: 2024,
+                available: true,
+                forAuction: false
+            },
+            {
+                id: 3,
+                title: "Timeless Elegance",
+                artist: "Sophie Dubois",
+                price: 5500,
+                image: "/api/placeholder/400/500",
+                category: "sculpture",
+                rating: 5,
+                views: 2100,
+                description: "A bronze sculpture that embodies grace and movement, inspired by classical forms.",
+                dimensions: "18x12x8 inches",
+                medium: "Bronze",
+                year: 2023,
+                available: true,
+                forAuction: true
+            },
+            {
+                id: 4,
+                title: "Digital Harmony",
+                artist: "Alex Rivera",
+                price: 1800,
+                image: "/api/placeholder/400/500",
+                category: "digital",
+                rating: 4.6,
+                views: 750,
+                description: "A cutting-edge digital artwork exploring the intersection of technology and nature.",
+                dimensions: "Digital - Various sizes available",
+                medium: "Digital Art",
+                year: 2024,
+                available: true,
+                forAuction: false
+            },
+            {
+                id: 5,
+                title: "Ocean's Whisper",
+                artist: "Emma Thompson",
+                price: 4200,
+                image: "/api/placeholder/400/500",
+                category: "painting",
+                rating: 4.9,
+                views: 1600,
+                description: "An abstract representation of ocean waves using mixed media and textural elements.",
+                dimensions: "40x30 inches",
+                medium: "Mixed Media",
+                year: 2024,
+                available: true,
+                forAuction: true
+            },
+            {
+                id: 6,
+                title: "City Nights",
+                artist: "David Park",
+                price: 3600,
+                image: "/api/placeholder/400/500",
+                category: "painting",
+                rating: 4.7,
+                views: 1100,
+                description: "A vibrant cityscape capturing the energy and movement of urban nightlife.",
+                dimensions: "32x24 inches",
+                medium: "Acrylic on Canvas",
+                year: 2024,
+                available: true,
+                forAuction: false
+            }
+        ];
+
+        // DOM Elements
+        const featuredGallery = document.getElementById('featuredGallery');
+        const mainGallery = document.getElementById('mainGallery');
+        const modal = document.getElementById('artworkModal');
+        const closeModal = document.getElementById('closeModal');
+        const navbar = document.getElementById('navbar');
+        const playBtn = document.getElementById('playBtn');
+        const volumeControl = document.getElementById('volumeControl');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderFeaturedGallery();
+            renderMainGallery();
+            initializeEventListeners();
+            initializeIntersectionObserver();
+        });
+
+        // Render featured gallery
+        function renderFeaturedGallery() {
+            const featuredArtworks = artworks.slice(0, 4);
+            featuredGallery.innerHTML = featuredArtworks.map(artwork => createArtworkCard(artwork)).join('');
+        }
+
+        // Render main gallery
+        function renderMainGallery() {
+            mainGallery.innerHTML = artworks.map(artwork => createArtworkCard(artwork, true)).join('');
+        }
+
+        // Create artwork card HTML
+        function createArtworkCard(artwork, isMainGallery = false) {
+            const stars = Array(Math.floor(artwork.rating)).fill('★').join('') + 
+                         Array(5 - Math.floor(artwork.rating)).fill('☆').join('');
+            
+            return `
+                <div class="artwork-card ${isMainGallery ? 'fade-in' : ''}" data-id="${artwork.id}">
+                    <img src="${artwork.image}" alt="${artwork.title}" class="artwork-image">
+                    <div class="artwork-info">
+                        <h3 class="artwork-title">${artwork.title}</h3>
+                        <p class="artwork-artist">by ${artwork.artist}</p>
+                        <div class="artwork-meta">
+                            <span class="artwork-price">${artwork.price.toLocaleString()}</span>
+                            <div class="rating">
+                                <span class="star">${stars}</span>
+                                <span style="margin-left: 0.5rem; font-size: 0.9rem; opacity: 0.7;">(${artwork.views})</span>
+                            </div>
+                        </div>
+                        <div class="artwork-actions">
+                            <button class="btn-bid" onclick="handleBid(${artwork.id})">
+                                ${artwork.forAuction ? 'Place Bid' : 'Purchase'}
+                            </button>
+                            <button class="btn-favorite" onclick="handleFavorite(${artwork.id})">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                            <button class="btn-share" onclick="handleShare(${artwork.id})">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize event listeners
+        function initializeEventListeners() {
+            // Navbar scroll effect
+            window.addEventListener('scroll', handleScroll);
+            
+            // Artwork card clicks
+            document.addEventListener('click', function(e) {
+                const card = e.target.closest('.artwork-card');
+                if (card && !e.target.closest('button')) {
+                    const artworkId = parseInt(card.dataset.id);
+                    openModal(artworkId);
+                }
+            });
+
+            // Modal close
+            closeModal.addEventListener('click', () => modal.style.display = 'none');
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) modal.style.display = 'none';
+            });
+
+            // Music player
+            playBtn.addEventListener('click', toggleMusic);
+            volumeControl.addEventListener('input', adjustVolume);
+
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            searchInput.addEventListener('input', handleSearch);
+
+            // Filter functionality
+            document.querySelectorAll('.filter-select').forEach(select => {
+                select.addEventListener('change', handleFilter);
+            });
+
+            // Upload form
+            const uploadForm = document.getElementById('uploadForm');
+            uploadForm.addEventListener('submit', handleUpload);
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        }
+
+        // Handle scroll effects
+        function handleScroll() {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }
+
+        // Initialize Intersection Observer for animations
+        function initializeIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationDelay = Math.random() * 0.5 + 's';
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.service-card, .artwork-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        // Open artwork modal
+        function openModal(artworkId) {
+            const artwork = artworks.find(a => a.id === artworkId);
+            if (!artwork) return;
+
+            document.getElementById('modalTitle').textContent = artwork.title;
+            document.getElementById('modalImage').src = artwork.image;
+            
+            const modalContent = `
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary-gold); margin-bottom: 0.5rem;">by ${artwork.artist}</h3>
+                    <p style="font-size: 2rem; font-weight: 700; color: var(--charcoal); margin-bottom: 1rem;">${artwork.price.toLocaleString()}</p>
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="rating">
+                            <span class="star">${Array(Math.floor(artwork.rating)).fill('★').join('')}${Array(5 - Math.floor(artwork.rating)).fill('☆').join('')}</span>
+                        </div>
+                        <span style="opacity: 0.7;">${artwork.views} views</span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--charcoal);">Description</h4>
+                    <p style="line-height: 1.6; opacity: 0.8;">${artwork.description}</p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--charcoal);">Details</h4>
+                        <p><strong>Medium:</strong> ${artwork.medium}</p>
+                        <p><strong>Dimensions:</strong> ${artwork.dimensions}</p>
+                        <p><strong>Year:</strong> ${artwork.year}</p>
+                        <p><strong>Category:</strong> ${artwork.category}</p>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--charcoal);">Availability</h4>
+                        <p><strong>Status:</strong> ${artwork.available ? 'Available' : 'Sold'}</p>
+                        <p><strong>Auction:</strong> ${artwork.forAuction ? 'Yes' : 'No'}</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem;">
+                    <button class="premium-btn" style="flex: 1;" onclick="handleBid(${artwork.id})">
+                        ${artwork.forAuction ? 'Place Bid' : 'Purchase Now'}
+                    </button>
+                    <button class="btn-favorite" style="padding: 1rem;" onclick="handleFavorite(${artwork.id})">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn-share" style="padding: 1rem;" onclick="handleShare(${artwork.id})">
+                        <i class="fas fa-share"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            modal.style.display = 'block';
+        }
+
+        // Handle bid/purchase
+        function handleBid(artworkId) {
+            const artwork = artworks.find(a => a.id === artworkId);
+            if (artwork.forAuction) {
+                alert(`Bidding on "${artwork.title}" - Current bid: ${artwork.price.toLocaleString()}`);
+            } else {
+                alert(`Purchasing "${artwork.title}" for ${artwork.price.toLocaleString()}`);
+            }
+        }
+
+        // Handle favorite
+        function handleFavorite(artworkId) {
+            const artwork = artworks.find(a => a.id === artworkId);
+            alert(`Added "${artwork.title}" to favorites!`);
+        }
+
+        // Handle share
+        function handleShare(artworkId) {
+            const artwork = artworks.find(a => a.id === artworkId);
+            if (navigator.share) {
+                navigator.share({
+                    title: artwork.title,
+                    text: `Check out this amazing artwork by ${artwork.artist}`,
+                    url: window.location.href
+                });
+            } else {
+                alert(`Share "${artwork.title}" by ${artwork.artist}`);
+            }
+        }
+
+        // Toggle music
+        let isPlaying = false;
+        function toggleMusic() {
+            isPlaying = !isPlaying;
+            playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+            // Here you would integrate with actual audio player
+        }
+
+        // Adjust volume
+        function adjustVolume() {
+            const volume = volumeControl.value;
+            // Here you would adjust actual audio volume
+        }
+
+        // Handle search
+        function handleSearch(e) {
+            const query = e.target.value.toLowerCase();
+            const filteredArtworks = artworks.filter(artwork => 
+                artwork.title.toLowerCase().includes(query) ||
+                artwork.artist.toLowerCase().includes(query) ||
+                artwork.category.toLowerCase().includes(query)
+            );
+            
+            mainGallery.innerHTML = filteredArtworks.map(artwork => createArtworkCard(artwork, true)).join('');
+        }
+
+        // Handle filter
+        function handleFilter() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const priceFilter = document.getElementById('priceFilter').value;
+            const sortFilter = document.getElementById('sortFilter').value;
+            const artistFilter = document.getElementById('artistFilter').value;
+
+            let filteredArtworks = [...artworks];
+
+            // Apply category filter
+            if (categoryFilter !== 'all') {
+                filteredArtworks = filteredArtworks.filter(artwork => artwork.category === categoryFilter);
+            }
+
+            // Apply price filter
+            if (priceFilter !== 'all') {
+                switch (priceFilter) {
+                    case 'under-1000':
+                        filteredArtworks = filteredArtworks.filter(artwork => artwork.price < 1000);
+                        break;
+                    case '1000-5000':
+                        filteredArtworks = filteredArtworks.filter(artwork => artwork.price >= 1000 && artwork.price <= 5000);
+                        break;
+                    case '5000-10000':
+                        filteredArtworks = filteredArtworks.filter(artwork => artwork.price >= 5000 && artwork.price <= 10000);
+                        break;
+                    case 'over-10000':
+                        filteredArtworks = filteredArtworks.filter(artwork => artwork.price > 10000);
+                        break;
+                }
+            }
+
+            // Apply sorting
+            switch (sortFilter) {
+                case 'price-low':
+                    filteredArtworks.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-high':
+                    filteredArtworks.sort((a, b) => b.price - a.price);
+                    break;
+                case 'newest':
+                    filteredArtworks.sort((a, b) => b.year - a.year);
+                    break;
+                case 'rating':
+                    filteredArtworks.sort((a, b) => b.rating - a.rating);
+                    break;
+            }
+
+            mainGallery.innerHTML = filteredArtworks.map(artwork => createArtworkCard(artwork, true)).join('');
+        }
+
+        // Handle upload
+        function handleUpload(e) {
+            e.preventDefault();
+            alert('Thank you for submitting your artwork! Our team will review it within 24-48 hours.');
+            e.target.reset();
+        }
+
+        // Add some premium loading animations
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease-in-out';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

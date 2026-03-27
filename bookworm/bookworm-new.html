@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookworm - Online Bookstore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #ffffff;
+            font-family: 'Georgia', serif;
+        }
+        header {
+            background: #101010;
+            padding: 20px 0;
+        }
+        .header-menu a {
+            color: #ffffff;
+            padding: 10px 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        .header-menu a:hover {
+            background: #d1a849;
+            color: #000;
+            border-radius: 5px;
+        }
+        .hero {
+            background-image: url('bookwormlogo2.jpg'); /* Replace with library background image */
+            background-size: contain;
+            background-position: center;
+            text-align: center;
+            padding: 100px 20px;
+        }
+        .hero h1 {
+            font-size: 64px;
+            color: #f8e9d4;
+            font-weight: bold;
+        }
+        .hero p {
+            color: #e1d3b0;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        .btn-primary {
+            background-color: #d1a849;
+            color: #000;
+            padding: 10px 30px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .btn-primary:hover {
+            background-color: #c99e40;
+        }
+        .bookshelf {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+        .book {
+            width: 120px;
+            height: 200px;
+            background: #fff;
+            color: #000;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .book:hover {
+            transform: translateY(-10px);
+        }
+        .book:hover .book-info {
+            display: block;
+        }
+        .book-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 10px;
+            display: none;
+        }
+        footer {
+            background: #101010;
+            color: #ffffff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        footer a {
+            color: #d1a849;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="flex items-center justify-between px-8">
+        <h1 class="text-3xl font-bold">Bookworm</h1>
+        <nav class="header-menu flex space-x-4">
+            <a href="/login">Login/Sign-Up</a>
+            <a href="#browse">Browse Books</a>
+            <a href="#sell">Sell Books</a>
+            <a href="#librarian">Librarian</a>
+            <a href="#programs">Library Programs</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to Bookworm</h1>
+        <p>Your ultimate online library and bookstore</p>
+        <a href="#browse" class="btn-primary mt-6">Browse Now</a>
+    </section>
+
+    <!-- Browse Section -->
+    <section id="browse" class="py-12">
+        <h2 class="text-3xl font-bold text-center text-yellow-500">Browse Our Categories</h2>
+        <div class="bookshelf mt-8">
+            <div class="book" onclick="window.location.href='/category/fiction'">
+                <div class="book-info">Fiction</div>
+            </div>
+            <div class="book" onclick="window.location.href='/category/non-fiction'">
+                <div class="book-info">Non-Fiction</div>
+            </div>
+            <div class="book" onclick="window.location.href='/category/classics'">
+                <div class="book-info">Classics</div>
+            </div>
+            <div class="book" onclick="window.location.href='/category/science'">
+                <div class="book-info">Science</div>
+            </div>
+            <div class="book" onclick="window.location.href='/category/history'">
+                <div class="book-info">History</div>
+            </div>
+            <div class="book" onclick="window.location.href='/category/art'">
+                <div class="book-info">Art</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sell Section -->
+    <section id="sell" class="py-12 bg-gray-900 text-center text-white">
+        <h2 class="text-3xl font-bold">Sell Your Books</h2>
+        <p class="mt-4">Join our platform to sell your books to other readers.</p>
+        <a href="/sell" class="btn-primary mt-6">Start Selling</a>
+    </section>
+
+    <!-- Librarian Section -->
+    <section id="librarian" class="py-12 text-center">
+        <h2 class="text-3xl font-bold text-yellow-500">Ask a Librarian</h2>
+        <p class="mt-4">Need help finding a book or have questions? Contact our librarians for assistance.</p>
+        <a href="/librarian" class="btn-primary mt-6">Contact Librarian</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Bookworm. All Rights Reserved. | <a href="/privacy">Privacy Policy</a></p>
+    </footer>
+    <!-- Added Image at Bottom -->
+    <img src="bookworm.png" alt="bookworm" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+</body>
+</html>

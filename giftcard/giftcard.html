@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIFTcard Store</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        /* Background Template */
+        .background {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background-image: url('GIFTCARD EDIT 2 EXPANDED.png'); /* Use your provided image */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: -1;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #007BFF;
+        }
+
+        /* Enlarged Shelves */
+        .popup-shelf {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            transform: translateY(100%);
+            transition: transform 0.5s ease;
+        }
+
+        .popup-shelf.visible {
+            transform: translateY(0);
+        }
+
+        .shelf-content {
+            width: 90%;
+            height: 80%;
+            background: #fff;
+            border-radius: 10px;
+            overflow: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: red;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background: darkred;
+        }
+
+        /* Gift Card Exchange Section */
+        .exchange-section {
+            position: absolute;
+            bottom: 50px;
+            left: 50px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .exchange-section h2 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .exchange-section form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .exchange-section input, .exchange-section select, .exchange-section button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .exchange-section button {
+            background: #007BFF;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .exchange-section button:hover {
+            background: #0056b3;
+        }
+
+        /* Affiliate Links */
+        .affiliate-section {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .affiliate-section h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .affiliate-section a {
+            text-decoration: none;
+            background: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+
+        .affiliate-section a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Template -->
+    <div class="background"></div>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="#">Login/Signup</a>
+        <a href="#">About</a>
+        <a href="#">Gift Card Exchange</a>
+        <a href="#">Custom Cards</a>
+        <a href="#">Contact</a>
+    </div>
+
+    <!-- Enlarged Shelves -->
+    <div id="greetingShelf" class="popup-shelf">
+        <div class="shelf-content">
+            <button class="close-btn" onclick="toggleShelf('greetingShelf')">Close</button>
+            <h2>Greeting Card Shelf</h2>
+            <p>Scroll through and select the perfect greeting card.</p>
+            <!-- Add more content dynamically here -->
+        </div>
+    </div>
+
+    <div id="giftCardRack" class="popup-shelf">
+        <div class="shelf-content">
+            <button class="close-btn" onclick="toggleShelf('giftCardRack')">Close</button>
+            <h2>Gift Card Rack</h2>
+            <p>Browse through the gift card categories and make your selection.</p>
+            <!-- Add more content dynamically here -->
+        </div>
+    </div>
+
+    <!-- Gift Card Exchange Section -->
+    <div class="exchange-section">
+        <h2>Exchange Gift Cards</h2>
+        <form>
+            <input type="text" placeholder="Card Brand" required>
+            <input type="number" placeholder="Card Value ($)" required>
+            <select required>
+                <option value="cash">Exchange for Cash</option>
+                <option value="another-card">Exchange for Another Gift Card</option>
+            </select>
+            <button type="submit">Exchange Now</button>
+        </form>
+    </div>
+
+    <!-- Affiliate Links -->
+    <div class="affiliate-section">
+        <h3>Looking for Deals?</h3>
+        <a href="#">Shop Now with Our Partners</a>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function toggleShelf(shelfId) {
+            const shelf = document.getElementById(shelfId);
+            if (shelf) {
+                shelf.classList.toggle('visible');
+            }
+        }
+    </script>
+</body>
+</html>

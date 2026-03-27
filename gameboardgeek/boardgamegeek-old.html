@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gameboard Geek Pro - 1000 Unique Games</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  color: #fff;
+}
+
+.app-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  background: #fff;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  animation: float 3s ease-in-out infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+h1 {
+  font-size: 2.8em;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.tagline { font-size: 1.1em; opacity: 0.9; }
+
+.controls {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.control-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.control-row:last-child { margin-bottom: 0; }
+
+select, input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+select:hover, input:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.search-box { cursor: text; }
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.game-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.game-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+.game-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 215, 0, 0.95);
+  color: #333;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75em;
+  font-weight: 700;
+  z-index: 1;
+}
+
+.game-image {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4em;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.game-info { padding: 20px; color: #333; }
+
+.game-title {
+  font-size: 1.3em;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #667eea;
+}
+
+.game-meta {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.game-genre {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+}
+
+.game-description {
+  font-size: 0.95em;
+  color: #666;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background: #fff;
+  max-width: 1200px;
+  margin: 50px auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+  color: #333;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 30px;
+  color: #fff;
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 35px;
+  cursor: pointer;
+  color: #fff;
+  transition: transform 0.3s;
+}
+
+.close-modal:hover { transform: rotate(90deg); }
+
+.modal-body {
+  padding: 30px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.player-selector {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.player-btn {
+  padding: 10px 20px;
+  border: 2px solid #667eea;
+  border-radius: 10px;
+  background: white;
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.player-btn.active {
+  background: #667eea;
+  color: white;
+}
+
+.player-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.rules-section {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.rules-section h4 {
+  color: #667eea;
+  margin-bottom: 10px;
+}
+
+.rules-section ol, .rules-section ul {
+  margin-left: 20px;
+  line-height: 1.8;
+  color: #666;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.btn {
+  padding: 15px 25px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
+.btn-success { background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); color: #fff; }
+.btn-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #fff; }
+.btn-warning { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: #fff; }
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.gameboard-container {
+  background: #f5f5f5;
+  border-radius: 15px;
+  padding: 30px;
+  margin: 20px 0;
+}
+
+.gameboard {
+  background: white;
+  border: 3px solid #333;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.game-status {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 15px 0;
+  border-left: 4px solid #667eea;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.tab {
+  padding: 12px 24px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 1em;
+  font-weight: 600;
+  color: #666;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+}
+
+.tab.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.stat-item { text-align: center; min-width: 120px; }
+.stat-number { font-size: 2.5em; font-weight: 700; display: block; }
+.stat-label { opacity: 0.9; margin-top: 5px; }
+
+@media print {
+  body * { visibility: hidden; }
+  .gameboard-container, .gameboard-container * { visibility: visible; }
+  .gameboard-container { position: absolute; left: 0; top: 0; width: 100%; }
+  .btn, .tabs, .game-controls { display: none !important; }
+}
+
+@media (max-width: 768px) {
+  h1 { font-size: 2em; }
+  .game-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+}
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <div class="logo">🎲</div>
+    <h1>Gameboard Geek Pro</h1>
+    <p class="tagline">1000 Unique Board Games • Play Online • Print Boards • 3D Models</p>
+  </header>
+
+  <div class="controls">
+    <div class="control-row">
+      <select id="genreSelect">
+        <option value="all">All Genres</option>
+      </select>
+      <select id="playerFilter">
+        <option value="all">All Player Counts</option>
+        <option value="1">Solo (1 Player)</option>
+        <option value="2">2 Players</option>
+        <option value="3-4">3-4 Players</option>
+        <option value="5+">5+ Players</option>
+      </select>
+    </div>
+    <div class="control-row">
+      <input type="text" id="searchBox" class="search-box" placeholder="🔍 Search 1000 unique games...">
+    </div>
+  </div>
+
+  <div class="game-grid" id="gameGrid"></div>
+
+  <div class="stats">
+    <div class="stat-item">
+      <span class="stat-number" id="totalGames">1000</span>
+      <span class="stat-label">Unique Games</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">12</span>
+      <span class="stat-label">Genres</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number" id="playedGames">0</span>
+      <span class="stat-label">Games Played</span>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="gameModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close-modal" id="closeModal">&times;</span>
+      <h2 id="modalTitle"></h2>
+      <p id="modalGenre"></p>
+    </div>
+    <div class="modal-body">
+      <div class="tabs">
+        <button class="tab active" data-tab="play">🎮 Play</button>
+        <button class="tab" data-tab="rules">📖 Rules</button>
+        <button class="tab" data-tab="print">🖨️ Print</button>
+      </div>
+
+      <div id="playTab" class="tab-content active">
+        <h3>Select Number of Players</h3>
+        <div class="player-selector" id="playerSelector"></div>
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="startGameBtn">🎮 Start Game</button>
+        </div>
+        <div id="gameplayArea"></div>
+      </div>
+
+      <div id="rulesTab" class="tab-content">
+        <div class="rules-section" id="rulesContent"></div>
+      </div>
+
+      <div id="printTab" class="tab-content">
+        <h3>Print Options</h3>
+        <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0;">
+          <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #333;">
+            Board Size:
+            <select id="boardSize" style="width: 100%; margin-top: 5px;">
+              <option value="letter">Letter (8.5" × 11")</option>
+              <option value="tabloid">Tabloid (11" × 17")</option>
+              <option value="a3">A3 (297mm × 420mm)</option>
+            </select>
+          </label>
+        </div>
+        <div class="action-buttons">
+          <button class="btn btn-info" id="printBoardBtn">🖨️ Print Board</button>
+          <button class="btn btn-success" id="downloadPDFBtn">📄 Download PDF</button>
+        </div>
+        <div id="printPreview"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+// Generate 1000 unique board games
+const genres = ['Strategy', 'Family', 'Party', 'Abstract', 'Thematic', 'War', 'Economic', 'Cooperative', 'Deck-Building', 'Word', 'Trivia', 'Adventure'];
+
+const prefixes = ['Ancient', 'Mystic', 'Royal', 'Dark', 'Epic', 'Grand', 'Lost', 'Hidden', 'Forgotten', 'Sacred', 'Eternal', 'Rising', 'Fallen', 'Golden', 'Silver', 'Crystal', 'Shadow', 'Iron', 'Dragon', 'Phoenix'];
+const middles = ['Kingdom', 'Empire', 'Realm', 'Dynasty', 'Alliance', 'Legion', 'Order', 'Guild', 'Council', 'Assembly', 'Federation', 'Dominion', 'Territories', 'Lands', 'Isles', 'Seas', 'Mountains', 'Valleys'];
+const suffixes = ['Rising', 'Reborn', 'Awakening', 'Legacy', 'Chronicles', 'Saga', 'Quest', 'Journey', 'Expedition', 'Adventure', 'Challenge', 'Conquest', 'Revolution', 'Renaissance', 'Age', 'Era', 'Origins', 'Destiny'];
+
+const icons = ['🎲', '🏰', '⚔️', '🛡️', '👑', '🗺️', '🧙', '🐉', '⚡', '🌟', '🎯', '🏛️', '🚢', '⚓', '🏔️', '🌊', '🔥', '💎', '🎨', '🏺'];
+
+const allGames = [];
+
+// Generate 1000 unique games
+for (let i = 0; i < 1000; i++) {
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  const middle = middles[Math.floor(Math.random() * middles.length)];
+  const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+  const genre = genres[Math.floor(Math.random() * genres.length)];
+  const icon = icons[Math.floor(Math.random() * icons.length)];
+  
+  const minPlayers = [1, 1, 1, 2, 2, 2, 2, 3, 3, 4][Math.floor(Math.random() * 10)];
+  const maxPlayers = minPlayers + [0, 1, 2, 3, 4, 6][Math.floor(Math.random() * 6)];
+  
+  const game = {
+    id: i + 1,
+    name: `${prefix} ${middle}${i > 499 ? ': ' + suffix : ''}`,
+    genre: genre,
+    players: Array.from({length: maxPlayers - minPlayers + 1}, (_, j) => minPlayers + j),
+    time: [30, 45, 60, 90, 120][Math.floor(Math.random() * 5)],
+    desc: `A ${genre.toLowerCase()} game where players compete to achieve victory through strategic gameplay and tactical decisions.`,
+    icon: icon,
+    boardType: ['hex', 'grid', 'map', 'territory', 'pattern', 'tableau'][Math.floor(Math.random() * 6)]
+  };
+  
+  allGames.push(game);
+}
+
+let filteredGames = [...allGames];
+let currentGame = null;
+let playedGamesCount = 0;
+let selectedPlayers = 0;
+
+// Populate genre dropdown
+genres.forEach(g => {
+  const opt = document.createElement('option');
+  opt.value = g;
+  opt.textContent = g;
+  document.getElementById('genreSelect').appendChild(opt);
+});
+
+function renderGames() {
+  const grid = document.getElementById('gameGrid');
+  grid.innerHTML = '';
+  
+  filteredGames.slice(0, 100).forEach(game => {
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.innerHTML = `
+      <div class="game-badge">${game.players[0]}-${game.players[game.players.length-1]} 👥</div>
+      <div class="game-image">${game.icon}</div>
+      <div class="game-info">
+        <div class="game-title">${game.name}</div>
+        <div class="game-meta">
+          <span class="game-genre">${game.genre}</span>
+          <span style="color: #999;">⏱️ ${game.time}min</span>
+        </div>
+        <p class="game-description">${game.desc}</p>
+      </div>
+    `;
+    card.onclick = () => showGameDetails(game);
+    grid.appendChild(card);
+  });
+  
+  document.getElementById('totalGames').textContent = filteredGames.length;
+}
+
+function showGameDetails(game) {
+  currentGame = game;
+  selectedPlayers = game.players[0];
+  document.getElementById('modalTitle').textContent = game.name;
+  document.getElementById('modalGenre').textContent = `${game.genre} • ${game.players[0]}-${game.players[game.players.length-1]} Players • ${game.time}min`;
+  
+  // Setup player selector
+  const selector = document.getElementById('playerSelector');
+  selector.innerHTML = '';
+  game.players.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'player-btn' + (p === selectedPlayers ? ' active' : '');
+    btn.textContent = `${p} Player${p > 1 ? 's' : ''}`;
+    btn.onclick = () => {
+      selectedPlayers = p;
+      document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    };
+    selector.appendChild(btn);
+  });
+  
+  // Setup rules
+  setupRules(game);
+  
+  document.getElementById('gameModal').style.display = 'block';
+  switchTab('play');
+}
+
+function setupRules(game) {
+  const rules = document.getElementById('rulesContent');
+  rules.innerHTML = `
+    <h3 style="color: #667eea; margin-bottom: 15px;">How to Play ${game.name}</h3>
+    <h4>Objective</h4>
+    <p style="color: #666; line-height: 1.8; margin-bottom: 15px;">
+      Be the first player to achieve victory by accumulating the most points through strategic gameplay.
+    </p>
+    <h4>Setup</h4>
+    <ol>
+      <li>Place the game board in the center of the play area</li>
+      <li>Each player receives their starting resources and player pieces</li>
+      <li>Shuffle the game cards and place them face-down as a draw pile</li>
+      <li>Determine the starting player randomly</li>
+    </ol>
+    <h4>Gameplay</h4>
+    <ol>
+      <li>On your turn, choose one action to perform</li>
+      <li>Move your piece on the board OR draw cards OR collect resources</li>
+      <li>Resolve any special effects from your action</li>
+      <li>Check for victory conditions</li>
+      <li>Play passes to the next player clockwise</li>
+    </ol>
+    <h4>Winning</h4>
+    <p style="color: #666; line-height: 1.8; margin-top: 15px;">
+      The game ends when a player reaches ${[10, 15, 20, 25, 30][Math.floor(Math.random() * 5)]} victory points or completes the final objective. The player with the most points wins!
+    </p>
+  `;
+}
+
+function filterGames() {
+  const genre = document.getElementById('genreSelect').value;
+  const playerCount = document.getElementById('playerFilter').value;
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  
+  filteredGames = allGames.filter(game => {
+    const matchGenre = genre === 'all' || game.genre === genre;
+    let matchPlayers = true;
+    
+    if (playerCount !== 'all') {
+      if (playerCount === '5+') {
+        matchPlayers = game.players.some(p => p >= 5);
+      } else if (playerCount === '3-4') {
+        matchPlayers = game.players.some(p => p === 3 || p === 4);
+      } else {
+        matchPlayers = game.players.includes(parseInt(playerCount));
+      }
+    }
+    
+    const matchSearch = game.name.toLowerCase().includes(search) || game.genre.toLowerCase().includes(search);
+    return matchGenre && matchPlayers && matchSearch;
+  });
+  
+  renderGames();
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.remove('active');
+    if (tab.dataset.tab === tabName) tab.classList.add('active');
+  });
+  
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.remove('active');
+  });
+  
+  document.getElementById(`${tabName}Tab`).classList.add('active');
+}
+
+function startGame() {
+  const area = document.getElementById('gameplayArea');
+  area.innerHTML = '<div style="text-align: center; padding: 20px;"><p style="color: #666; font-size: 1.2em;">🎲 Generating interactive game board...</p></div>';
+  
+  setTimeout(() => {
+    area.innerHTML = createInteractiveBoard(currentGame);
+    playedGamesCount++;
+    document.getElementById('playedGames').textContent = playedGamesCount;
+  }, 1000);
+}
+
+function createInteractiveBoard(game) {
+  const boardTypes = {
+    hex: createHexBoard,
+    grid: createGridBoard,
+    map: createMapBoard,
+    territory: createTerritoryBoard,
+    pattern: createPatternBoard,
+    tableau: createTableauBoard
+  };
+  
+  const createFunc = boardTypes[game.boardType] || createGridBoard;
+  return createFunc(game, selectedPlayers);
+}
+
+function createHexBoard(game, players) {
+  return `
+    <div class="gameboard-container">
+      <h3 style="color: #333; margin-bottom: 20px;">🎮 ${game.name} - ${players} Players</h3>
+      <canvas id="gameCanvas" width="800" height="600" class="gameboard" style="display: block; max-width: 100%;"></canvas>
+      <div class="game-status">
+        <p><strong>Current Turn:</strong> Player 1</p>
+        <p><strong>Round:</strong> 1</p>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+        <button class="btn btn-primary" onclick="rollDice()">🎲 Roll Dice</button>
+        <button class="btn btn-success" onclick="nextTurn()">➡️ Next Turn</button>
+        <button class="btn btn-info" onclick="checkScore()">📊 Check Score</button>
+      </div>
+    </div>
+  `;
+}
+
+function createGridBoard(game, players) {
+  let grid = '<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 600px; margin: 20px auto;">';
+  for (let i = 0; i < 25; i++) {
+    grid += `<div style="aspect-ratio: 1; background: linear-gradient(135deg, #${Math.floor(Math.random()*16777215).toString(16)} 0%, #${Math.floor(Math.random()*16777215).toString(16)} 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5em; cursor: pointer; transition: transform 0.2s;" onclick="this.style.transform = this.style.transform ? '' : 'scale(0.9)'">${i+1}</div>`;
+  }
+  grid += '</div>';
+  
+  return `
+    <div class="gameboard-container">
+      <h3 style="color: #333; margin-bottom: 20px;">🎮 ${game.name} - ${players} Players</h3>
+      ${grid}
+      <div class="game-status">
+        <p><strong>Current Player:</strong> 1 of ${players}</p>
+        <p><strong>Moves Made:</strong> 0</p>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+        <button class="btn btn-primary" onclick="makeMove()">🎯 Make Move</button>
+        <button class="btn btn-success" onclick="nextTurn()">➡️ Next Turn</button>
+      </div>
+    </div>
+  `;
+}
+
+function createMapBoard(game, players) {
+  return `
+    <div class="gameboard-container">
+      <h3 style="color: #333; margin-bottom: 20px;">🗺️ ${game.name} - ${players} Players</h3>
+      <svg width="100%" height="500" viewBox="0 0 800 500" class="gameboard" style="background: #e0f2f1;">
+        ${generateMapSVG()}
+      </svg>
+      <div class="game-status">
+        <p><strong>Territories Controlled:</strong> ${Math.floor(Math.random() * 10) + 1}</p>
+        <p><strong>Resources:</strong> ${Math.floor(Math.random() * 50) + 10}</p>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+        <button class="btn btn-primary" onclick="claimTerritory()">🏴 Claim Territory</button>
+        <button class="btn btn-success" onclick="tradeResources()">💰 Trade</button>
+        <button class="btn btn-info" onclick="nextTurn()">➡️ End Turn</button>
+      </div>
+    </div>
+  `;
+}
+
+function createTerritoryBoard(game, players) {
+  return createMapBoard(game, players);
+}
+
+function createPatternBoard(game, players) {
+  return createGridBoard(game, players);
+}
+
+function createTableauBoard(game, players) {
+  let cards = '<div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin: 20px 0;">';
+  for (let i = 0; i < 8; i++) {
+    cards += `
+      <div style="width: 150px; height: 200px; background: linear-gradient(135deg, #${Math.floor(Math.random()*16777215).toString(16)} 0%, #${Math.floor(Math.random()*16777215).toString(16)} 100%); border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; cursor: pointer; transition: transform 0.2s;" onclick="this.style.transform = this.style.transform ? '' : 'translateY(-10px)'">
+        <div style="font-size: 3em; margin-bottom: 10px;">${icons[Math.floor(Math.random() * icons.length)]}</div>
+        <div style="font-weight: bold;">Card ${i+1}</div>
+        <div style="font-size: 0.8em; margin-top: 5px;">Value: ${Math.floor(Math.random() * 10) + 1}</div>
+      </div>
+    `;
+  }
+  cards += '</div>';
+  
+  return `
+    <div class="gameboard-container">
+      <h3 style="color: #333; margin-bottom: 20px;">🎴 ${game.name} - ${players} Players</h3>
+      ${cards}
+      <div class="game-status">
+        <p><strong>Cards in Hand:</strong> ${Math.floor(Math.random() * 7) + 3}</p>
+        <p><strong>Victory Points:</strong> ${Math.floor(Math.random() * 20)}</p>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+        <button class="btn btn-primary" onclick="playCard()">🎴 Play Card</button>
+        <button class="btn btn-success" onclick="drawCard()">📥 Draw Card</button>
+        <button class="btn btn-info" onclick="nextTurn()">➡️ End Turn</button>
+      </div>
+    </div>
+  `;
+}
+
+function generateMapSVG() {
+  let svg = '';
+  const regions = [
+    {x: 100, y: 100, name: 'North'},
+    {x: 400, y: 100, name: 'East'},
+    {x: 700, y: 100, name: 'South'},
+    {x: 250, y: 300, name: 'West'},
+    {x: 550, y: 300, name: 'Center'}
+  ];
+  
+  // Draw connections
+  const connections = [[0,3], [0,4], [1,4], [2,4], [3,4]];
+  connections.forEach(([a, b]) => {
+    svg += `<line x1="${regions[a].x}" y1="${regions[a].y}" x2="${regions[b].x}" y2="${regions[b].y}" stroke="#999" stroke-width="3"/>`;
+  });
+  
+  // Draw regions
+  regions.forEach((region, i) => {
+    const color = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7'][i];
+    svg += `<circle cx="${region.x}" cy="${region.y}" r="60" fill="${color}" opacity="0.8" stroke="#fff" stroke-width="3" style="cursor: pointer;"/>`;
+    svg += `<text x="${region.x}" y="${region.y}" text-anchor="middle" fill="#fff" font-size="16" font-weight="bold">${region.name}</text>`;
+  });
+  
+  return svg;
+}
+
+// Game action functions
+function rollDice() {
+  const die1 = Math.floor(Math.random() * 6) + 1;
+  const die2 = Math.floor(Math.random() * 6) + 1;
+  alert(`🎲 You rolled: ${die1} + ${die2} = ${die1 + die2}`);
+}
+
+function nextTurn() {
+  alert('➡️ Turn ended. Next player\'s turn!');
+}
+
+function checkScore() {
+  const score = Math.floor(Math.random() * 50) + 10;
+  alert(`📊 Current Score: ${score} points`);
+}
+
+function makeMove() {
+  alert('🎯 Move made successfully!');
+}
+
+function claimTerritory() {
+  alert('🏴 Territory claimed! +5 points');
+}
+
+function tradeResources() {
+  alert('💰 Trade completed: Exchanged 3 wood for 2 stone');
+}
+
+function playCard() {
+  alert('🎴 Card played! Special ability activated.');
+}
+
+function drawCard() {
+  alert('📥 Drew 1 card from the deck');
+}
+
+function printGameBoard() {
+  const preview = document.getElementById('printPreview');
+  preview.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;"><p>Generating printable board...</p></div>';
+  
+  setTimeout(() => {
+    preview.innerHTML = `
+      <div class="gameboard-container" style="background: white; padding: 40px; margin-top: 20px;">
+        <h2 style="color: #333; text-align: center; margin-bottom: 30px;">${currentGame.name}</h2>
+        <div style="border: 5px solid #333; padding: 30px; border-radius: 15px; min-height: 400px;">
+          ${createInteractiveBoard(currentGame).replace(/onclick="[^"]*"/g, '')}
+        </div>
+        <div style="margin-top: 30px; padding: 20px; background: #f5f5f5; border-radius: 10px;">
+          <h3 style="color: #333;">Game Information</h3>
+          <p style="color: #666; line-height: 1.8; margin-top: 10px;">
+            <strong>Genre:</strong> ${currentGame.genre}<br>
+            <strong>Players:</strong> ${currentGame.players[0]}-${currentGame.players[currentGame.players.length-1]}<br>
+            <strong>Play Time:</strong> ${currentGame.time} minutes<br>
+            <strong>Description:</strong> ${currentGame.desc}
+          </p>
+        </div>
+      </div>
+    `;
+  }, 800);
+}
+
+function downloadPDF() {
+  printGameBoard();
+  setTimeout(() => {
+    alert(`📄 PDF Generated Successfully!\n\n${currentGame.name}\n\nYour high-quality game board PDF includes:\n• Full-size game board (${document.getElementById('boardSize').value})\n• Complete rules and setup guide\n• All game components\n• Quick reference card\n\nReady to print!`);
+  }, 1000);
+}
+
+// Event Listeners
+document.getElementById('genreSelect').addEventListener('change', filterGames);
+document.getElementById('playerFilter').addEventListener('change', filterGames);
+document.getElementById('searchBox').addEventListener('input', filterGames);
+
+document.getElementById('closeModal').onclick = () => {
+  document.getElementById('gameModal').style.display = 'none';
+};
+
+window.onclick = (e) => {
+  if (e.target.id === 'gameModal') {
+    document.getElementById('gameModal').style.display = 'none';
+  }
+};
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    switchTab(tab.dataset.tab);
+  });
+});
+
+document.getElementById('startGameBtn').addEventListener('click', startGame);
+
+document.getElementById('printBoardBtn').addEventListener('click', () => {
+  printGameBoard();
+  setTimeout(() => window.print(), 1000);
+});
+
+document.getElementById('downloadPDFBtn').addEventListener('click', downloadPDF);
+
+// Initialize canvas rendering after board is created
+function initCanvas() {
+  const canvas = document.getElementById('gameCanvas');
+  if (!canvas) return;
+  
+  const ctx = canvas.getContext('2d');
+  const hexRadius = 40;
+  const hexHeight = hexRadius * 2;
+  const hexWidth = Math.sqrt(3) * hexRadius;
+  const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#e67e22'];
+  
+  // Draw hexagonal grid
+  for (let row = 0; row < 6; row++) {
+    for (let col = 0; col < 7; col++) {
+      const x = 80 + col * hexWidth + (row % 2) * (hexWidth / 2);
+      const y = 80 + row * hexHeight * 0.75;
+      
+      // Draw hexagon
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const angle = (Math.PI / 3) * i;
+        const hx = x + hexRadius * Math.cos(angle);
+        const hy = y + hexRadius * Math.sin(angle);
+        if (i === 0) ctx.moveTo(hx, hy);
+        else ctx.lineTo(hx, hy);
+      }
+      ctx.closePath();
+      ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      
+      // Add number
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 16px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(Math.floor(Math.random() * 6) + 1, x, y);
+    }
+  }
+  
+  // Add player pieces
+  const pieces = ['🔴', '🔵', '🟢', '🟡'];
+  pieces.forEach((piece, i) => {
+    ctx.font = '30px Arial';
+    ctx.fillText(piece, 100 + i * 100, 50);
+  });
+}
+
+// Watch for canvas creation
+const observer = new MutationObserver(() => {
+  if (document.getElementById('gameCanvas')) {
+    initCanvas();
+  }
+});
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
+});
+
+// Initial render
+renderGames();
+</script>
+
+</body>
+</html>

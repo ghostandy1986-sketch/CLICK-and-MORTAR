@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Date Experience</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2a9d8f;
+      --secondary: #e76f51;
+      --accent: #f4a261;
+      --dark: #264653;
+      --light: #e9ecef;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      background: linear-gradient(135deg, #f6f8fa 0%, #e9ecef 100%);
+      color: var(--dark);
+    }
+
+    #app {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(rgba(38, 70, 83, 0.8), rgba(38, 70, 83, 0.9)),
+                  url('1737237090018wlfnxscs.png');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      border-radius: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .date-scenarios {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .scenario-card {
+      background: white;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .scenario-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .scenario-image {
+      height: 200px;
+      background: var(--light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scenario-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .scenario-content {
+      padding: 1.5rem;
+    }
+
+    .scenario-content h3 {
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      border-radius: 2rem;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: white;
+    }
+
+    .scene-container {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .scene-image {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .choices {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .ending-scene {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(rgba(38, 70, 83, 0.8), rgba(38, 70, 83, 0.9)),
+                  url('waterfall.png');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      border-radius: 1rem;
+      margin-top: 2rem;
+    }
+
+    .glitch-effect {
+      animation: glitch 0.5s infinite;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0) }
+      20% { transform: translate(-2px, 2px) }
+      40% { transform: translate(-2px, -2px) }
+      60% { transform: translate(2px, 2px) }
+      80% { transform: translate(2px, -2px) }
+      100% { transform: translate(0) }
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <section class="hero animate__animated animate__fadeIn">
+      <h1>Virtual Date Experience</h1>
+      <p>Embark on an interactive journey of romance and adventure. Your choices shape your unique story.</p>
+      <button class="btn btn-primary" onclick="startJourney()">Begin Your Adventure</button>
+    </section>
+
+    <div id="mainContent">
+      <div class="date-scenarios animate__animated animate__fadeInUp">
+        <div class="scenario-card">
+          <div class="scenario-image">
+            <img src="italian patio dinner.png" alt="Italian Patio Dinner" />
+          </div>
+          <div class="scenario-content">
+            <h3>Romantic Italian Dinner</h3>
+            <p>Experience an enchanting evening at a charming Italian restaurant with stunning views.</p>
+            <button class="btn btn-primary" onclick="startScene('dinner')">Choose This Date</button>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="scenario-image">
+            <img src="paddle boat .png" alt="Paddle Boat Adventure" />
+          </div>
+          <div class="scenario-content">
+            <h3>Paddle Boat Adventure</h3>
+            <p>Navigate through serene waters and create unforgettable memories together.</p>
+            <button class="btn btn-primary" onclick="startScene('boat')">Choose This Date</button>
+          </div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="scenario-image">
+            <img src="1738195951332u6vbkb71.png" alt="Surprise Adventure" />
+          </div>
+          <div class="scenario-content">
+            <h3>Mystery Adventure</h3>
+            <p>Take a chance on an unexpected journey filled with surprises and excitement.</p>
+            <button class="btn btn-primary" onclick="startScene('mystery')">Choose This Date</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sceneContainer" class="scene-container" style="display: none">
+    </div>
+  </div>
+
+  <script>
+    const scenes = {
+      dinner: {
+        sequence: [
+          {
+            image: "italian patio dinner.png",
+            title: "A Perfect Evening Begins",
+            description: "You arrive at a charming Italian restaurant, fairy lights twinkling overhead. The atmosphere is magical, but suddenly there's an unexpected twist...",
+            choices: [
+              { text: "Suggest a romantic walk", next: "dinner_walk" },
+              { text: "Stay and embrace the moment", next: "dinner_stay" }
+            ]
+          },
+          {
+            id: "dinner_walk",
+            image: "1738195951332u6vbkb71.png",
+            title: "Moonlit Stroll",
+            description: "The night air is perfect as you walk together, discovering hidden gems in the city...",
+            choices: [
+              { text: "Head to the waterfall", next: "waterfall" },
+              { text: "Take a boat ride", next: "boat_scene" }
+            ]
+          },
+          {
+            id: "dinner_stay",
+            image: "italian patio dinner.png",
+            title: "Dancing Under the Stars",
+            description: "The restaurant's musicians begin playing, creating a perfect moment...",
+            choices: [
+              { text: "Join the dance", next: "waterfall" },
+              { text: "Suggest an adventure", next: "boat_scene" }
+            ]
+          }
+        ]
+      },
+      boat: {
+        sequence: [
+          {
+            image: "paddle boat .png",
+            title: "Setting Sail",
+            description: "The lake is peaceful as you begin your paddle boat adventure. The sunset creates a stunning backdrop...",
+            choices: [
+              { text: "Explore the lake", next: "boat_explore" },
+              { text: "Race to the island", next: "boat_race" }
+            ]
+          },
+          {
+            id: "boat_explore",
+            image: "paddle boat .png",
+            title: "Hidden Cove",
+            description: "You discover a beautiful hidden cove with fascinating wildlife...",
+            choices: [
+              { text: "Continue exploring", next: "waterfall" },
+              { text: "Head to shore", next: "mystery_scene" }
+            ]
+          },
+          {
+            id: "boat_race",
+            image: "1738195951332u6vbkb71.png",
+            title: "Adventure Calls",
+            description: "The race becomes an exciting challenge as you both navigate the waters...",
+            choices: [
+              { text: "Take a shortcut", next: "waterfall" },
+              { text: "Follow the current", next: "mystery_scene" }
+            ]
+          }
+        ]
+      },
+      mystery: {
+        sequence: [
+          {
+            image: "1738195951332u6vbkb71.png",
+            title: "The Mystery Begins",
+            description: "You receive an envelope containing clues to an exciting adventure...",
+            choices: [
+              { text: "Follow the first clue", next: "mystery_clue" },
+              { text: "Create your own path", next: "mystery_adventure" }
+            ]
+          },
+          {
+            id: "mystery_clue",
+            image: "paddle boat .png",
+            title: "The Adventure Unfolds",
+            description: "The clues lead you to an unexpected and magical location...",
+            choices: [
+              { text: "Solve the mystery", next: "waterfall" },
+              { text: "Take a detour", next: "boat_scene" }
+            ]
+          },
+          {
+            id: "mystery_adventure",
+            image: "italian patio dinner.png",
+            title: "Unexpected Discovery",
+            description: "Your spontaneous choice leads to an amazing discovery...",
+            choices: [
+              { text: "Explore further", next: "waterfall" },
+              { text: "Share the moment", next: "final_scene" }
+            ]
+          }
+        ]
+      }
+    };
+
+    let currentScene = null;
+    let currentSequenceIndex = 0;
+
+    function startJourney() {
+      document.querySelector('.date-scenarios').style.display = 'grid';
+      document.querySelector('.hero').style.marginBottom = '4rem';
+    }
+
+    function startScene(sceneType) {
+      currentScene = scenes[sceneType];
+      currentSequenceIndex = 0;
+      showSequence();
+    }
+
+    function showSequence() {
+      const sequence = currentScene.sequence[currentSequenceIndex];
+      const container = document.getElementById('sceneContainer');
+      
+      container.style.display = 'block';
+      container.innerHTML = `
+        <img src="${sequence.image}" alt="${sequence.title}" class="scene-image animate__animated animate__fadeIn">
+        <h2>${sequence.title}</h2>
+        <p>${sequence.description}</p>
+        <div class="choices">
+          ${sequence.choices.map(choice => 
+            `<button class="btn btn-primary" onclick="makeChoice('${choice.next}')">${choice.text}</button>`
+          ).join('')}
+        </div>
+      `;
+
+      container.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function makeChoice(next) {
+      if (next === 'waterfall' || next === 'final_scene') {
+        showEnding();
+        return;
+      }
+
+      const nextScene = next.split('_')[0];
+      currentScene = scenes[nextScene];
+      currentSequenceIndex++;
+      showSequence();
+    }
+
+    function showEnding() {
+      const container = document.getElementById('sceneContainer');
+      container.innerHTML = `
+        <div class="ending-scene animate__animated animate__fadeIn">
+          <h2>Your Perfect Ending</h2>
+          <p>Together you've created a magical experience that will last forever...</p>
+          <img src="waterfall.png" alt="Final Scene" class="scene-image">
+          <div class="choices">
+            <button class="btn btn-primary" onclick="startJourney()">Start a New Adventure</button>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

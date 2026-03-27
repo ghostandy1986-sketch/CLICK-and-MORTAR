@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Camera Stealth Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a1a;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .store-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 60px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .aisle {
+            background: #333;
+            height: 80vh;
+            position: relative;
+        }
+
+        .camera {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff4444;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .camera-view {
+            position: absolute;
+            background: rgba(255, 0, 0, 0.1);
+            transform-origin: center;
+            clip-path: polygon(0 0, 100% 0, 200% 200%, -100% 200%);
+            transition: transform 2s ease-in-out;
+        }
+
+        .item {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            cursor: move;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 8px;
+            font-size: 24px;
+            z-index: 3;
+        }
+
+        .item.cellphone { transition: all 0.1s ease; }
+        .item.laptop { transition: all 0.2s ease; }
+        .item.tv { transition: all 0.3s ease; }
+
+        .dragging {
+            opacity: 0.8;
+            transform: scale(1.1);
+        }
+
+        .game-ui {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 4;
+        }
+
+        .exit-zone {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 200px;
+            background: #4CAF50;
+            z-index: 3;
+        }
+
+        .caught-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.3);
+            display: none;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-ui">
+            <div>Score: <span id="score">0</span></div>
+            <div>Attempts: <span id="attempts">3</span></div>
+        </div>
+        <div class="store-grid" id="storeGrid"></div>
+        <div class="exit-zone"></div>
+        <div class="caught-overlay"></div>
+    </div>
+
+    <script>
+        class StealthGame {
+            constructor() {
+                this.score = 0;
+                this.attempts = 3;
+                this.cameras = [];
+                this.items = [];
+                this.isDragging = false;
+                this.currentItem = null;
+                this.init();
+            }
+
+            init() {
+                this.createAisles();
+                this.createCameras();
+                this.createItems();
+                this.setupEventListeners();
+                this.startCameraRotations();
+            }
+
+            createAisles() {
+                const grid = document.getElementById('storeGrid');
+                for (let i = 0; i < 8; i++) {
+                    const aisle = document.createElement('div');
+                    aisle.className = 'aisle';
+                    grid.appendChild(aisle);
+                }
+            }
+
+            createCameras() {
+                const aisles = document.querySelectorAll('.aisle');
+                aisles.forEach((aisle, index) => {
+                    if (index % 2 === 0) {
+                        this.createCamera(aisle, 'top');
+                        this.createCamera(aisle, 'bottom');
+                    }
+                });
+            }
+
+            createCamera(aisle, position) {
+                const camera = document.createElement('div');
+                camera.className = 'camera';
+                const view = document.createElement('div');
+                view.className = 'camera-view';
+
+                camera.style.left = '-10px';
+                view.style.width = '200px';
+                view.style.height = '200px';
+
+                if (position === 'top') {
+                    camera.style.top = '20px';
+                    view.style.top = '20px';
+                } else {
+                    camera.style.bottom = '20px';
+                    view.style.bottom = '20px';
+                }
+
+                aisle.appendChild(camera);
+                aisle.appendChild(view);
+                this.cameras.push({ camera, view, rotation: 0 });
+            }
+
+            createItems() {
+                const items = [
+                    { type: 'cellphone', emoji: '📱', speed: 1 },
+                    { type: 'laptop', emoji: '💻', speed: 0.7 },
+                    { type: 'tv', emoji: '📺', speed: 0.4 }
+                ];
+
+                items.forEach((itemData, index) => {
+                    const item = document.createElement('div');
+                    item.className = `item ${itemData.type}`;
+                    item.innerHTML = itemData.emoji;
+                    item.style.left = `${100 + (index * 150)}px`;
+                    item.style.top = '20px';
+                    item.setAttribute('data-speed', itemData.speed);
+                    document.querySelector('.store-grid').appendChild(item);
+                    this.items.push(item);
+                });
+            }
+
+            setupEventListeners() {
+                this.items.forEach(item => {
+                    item.addEventListener('mousedown', (e) => this.startDragging(e, item));
+                });
+
+                document.addEventListener('mousemove', (e) => this.handleDrag(e));
+                document.addEventListener('mouseup', () => this.stopDragging());
+            }
+
+            startDragging(e, item) {
+                if (this.isDragging) return;
+                this.isDragging = true;
+                this.currentItem = item;
+                item.classList.add('dragging');
+
+                const speed = parseFloat(item.getAttribute('data-speed'));
+                item.style.transition = `transform ${0.1 / speed}s ease`;
+            }
+
+            handleDrag(e) {
+                if (!this.isDragging || !this.currentItem) return;
+                
+                const speed = parseFloat(this.currentItem.getAttribute('data-speed'));
+                const newX = e.clientX - (this.currentItem.offsetWidth / 2);
+                const newY = e.clientY - (this.currentItem.offsetHeight / 2);
+                
+                this.currentItem.style.left = `${newX}px`;
+                this.currentItem.style.top = `${newY}px`;
+
+                this.checkCameraCollision();
+            }
+
+            stopDragging() {
+                if (!this.isDragging) return;
+                this.isDragging = false;
+                if (this.currentItem) {
+                    this.currentItem.classList.remove('dragging');
+                    this.checkExit();
+                }
+                this.currentItem = null;
+            }
+
+            checkCameraCollision() {
+                if (!this.currentItem) return;
+                
+                const itemRect = this.currentItem.getBoundingClientRect();
+                let caught = false;
+
+                this.cameras.forEach(({view}) => {
+                    const viewRect = view.getBoundingClientRect();
+                    if (this.isColliding(itemRect, viewRect)) {
+                        caught = true;
+                    }
+                });
+
+                if (caught) this.handleCaught();
+            }
+
+            isColliding(rect1, rect2) {
+                return !(rect1.right < rect2.left || 
+                        rect1.left > rect2.right || 
+                        rect1.bottom < rect2.top || 
+                        rect1.top > rect2.bottom);
+            }
+
+            handleCaught() {
+                this.attempts--;
+                document.getElementById('attempts').textContent = this.attempts;
+                document.querySelector('.caught-overlay').style.display = 'block';
+                
+                setTimeout(() => {
+                    document.querySelector('.caught-overlay').style.display = 'none';
+                }, 500);
+
+                this.stopDragging();
+                this.resetItemPosition(this.currentItem);
+
+                if (this.attempts <= 0) {
+                    alert('Game Over!');
+                    location.reload();
+                }
+            }
+
+            checkExit() {
+                if (!this.currentItem) return;
+                
+                const itemRect = this.currentItem.getBoundingClientRect();
+                const exitRect = document.querySelector('.exit-zone').getBoundingClientRect();
+
+                if (this.isColliding(itemRect, exitRect)) {
+                    this.score++;
+                    document.getElementById('score').textContent = this.score;
+                    this.resetItemPosition(this.currentItem);
+                }
+            }
+
+            resetItemPosition(item) {
+                const index = this.items.indexOf(item);
+                item.style.left = `${100 + (index * 150)}px`;
+                item.style.top = '20px';
+            }
+
+            startCameraRotations() {
+                setInterval(() => {
+                    this.cameras.forEach(({view}, index) => {
+                        const rotation = Math.sin(Date.now() / 2000 + index) * 90;
+                        view.style.transform = `rotate(${rotation}deg)`;
+                    });
+                }, 16);
+            }
+        }
+
+        // Start the game
+        window.onload = () => new StealthGame();
+    </script>
+</body>
+</html>

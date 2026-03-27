@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webitentiary - Ad Dungeon</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-300 relative min-h-screen">
+    <!-- Fixed Freedom Bar -->
+    <header class="fixed top-0 left-0 right-0 bg-gray-800 shadow-md border-b-4 border-yellow-500 z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-yellow-500 font-bold">Webitentiary</h1>
+                <p class="text-sm">Time Served: <span id="timeServed" class="text-red-500">00:00:00</span></p>
+            </div>
+            <button id="postBond" class="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600">
+                Post Bond ($1)
+            </button>
+        </div>
+    </header>
+
+    <!-- Dungeon Theme Elements -->
+    <div class="fixed inset-0 z-0 opacity-20 pointer-events-none bg-gradient-to-b from-gray-800 to-black"></div>
+    <div class="fixed inset-0 pointer-events-none grid grid-cols-3">
+        <!-- Chains on the sides -->
+        <div class="h-full w-px bg-gradient-to-b from-gray-600 via-transparent to-transparent animate-sway-left"></div>
+        <div></div>
+        <div class="h-full w-px bg-gradient-to-b from-gray-600 via-transparent to-transparent animate-sway-right"></div>
+    </div>
+
+    <!-- Main Dungeon Content -->
+    <main class="container mx-auto mt-20 px-6">
+        <!-- Booking Report -->
+        <section class="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-8 shadow-lg">
+            <h2 class="text-2xl font-bold text-yellow-500 mb-4">Dungeon Booking Report</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <p><strong>Offense:</strong> Lost Bet on FoodVFight</p>
+                    <p><strong>Sentence:</strong> 24 Hours or Complete Tasks</p>
+                    <p><strong>Previous Incarcerations:</strong> 3 Times</p>
+                </div>
+                <div>
+                    <p><strong>Brand Betrayed:</strong> <span class="text-red-500">Burger Empire</span></p>
+                    <p><strong>Release Options:</strong> Scroll Up or Post Bond</p>
+                    <button onclick="makePrisonCall()" class="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600 mt-2">
+                        📞 Make a Prison Call
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Ad Grid -->
+        <section>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Video Ad Cell -->
+                <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition">
+                    <div class="relative">
+                        <img src="https://via.placeholder.com/400x300" alt="Ad Content" class="w-full h-48 object-cover">
+                        <button onclick="watchAd()" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition">
+                            <span class="bg-red-500 text-white px-4 py-2 rounded">Watch to Reduce Time</span>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-yellow-500 font-bold">Prison Entertainment</h3>
+                        <p class="text-sm">Watch this ad to reduce your sentence!</p>
+                    </div>
+                </div>
+
+                <!-- Survey Cell -->
+                <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-md p-6 transform hover:scale-105 transition">
+                    <h3 class="text-yellow-500 font-bold mb-4">Prisoner Survey</h3>
+                    <form onsubmit="submitSurvey(event)">
+                        <label for="favoriteFood" class="block text-sm mb-2">Favorite Food Chain</label>
+                        <input type="text" id="favoriteFood" class="w-full bg-gray-700 rounded px-3 py-2 mb-4" required>
+
+                        <label for="dealType" class="block text-sm mb-2">Preferred Deal Type</label>
+                        <select id="dealType" class="w-full bg-gray-700 rounded px-3 py-2 mb-4">
+                            <option value="bogo">BOGO Offers</option>
+                            <option value="percentage">Percentage Discounts</option>
+                            <option value="combo">Combo Deals</option>
+                        </select>
+
+                        <button type="submit" class="bg-green-500 w-full py-2 rounded hover:bg-green-600">
+                            Submit for Freedom Points
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Daily Challenge Cell -->
+                <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-md p-6 transform hover:scale-105 transition">
+                    <div class="text-center">
+                        <h3 class="text-yellow-500 font-bold mb-4">Daily Challenge</h3>
+                        <div class="mb-4">
+                            <div class="w-32 h-32 mx-auto bg-gray-700 rounded-full flex items-center justify-center">
+                                <span class="text-4xl">🎮</span>
+                            </div>
+                        </div>
+                        <button onclick="playMiniGame()" class="bg-purple-500 px-6 py-2 rounded hover:bg-purple-600">
+                            Play Mini-Game
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Progress Bar -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-gray-800">
+        <div id="progressBar" class="h-2 bg-yellow-500" style="width: 0%;"></div>
+    </footer>
+
+    <script>
+        // Timer Logic
+        let timeServed = 0;
+        const timerElement = document.getElementById('timeServed');
+
+        function updateTimer() {
+            timeServed++;
+            const hours = String(Math.floor(timeServed / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((timeServed % 3600) / 60)).padStart(2, '0');
+            const seconds = String(timeServed % 60).padStart(2, '0');
+            timerElement.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        setInterval(updateTimer, 1000);
+
+        // Scroll Progress Bar
+        const progressBar = document.getElementById('progressBar');
+        window.addEventListener('scroll', () => {
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollPercentage = (scrollTop / scrollHeight) * 100;
+            progressBar.style.width = `${scrollPercentage}%`;
+        });
+
+        // Prison Call
+        function makePrisonCall() {
+            alert("You've called the brand! They'll review your case.");
+        }
+
+        // Watch Ad
+        function watchAd() {
+            alert("You've watched an ad! Sentence time reduced by 10 minutes.");
+        }
+
+        // Submit Survey
+        function submitSurvey(event) {
+            event.preventDefault();
+            alert("Survey submitted! Freedom points awarded.");
+        }
+
+        // Play Mini-Game
+        function playMiniGame() {
+            alert("Launching mini-game...");
+        }
+    </script>
+</body>
+</html>
