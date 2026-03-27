@@ -993,10 +993,10 @@
         </button>
         
         <!-- Special Buttons -->
-	<!-- InfoKiosk - FIXED -->
+	<!-- InfoKiosk - FINAL FIXED -->
 <button class="special-button infokiosk-button"
         style="top: 845px; left: 940px; width: 55px; height: 75px;"
-        onclick="openSpecialModal('Info Kiosk', './logos/info-kiosk.png')"
+        onclick="openSpecialModal('Info Kiosk', './logos/info-kiosk.png', './info-kiosk-final.html')"
         data-url="./info-kiosk-final.html">
     
     <div class="preview-popup">
@@ -1005,10 +1005,10 @@
     </div>
 </button>
 
-<!-- Wishing Well - FIXED -->
+<!-- Wishing Well - FINAL FIXED -->
 <button class="special-button wishing-well-button"
         style="top: 1000px; left: 900px; width: 150px; height: 100px;"
-        onclick="openSpecialModal('Wishing Well', './logos/wishing-well.jpg')"
+        onclick="openSpecialModal('Wishing Well', './logos/wishing-well.jpg', './wish-fountain.html')"
         data-url="./wish-fountain.html">
     
     <div class="preview-popup">
@@ -2298,13 +2298,12 @@
             openModal(adTitle, './blankslate-ad.png', 'This is a placeholder for advertisement content. Click to learn more about our advertising opportunities.');
           }
 
-         // FIXED: Special Modal now uses data-url (HTML page) instead of logo
-function openSpecialModal(title, logoPath) {
-    const button = event.currentTarget;           // ← this is the key line
-    currentBrandUrl = button.getAttribute('data-url');   // now reads the real HTML file
+         // ✅ FINAL FIXED: Special Modal (uses explicit data-url parameter)
+function openSpecialModal(title, logoPath, htmlUrl) {
+    currentBrandUrl = htmlUrl;   // ← now correctly receives the real HTML page
 
     document.getElementById('modalTitle').innerText = title;
-    document.getElementById('modalImage').src = logoPath;   // show the logo in the modal
+    document.getElementById('modalImage').src = logoPath;   // logo shows in modal
     document.getElementById('modalDescription').innerText = `Click "Visit Website" to open ${title}`;
     
     document.getElementById('modalOverlay').style.display = 'block';
