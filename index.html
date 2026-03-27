@@ -947,21 +947,29 @@
             </div>
         </div>
             
-        <a href="#" class="blankslate-ad.png" style="top: 643px; left: 678px; width: 145px; height: 49px;" onclick="openAdModal('Left Advertisement')">
-            Blankslate A
-        </a>
-        <a href="#" class="blankslate-ad.png" style="top: 643px; left: 1116px; width: 153px; height: 46px;" onclick="openAdModal('Right Advertisement')">
-            Blankslate B
-        </a>
+        <a href="#" class="blankslate-ad" 
+   style="top: 643px; left: 678px; width: 145px; height: 49px;" 
+   onclick="openAdModal('Left Advertisement')">
+    Blankslate A
+</a>
 
-        <!-- FIXED: Elevator Buttons - raised up by 10px each -->
-        <button class="elevator-left.png" style="top: 511px; left: 758px; width: 76px; height: 62px;" onclick="openNewHtml('./new-view-mall.html')">
-            ▲ 
-        </button>
+<a href="#" class="blankslate-ad" 
+   style="top: 643px; left: 1116px; width: 153px; height: 46px;" 
+   onclick="openAdModal('Right Advertisement')">
+    Blankslate B
+</a>
 
-        <button class="elevator-right.png" style="top: 509px; left: 1104px; width: 76px; height: 64px;" onclick="reopenCurrent()">
-            ⟲
-        </button>
+        <button class="elevator-button elevator-left" 
+        style="top: 511px; left: 758px; width: 76px; height: 62px;" 
+        onclick="openNewHtml('./new-view-mall.html')">
+    ▲
+</button>
+
+<button class="elevator-button elevator-right" 
+        style="top: 509px; left: 1104px; width: 76px; height: 64px;" 
+        onclick="reopenCurrent()">
+    ⟲
+</button>
 
         <!-- Main Text Ad Buttons -->
         <button class="text-ad-button" style="top: 598px; left: 677px; width: 268px; height: 22px;" onclick="openTextAdModal('Premium Digital Solutions')" ondblclick="window.open('https://example.com/premium', '_blank')">
@@ -973,38 +981,40 @@
         </button>
         
         <!-- Special Buttons -->
-	<!-- InfoKiosk -->
-        <button class="special-button infokiosk-button" style="top: 845px; left: 940px; width: 55px; height: 75px;"
-                onclick="openSpecialModal('Info Kiosk', './logos/info-kiosk.png')">
-		data-url="./info-kiosk-final.html">
-            InfoKiosk
-            <div class="preview-popup">
-                <img src="./logos/info-kiosk.png" alt="InfoKiosk">
-                <p>C&M Directory</p>
-            </div>
-        </button>
+	<!-- InfoKiosk - FIXED -->
+<button class="special-button infokiosk-button" 
+        style="top: 845px; left: 940px; width: 55px; height: 75px;"
+        onclick="openSpecialModal('Info Kiosk', './logos/info-kiosk.png')"
+        data-url="./info-kiosk-final.html">
+    InfoKiosk
+    <div class="preview-popup">
+        <img src="./logos/info-kiosk.png" alt="InfoKiosk">
+        <p>C&M Directory</p>
+    </div>
+</button>
 
-	<!-- WishingWell -->
-        <button class="special-button wishing-well-button" style="top: 1000px; left: 900px; width: 150px; height: 100px;"
-                onclick="openSpecialModal('Wishing Well', './logos/wishing-well.jpg')">
-		data-url="./wish-fountain.html">
-            wishing well
-            <div class="preview-popup">
-                <img src="./wishing-well.jpg" alt="WishWell">
-                <p>toss a donation into the fountain and make a wish</p>
-            </div>
-        </button>
+<!-- Wishing Well - FIXED -->
+<button class="special-button wishing-well-button" 
+        style="top: 1000px; left: 900px; width: 150px; height: 100px;"
+        onclick="openSpecialModal('Wishing Well', './logos/wishing-well.jpg')"
+        data-url="./wish-fountain.html">
+    wishing well
+    <div class="preview-popup">
+        <img src="./wishing-well.jpg" alt="WishWell">
+        <p>toss a donation into the fountain and make a wish</p>
+    </div>
+</button>
 
-        <!-- FlowerBox -->
-        <button class="brand-button" style="top: 1535px; left: 841px; width: 237px; height: 77px;"
-                onclick="openModal('Flower Box', './flowerbox.html', 'Beautiful flower arrangements and donations', this)"
-                data-url="./flowerbox.html">
-            Flower Box
-            <div class="preview-popup">
-                <img src="./logos/flowerboxnew.png" alt="FlowerBox">
-                <p>Send flowers and support causes you love</p>
-            </div>
-        </button>
+<!-- Flower Box (already correct - no change needed) -->
+<button class="brand-button" style="top: 1535px; left: 841px; width: 237px; height: 77px;"
+        onclick="openModal('Flower Box', './flowerbox.html', 'Beautiful flower arrangements and donations', this)"
+        data-url="./flowerbox.html">
+    Flower Box
+    <div class="preview-popup">
+        <img src="./logos/flowerboxnew.png" alt="FlowerBox">
+        <p>Send flowers and support causes you love</p>
+    </div>
+</button>
         
 	<!-- Outer Left Column Brand Buttons (19 total) -->
 
