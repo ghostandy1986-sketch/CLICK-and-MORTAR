@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wishing Fountain</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(to bottom, #87cefa, #f4f4f4);
+    }
+    #app {
+      max-width: 600px;
+      margin: 0px auto;
+      padding: 50px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    h1 {
+      font-size: 2em;
+      color: #007BFF;
+    }
+    button {
+      padding: 10px 20px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #fountain {
+      width: 600px;
+      height: 600px;
+      margin: 20px auto;
+      position: fill;
+      background: url('Wishing Well.jpg')
+      no-repeat center center;
+      background-size: cover;
+      border-radius: 0%;
+    }
+      .water-animation {
+        width: 300px;
+    height: 300px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 150, 255, 0.4);
+    border-radius: 50%;
+    animation: ripple 3s infinite;
+}
+
+@keyframes ripple {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}    .coin-animation {
+      position: center;
+      width: 30px;
+      height: 30px;
+      background: gold;
+      border-radius: 50%;
+      animation: drop 2s ease-in-out backwards;
+    }
+    @keyframes drop {
+      0% {
+        transform: translateY(-200px) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(0px) scale(0.5);
+        opacity: 0;
+      }
+    }
+    #wish-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    input, textarea {
+      padding: 10px;
+      font-size: 1em;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #wishes-list {
+      margin-top: 20px;
+      text-align: left;
+    }
+    .wish-item {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Wishing Fountain</h1>
+    <div id="fountain"></div>
+    <p>Click the fountain to make a wish!</p>
+    <form id="wish-form" style="display: none;">
+      <textarea id="wish-text" rows="3" placeholder="Enter your wish"></textarea>
+      <input type="number" id="donation-credits" min="1" max="100" value="25" />
+      <button type="button" id="submit-wish">Submit Wish</button>
+    </form>
+    <div id="wishes-list">
+      <h3>Your Wishes</h3>
+      <!-- Wishes will appear here -->
+    </div>
+  </div>
+
+  <script>
+    let wishes = [];
+    let credits = 100;
+
+    const fountain = document.getElementById('fountain');
+    const wishForm = document.getElementById('wish-form');
+    const wishText = document.getElementById('wish-text');
+    const donationCredits = document.getElementById('donation-credits');
+    const submitWish = document.getElementById('submit-wish');
+    const wishesList = document.getElementById('wishes-list');
+
+    fountain.addEventListener('click', () => {
+      wishForm.style.display = 'block';
+    });
+
+    submitWish.addEventListener('click', () => {
+      const wish = wishText.value.trim();
+      const creditsDonated = parseInt(donationCredits.value, 10);
+
+      if (!wish) {
+        alert('Please enter your wish.');
+        return;
+      }
+
+      if (creditsDonated > credits) {
+        alert('Not enough credits!');
+        return;
+      }
+
+      // Simulate sending wish to the backend
+      const processedWish = processWish(wish, creditsDonated);
+      wishes.push(processedWish);
+      credits -= creditsDonated;
+
+      // Render wishes
+      renderWishes();
+
+      // Reset form
+      wishText.value = '';
+      donationCredits.value = 25;
+      wishForm.style.display = 'none';
+
+      // Show animation
+      createCoinAnimation();
+    });
+
+    function processWish(wishText, creditsDonated) {
+      // Simulated AI-based processing
+      const analysis = {
+        id: Date.now(),
+        text: wishText,
+        credits: creditsDonated,
+        timestamp: new Date().toISOString(),
+        category: categorizeWish(wishText),
+      };
+
+      return analysis;
+    }
+
+    function categorizeWish(wishText) {
+      const keywords = {
+        credits: ['credit', 'money', 'coins'],
+        items: ['item', 'want', 'need'],
+        experiences: ['visit', 'travel', 'experience'],
+        relationships: ['friend', 'love', 'connect'],
+      };
+
+      for (const category in keywords) {
+        if (keywords[category].some(keyword => wishText.toLowerCase().includes(keyword))) {
+          return category;
+        }
+      }
+
+      return 'general';
+    }
+
+    function renderWishes() {
+      wishesList.innerHTML = '<h3>Your Wishes</h3>';
+      wishes.forEach(wish => {
+        const wishItem = document.createElement('div');
+        wishItem.className = 'wish-item';
+        wishItem.innerHTML = `
+          <strong>${wish.text}</strong>
+          <p>Category: ${wish.category}</p>
+          <p>Credits: ${wish.credits}</p>
+          <small>${new Date(wish.timestamp).toLocaleString()}</small>
+        `;
+        wishesList.appendChild(wishItem);
+      });
+    }
+
+    function createCoinAnimation() {
+      const coin = document.createElement('div');
+      coin.className = 'coin-animation';
+      coin.style.left = `${Math.random() * 80 + 10}%`;
+      document.body.appendChild(coin);
+      setTimeout(() => coin.remove(), 2000);
+    }
+  </script>
+</body>
+</html>

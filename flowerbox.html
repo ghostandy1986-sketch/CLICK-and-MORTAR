@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌻 FlowerBox Widget</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --wood-dark:#3d1f0d; --wood-mid:#6b3a1f; --wood-warm:#c4834a;
+  --cream:#fdf6ec; --petal-yellow:#f7c948; --petal-gold:#e8a020;
+  --petal-pink:#e87a8c; --text-dark:#1a0e05; --text-mid:#5c3d1a;
+  --text-light:#9e7a50; --leaf-green:#5a9e4a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:radial-gradient(ellipse at 60% 40%,#c8b49a,#8a6e4a 60%,#6a4e2a);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+
+
+/* ── WIDGET SHELL ── */
+#flowerbox-widget{width:640px;font-family:'DM Sans',sans-serif;filter:drop-shadow(0 20px 60px rgba(20,6,0,.65));border-radius:4px 4px 8px 8px;overflow:visible;}
+
+/* ── IMAGE STAGE ── */
+.image-stage{position:relative;width:640px;height:336px;overflow:hidden;border-radius:4px 4px 0 0;}
+.bg-image{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;pointer-events:none;}
+
+/* ── BIN ZONES ── */
+.bin-zone{
+  position:absolute;top:0;height:46%;
+  cursor:pointer;background:transparent;border:none;outline:none;z-index:10;
+  border-radius:6px;transition:background .18s;
+}
+.bin-zone:hover{background:rgba(255,255,200,.1);}
+.bin-zone:active{background:rgba(247,201,72,.2);}
+#bz0{left:1.2%;  width:14%;}
+#bz1{left:16.8%; width:14%;}
+#bz2{left:33%;   width:17%;}
+#bz3{left:51.5%; width:14%;}
+#bz4{left:66.5%; width:13.5%;}
+#bz5{left:81.5%; width:17%;}
+
+/* ── BIN TOOLTIPS ── */
+.bin-zone::after{
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 6px);left:50%;
+  transform:translateX(-50%) scale(.82) translateY(4px);
+  background:rgba(20,6,0,.92);color:var(--cream);
+  font-family:'DM Sans',sans-serif;font-size:9.5px;font-weight:700;
+  padding:5px 10px;border-radius:6px;white-space:nowrap;
+  letter-spacing:.05em;text-transform:uppercase;
+  opacity:0;transition:all .2s;pointer-events:none;
+  box-shadow:0 4px 12px rgba(0,0,0,.4);
+  border:1px solid rgba(255,200,80,.2);
+}
+.bin-zone:hover::after{opacity:1;transform:translateX(-50%) scale(1) translateY(0);}
+
+/* ── FLOWER ROW ── */
+.flower-row{
+  position:absolute;bottom:22%;left:0;right:0;height:46%;
+  display:flex;align-items:flex-end;justify-content:space-around;
+  padding:0 16px;pointer-events:none;z-index:5;
+}
+.flower-slot{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative;}
+
+/* SVG Flower Container */
+.flower-svg-wrap{
+  position:absolute;bottom:0;left:50%;
+  transform:translateX(-50%) scale(0);
+  transform-origin:bottom center;
+  width:54px;height:72px;
+  opacity:0;
+  transition:transform .75s cubic-bezier(.175,.885,.32,1.275), opacity .5s ease;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));
+}
+.flower-svg-wrap[data-stage="1"]{transform:translateX(-50%) scale(.22);opacity:.9;}
+.flower-svg-wrap[data-stage="2"]{transform:translateX(-50%) scale(.42);opacity:1;}
+.flower-svg-wrap[data-stage="3"]{transform:translateX(-50%) scale(.62);opacity:1;}
+.flower-svg-wrap[data-stage="4"]{transform:translateX(-50%) scale(.82);opacity:1;}
+.flower-svg-wrap[data-stage="5"]{transform:translateX(-50%) scale(1.0);opacity:1;}
+
+@keyframes golden-glow{
+  0%,100%{filter:drop-shadow(0 3px 6px rgba(0,0,0,.4)) drop-shadow(0 0 5px rgba(247,201,72,.3));}
+  50%{filter:drop-shadow(0 4px 10px rgba(0,0,0,.35)) drop-shadow(0 0 18px rgba(247,201,72,.9));}
+}
+.flower-svg-wrap.full-bloom{
+  animation:golden-glow 2.2s ease-in-out infinite, sway 3.5s ease-in-out infinite;
+}
+
+/* Gentle sway animation for blooming flowers */
+@keyframes sway{
+  0%,100%{transform:translateX(-50%) scale(1) rotate(-1.5deg);}
+  50%{transform:translateX(-50%) scale(1) rotate(1.5deg);}
+}
+
+.stage-badge{
+  position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);
+  font-size:7px;font-weight:700;color:rgba(255,250,200,.95);
+  text-shadow:0 1px 4px rgba(0,0,0,.95);letter-spacing:.03em;white-space:nowrap;
+}
+
+/* ── NAV STRIP ── */
+.nav-strip{background:linear-gradient(to bottom,#1e0a02,#120601);display:flex;align-items:stretch;border-top:2px solid rgba(180,110,50,.3);}
+.nav-btn{flex:1;padding:9px 3px;background:none;border:none;cursor:pointer;color:rgba(190,140,80,.65);display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'DM Sans',sans-serif;border-right:1px solid rgba(255,255,255,.04);transition:background .2s,color .2s;position:relative;}
+.nav-btn:last-child{border-right:none;}
+.nav-btn:hover{background:rgba(190,120,40,.16);color:var(--petal-yellow);}
+.nav-btn.active-nav{background:rgba(200,130,50,.12);color:var(--petal-gold);}
+.nav-icon{font-size:15px;}
+.nav-label{font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.notif-dot{position:absolute;top:5px;right:8px;width:6px;height:6px;border-radius:50%;background:var(--petal-pink);border:1.5px solid #120601;display:none;box-shadow:0 0 6px var(--petal-pink);}
+.notif-dot.show{display:block;}
+
+/* ── REWARD BANNER ── */
+#reward-banner{
+  display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:640px;z-index:9000;
+  background:linear-gradient(135deg,#3d1f0d,#7a4020);color:var(--cream);
+  padding:14px 20px;border-top:3px solid var(--petal-gold);
+  box-shadow:0 -8px 30px rgba(0,0,0,.5);text-align:center;
+  animation:slide-up .5s cubic-bezier(.175,.885,.32,1.275) forwards;
+}
+@keyframes slide-up{from{transform:translateX(-50%) translateY(100%);}to{transform:translateX(-50%) translateY(0);}}
+#reward-banner h3{font-family:'Playfair Display',serif;font-size:15px;margin-bottom:3px;}
+#reward-banner p{font-size:11px;opacity:.85;margin-bottom:8px;}
+.rew-btns{display:flex;gap:8px;justify-content:center;}
+.rew-btns button{padding:7px 16px;border:none;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;transition:opacity .2s;}
+.rbtn-yes{background:var(--petal-gold);color:var(--text-dark);}
+.rbtn-yes:hover{opacity:.88;}
+.rbtn-no{background:rgba(255,255,255,.15);color:var(--cream);}
+.rbtn-no:hover{background:rgba(255,255,255,.25);}
+
+/* ── MODAL SYSTEM ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,3,0,.85);backdrop-filter:blur(10px);z-index:9999;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--cream);border-radius:18px;width:100%;max-width:484px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 90px rgba(0,0,0,.7),0 0 0 1px rgba(200,150,80,.2);animation:mpop .32s cubic-bezier(.175,.885,.32,1.275);}
+@keyframes mpop{from{transform:scale(.86) translateY(24px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+.modal-hdr{background:linear-gradient(135deg,var(--wood-mid),var(--wood-dark));color:var(--cream);padding:20px 22px 15px;border-radius:18px 18px 0 0;position:relative;}
+.modal-hdr h2{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;margin-bottom:2px;}
+.modal-hdr p{font-size:11px;opacity:.72;font-weight:300;}
+.modal-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.13);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;}
+.modal-close:hover{background:rgba(255,255,255,.28);transform:rotate(90deg);}
+.modal-body{padding:18px 22px 20px;}
+.fg{margin-bottom:13px;}
+.fg label{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-mid);margin-bottom:5px;}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 12px;border:1.5px solid #ddd0c0;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-dark);background:white;transition:border-color .2s,box-shadow .2s;outline:none;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--wood-warm);box-shadow:0 0 0 3px rgba(196,131,74,.14);}
+.fg textarea{resize:vertical;min-height:64px;}
+.amt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:9px;}
+.amt-chip{padding:8px;border:1.5px solid #ddd0c0;border-radius:7px;background:white;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .18s;color:var(--text-mid);}
+.amt-chip:hover,.amt-chip.active{background:var(--wood-warm);border-color:var(--wood-warm);color:white;transform:translateY(-1px);box-shadow:0 4px 10px rgba(196,131,74,.25);}
+.divider{display:flex;align-items:center;gap:8px;margin:14px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#e0d0b8;}
+.divider span{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-light);white-space:nowrap;}
+.btn-primary{width:100%;padding:12px;background:linear-gradient(135deg,var(--wood-warm),var(--wood-mid));color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s,box-shadow .2s;letter-spacing:.03em;}
+.btn-primary:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 6px 20px rgba(100,50,20,.25);}
+.btn-primary:active{transform:translateY(0);}
+.btn-secondary{flex:1;padding:10px;background:white;color:var(--text-mid);border:1.5px solid #ddd0c0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s;}
+.btn-secondary:hover{background:#f5ede0;border-color:#c8aa80;}
+.btn-row{display:flex;gap:7px;margin-top:12px;}
+.tabs{display:flex;gap:3px;background:#f0e4d0;border-radius:9px;padding:3px;margin-bottom:14px;}
+.tab{flex:1;padding:6px 3px;border:none;background:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:700;color:var(--text-light);cursor:pointer;transition:all .2s;text-align:center;}
+.tab.active{background:white;color:var(--text-dark);box-shadow:0 1px 5px rgba(0,0,0,.13);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.charity-search{position:relative;margin-bottom:10px;}
+.charity-search::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:12px;pointer-events:none;}
+.charity-search input{padding-left:30px!important;}
+.charity-list{max-height:248px;overflow-y:auto;border:1.5px solid #ddd0c0;border-radius:10px;background:white;}
+.ch-item{padding:8px 12px;font-size:12px;font-weight:500;cursor:pointer;border-bottom:1px solid #f0e8d8;color:var(--text-dark);transition:background .14s;display:flex;align-items:center;justify-content:space-between;}
+.ch-item:last-child{border-bottom:none;}
+.ch-item:hover{background:#fdf0e0;}
+.ch-item.sel{background:#fde8c0;font-weight:700;}
+.ch-letter{padding:4px 12px;font-size:9.5px;font-weight:700;letter-spacing:.12em;color:var(--text-light);background:#f8f0e4;border-bottom:1px solid #f0e8d8;position:sticky;top:0;z-index:1;text-transform:uppercase;}
+.trk-entry{background:white;border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid #e8dcc8;transition:box-shadow .2s;}
+.trk-entry:hover{box-shadow:0 4px 14px rgba(100,60,20,.1);}
+.trk-org{font-weight:700;font-size:12.5px;color:var(--text-dark);}
+.trk-meta{font-size:10.5px;color:var(--text-light);margin-top:2px;}
+.trk-impact{font-size:10.5px;color:var(--leaf-green);font-weight:700;margin-top:3px;}
+.trk-empty{text-align:center;padding:28px;color:var(--text-light);font-size:12px;}
+.trk-empty-icon{font-size:30px;margin-bottom:6px;}
+.ty-entry{background:linear-gradient(135deg,#fff8f0,#fdebd0);border-radius:10px;padding:12px;margin-bottom:8px;border:1.5px solid var(--petal-gold);font-family:'Caveat',cursive;font-size:15px;color:var(--text-dark);animation:mpop .3s ease;}
+.ty-entry::before{content:'💌';font-size:16px;display:block;margin-bottom:3px;}
+.ty-from{font-size:10.5px;font-family:'DM Sans',sans-serif;color:var(--text-light);margin-top:5px;font-style:italic;}
+.card-canvas-wrap{border-radius:10px;overflow:hidden;border:2px solid #ddd0c0;box-shadow:inset 0 2px 8px rgba(0,0,0,.06);}
+#greeting-canvas{display:block;width:100%;cursor:crosshair;}
+.card-tools{display:flex;gap:5px;align-items:center;margin-bottom:9px;flex-wrap:wrap;}
+.col-sw{width:21px;height:21px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .2s,transform .2s;flex-shrink:0;}
+.col-sw.active{border-color:var(--text-dark);transform:scale(1.25);}
+.tool-btn{padding:5px 10px;font-size:10.5px;font-weight:700;border:1.5px solid #ddd0c0;border-radius:7px;background:white;cursor:pointer;color:var(--text-mid);transition:all .2s;}
+.tool-btn:hover{background:#f5ede0;border-color:#c8aa80;}
+.tool-btn.active{background:var(--wood-warm);color:white;border-color:var(--wood-warm);}
+.card-bg-picker{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:10px;}
+.card-bg-opt{height:24px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:border-color .2s,transform .2s;}
+.card-bg-opt:hover{transform:scale(1.08);}
+.card-bg-opt.active{border-color:var(--text-dark);}
+.print-note{background:linear-gradient(135deg,#f0f8ff,#e8f4ff);border:1.5px solid #b8d8f8;border-radius:10px;padding:11px 13px;font-size:11px;color:#2563eb;margin-top:10px;}
+.print-note strong{display:block;margin-bottom:2px;font-size:12px;}
+.soc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:13px;}
+.soc-card{border:1.5px solid #ddd0c0;border-radius:10px;padding:9px 6px;text-align:center;cursor:pointer;transition:all .2s;background:white;}
+.soc-card:hover{border-color:var(--wood-warm);background:#fdf6ec;transform:translateY(-2px);box-shadow:0 4px 12px rgba(100,60,20,.12);}
+.s-icon{font-size:20px;display:block;margin-bottom:3px;}
+.s-name{font-size:9.5px;font-weight:700;color:var(--text-mid);}
+.s-handle{font-size:8.5px;color:var(--text-light);font-style:italic;margin-top:1px;word-break:break-all;}
+.rew-prog{background:#f5ede0;border-radius:11px;padding:14px;margin-bottom:14px;border:1.5px solid #e0cca8;}
+.rew-bar-wrap{height:8px;background:#e0cca8;border-radius:4px;overflow:hidden;margin:6px 0;}
+.rew-bar-fill{height:100%;background:linear-gradient(90deg,var(--petal-yellow),var(--petal-gold));border-radius:4px;transition:width .8s cubic-bezier(.34,1.56,.64,1);}
+.bun-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.bun-card{border:1.5px solid #e0cca8;border-radius:11px;padding:11px;text-align:center;transition:all .2s;background:white;}
+.bun-card:hover{border-color:var(--wood-warm);transform:translateY(-2px);box-shadow:0 4px 12px rgba(100,60,20,.1);}
+.bun-icon{font-size:26px;}
+.bun-name{font-weight:700;font-size:11.5px;margin-top:3px;color:var(--text-dark);}
+.bun-sub{font-size:9.5px;color:var(--text-light);}
+.bun-price{font-weight:700;margin-top:3px;font-size:11px;}
+.embed-code{background:#f0e4d0;border-radius:9px;padding:13px;font-family:monospace;font-size:9.5px;color:var(--text-dark);word-break:break-all;line-height:1.6;border:1px solid #ddd0b8;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:#f0e4d0;border-radius:4px;}
+::-webkit-scrollbar-thumb{background:var(--wood-warm);border-radius:4px;}
+@keyframes fall{0%{transform:translateY(0) rotate(0);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+.powered-bar{background:#0a0200;text-align:center;font-size:8px;color:rgba(180,120,50,.4);padding:4px 0 3px;letter-spacing:.14em;font-weight:600;}
+
+/* ── FLOWER PROGRESS PREVIEW ── */
+.flower-preview-panel{background:#f5ede0;border-radius:10px;padding:12px;margin-bottom:13px;display:flex;align-items:center;gap:14px;border:1.5px solid #e0cca8;}
+.flower-preview-icon{font-size:30px;line-height:1;min-width:36px;text-align:center;transition:transform .4s cubic-bezier(.175,.885,.32,1.275);}
+.flower-preview-icon.pop{transform:scale(1.4);}
+.flower-preview-details{flex:1;}
+.flower-preview-title{font-size:11px;font-weight:700;color:var(--text-dark);}
+.flower-preview-status{font-size:10px;color:var(--text-mid);margin-top:2px;}
+.flower-preview-bar{height:6px;background:#e0cca8;border-radius:3px;margin-top:6px;overflow:hidden;}
+.flower-preview-fill{height:100%;background:linear-gradient(90deg,#f7c948,#e8a020);border-radius:3px;transition:width .6s ease;}
+</style>
+</head>
+<body>
+
+<div id="flowerbox-widget">
+
+  <!-- ══ IMAGE STAGE ══ -->
+  <div class="image-stage">
+    <img class="bg-image" src="flowerboxnew.png" alt="FlowerBox Donation Station">
+
+    <!-- Bin click zones -->
+    <button class="bin-zone" id="bz0" data-tip="PayPal"          onclick="openDonate(0)"></button>
+    <button class="bin-zone" id="bz1" data-tip="Patreon"         onclick="openDonate(1)"></button>
+    <button class="bin-zone" id="bz2" data-tip="GoFundMe"        onclick="openDonate(2)"></button>
+    <button class="bin-zone" id="bz3" data-tip="Buy Me a Coffee" onclick="openDonate(3)"></button>
+    <button class="bin-zone" id="bz4" data-tip="Charity"         onclick="openDonate(4)"></button>
+    <button class="bin-zone" id="bz5" data-tip="Crypto"          onclick="openDonate(5)"></button>
+
+    <!-- Flower growth row -->
+    <div class="flower-row" id="flower-row"></div>
+  </div>
+
+  <!-- ══ NAV STRIP ══ -->
+  <div class="nav-strip">
+    <button class="nav-btn" onclick="openModal('m-account')"><span class="nav-icon">👤</span><span class="nav-label">Account</span></button>
+    <button class="nav-btn" onclick="openModal('m-card');setTimeout(()=>{if(!ctx)initCanvas();},120)"><span class="nav-icon">💌</span><span class="nav-label">Send Card</span></button>
+    <button class="nav-btn" onclick="openModal('m-tracker')"><span class="nav-icon">📊</span><span class="nav-label">Tracker</span><span class="notif-dot" id="tracker-dot"></span></button>
+    <button class="nav-btn" onclick="openModal('m-charities')"><span class="nav-icon">🏛️</span><span class="nav-label">Charities</span></button>
+    <button class="nav-btn" onclick="openModal('m-social')"><span class="nav-icon">📲</span><span class="nav-label">Social</span></button>
+    <button class="nav-btn" onclick="openModal('m-bundle');checkFullBlooms()"><span class="nav-icon">💐</span><span class="nav-label">Bundles</span></button>
+  </div>
+
+  <div class="powered-bar">✦ FLOWERBOX WIDGET — EMBED ANYWHERE ✦</div>
+</div>
+
+<!-- ══════ FULL BLOOM REWARD BANNER ══════ -->
+<div id="reward-banner">
+  <h3>🌸 All 6 Flowers in Full Bloom!</h3>
+  <p>You've earned a <strong>special discount</strong> on a real flower bundle — send or receive a beautiful arrangement at a reduced price!</p>
+  <div class="rew-btns">
+    <button class="rbtn-yes" onclick="openModal('m-bundle');hideBanner()">💐 Claim Discount</button>
+    <button class="rbtn-no" onclick="hideBanner()">Maybe Later</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- DONATION -->
+<div class="modal-overlay" id="m-donate">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h2><span id="dm-icon">🌻</span> Donate via <span id="dm-name">PayPal</span></h2>
+      <p>Each donation grows your flower one stage!</p>
+      <button class="modal-close" onclick="closeAll()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <label>Choose Amount</label>
+        <div class="amt-grid">
+          <div class="amt-chip" onclick="setAmt(5,this)">$5</div>
+          <div class="amt-chip" onclick="setAmt(10,this)">$10</div>
+          <div class="amt-chip" onclick="setAmt(25,this)">$25</div>
+          <div class="amt-chip" onclick="setAmt(50,this)">$50</div>
+        </div>
+        <input type="number" id="d-amount" placeholder="Or enter custom amount…" min="1">
+      </div>
+      <div class="fg" id="d-charity-wrap" style="display:none"><label>Select Charity</label><select id="d-charity"><option value="">— Choose —</option></select></div>
+      <div class="fg" id="d-crypto-wrap" style="display:none"><label>Crypto Network / Wallet</label><input type="text" placeholder="BTC, ETH, USDC…"></div>
+
+      <!-- Live flower progress preview -->
+      <div class="flower-preview-panel">
+        <div class="flower-preview-icon" id="dm-prev">🌱</div>
+        <div class="flower-preview-details">
+          <div class="flower-preview-title">Flower Progress</div>
+          <div class="flower-preview-status" id="dm-status">Make your first donation to plant a seed!</div>
+          <div class="flower-preview-bar"><div class="flower-preview-fill" id="dm-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="divider"><span>Optional — Gift with Donation</span></div>
+      <div class="fg"><label>Recipient Name</label><input type="text" id="d-recip" placeholder="Who are you gifting to?"></div>
+      <div class="fg"><label>Personal Message</label><textarea id="d-msg" placeholder="Write a heartfelt note…"></textarea></div>
+      <div class="fg"><label>Email / Address</label><input type="text" id="d-email" placeholder="For digital or print delivery"></div>
+
+      <button class="btn-primary" onclick="submitDonate()">💳 Donate &amp; Grow a Flower</button>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="closeAll()">Cancel</button>
+        <button class="btn-secondary" onclick="closeAll();openModal('m-card');setTimeout(()=>{if(!ctx)initCanvas();},120)">✏️ Design Card</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACCOUNT -->
+<div class="modal-overlay" id="m-account">
+  <div class="modal-box">
+    <div class="modal-hdr"><h2>👤 My Account</h2><p>Configure your FlowerBox</p><button class="modal-close" onclick="closeAll()">✕</button></div>
+    <div class="modal-body">
+      <div class="tabs">
+        <button class="tab active" onclick="swTab(this,'tp-profile')">Profile</button>
+        <button class="tab" onclick="swTab(this,'tp-links')">My Links</button>
+        <button class="tab" onclick="swTab(this,'tp-embed')">Embed</button>
+      </div>
+      <div class="tab-panel active" id="tp-profile">
+        <div class="fg"><label>Display Name</label><input type="text" placeholder="Your name or cause name"></div>
+        <div class="fg"><label>Bio / Mission</label><textarea placeholder="Tell donors what you stand for…"></textarea></div>
+        <div class="fg"><label>Photo URL</label><input type="text" placeholder="https://…"></div>
+        <div class="fg"><label>Fundraising Goal ($)</label><input type="number" placeholder="1000"></div>
+        <button class="btn-primary" onclick="showToast('✅ Profile saved!')">Save Profile</button>
+      </div>
+      <div class="tab-panel" id="tp-links">
+        <div class="fg"><label>PayPal</label><input type="text" placeholder="paypal.me/yourname"></div>
+        <div class="fg"><label>Patreon</label><input type="text" placeholder="patreon.com/yourname"></div>
+        <div class="fg"><label>GoFundMe</label><input type="text" placeholder="gofundme.com/f/…"></div>
+        <div class="fg"><label>Buy Me a Coffee</label><input type="text" placeholder="buymeacoffee.com/yourname"></div>
+        <div class="fg"><label>Crypto Wallet</label><input type="text" placeholder="BTC/ETH address…"></div>
+        <div class="fg"><label>Default Charity</label><input type="text" placeholder="e.g. American Red Cross"></div>
+        <button class="btn-primary" onclick="showToast('✅ Links saved!')">Save Links</button>
+      </div>
+      <div class="tab-panel" id="tp-embed">
+        <p style="font-size:12px;color:var(--text-mid);margin-bottom:10px;">Paste this snippet anywhere — websites, eBay listings, landing pages, social link-in-bio:</p>
+        <div class="embed-code" id="embed-snippet">&lt;iframe src="https://flowerbox.widget/embed?id=YOUR_ID" width="640" height="300" frameborder="0" scrolling="no" style="border:none"&gt;&lt;/iframe&gt;</div>
+        <div class="btn-row" style="margin-top:9px;">
+          <button class="btn-secondary" onclick="navigator.clipboard.writeText(document.getElementById('embed-snippet').textContent);showToast('📋 Embed code copied!')">📋 Copy Code</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GREETING CARD -->
+<div class="modal-overlay" id="m-card">
+  <div class="modal-box">
+    <div class="modal-hdr"><h2>💌 Design a Greeting Card</h2><p>Draw, stamp &amp; send — or order it printed</p><button class="modal-close" onclick="closeAll()">✕</button></div>
+    <div class="modal-body">
+      <div style="font-size:10px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Card Background</div>
+      <div class="card-bg-picker">
+        <div class="card-bg-opt active" style="background:linear-gradient(135deg,#fff8f0,#fdebd0)" onclick="setCardBg(this,'#fff8f0','#fdebd0')"></div>
+        <div class="card-bg-opt" style="background:linear-gradient(135deg,#f0f8ff,#ddeeff)" onclick="setCardBg(this,'#f0f8ff','#ddeeff')"></div>
+        <div class="card-bg-opt" style="background:linear-gradient(135deg,#f5fdf0,#d8f5d0)" onclick="setCardBg(this,'#f5fdf0','#d8f5d0')"></div>
+        <div class="card-bg-opt" style="background:linear-gradient(135deg,#fdf0f8,#fde0f0)" onclick="setCardBg(this,'#fdf0f8','#fde0f0')"></div>
+        <div class="card-bg-opt" style="background:linear-gradient(135deg,#2d1b0e,#5c3020)" onclick="setCardBg(this,'#2d1b0e','#5c3020')"></div>
+        <div class="card-bg-opt" style="background:linear-gradient(135deg,#0f1728,#1c2f50)" onclick="setCardBg(this,'#0f1728','#1c2f50')"></div>
+      </div>
+      <div class="card-tools">
+        <button class="tool-btn active" id="t-pen"     onclick="setTool('pen')">✏️ Pen</button>
+        <button class="tool-btn"        id="t-text"    onclick="setTool('text')">T Text</button>
+        <button class="tool-btn"        id="t-sticker" onclick="setTool('sticker')">🌻 Stamp</button>
+        <button class="tool-btn"        id="t-erase"   onclick="setTool('erase')">🧹 Erase</button>
+        <div style="flex:1"></div>
+        <button class="tool-btn" onclick="clearCanvas()">🗑️ Clear</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:9px;align-items:center;">
+        <span style="font-size:10px;font-weight:600;color:var(--text-light)">Color:</span>
+        <div class="col-sw active" style="background:#1a0e05"  onclick="setColor('#1a0e05',this)"></div>
+        <div class="col-sw"        style="background:#e87a8c"  onclick="setColor('#e87a8c',this)"></div>
+        <div class="col-sw"        style="background:#f7c948"  onclick="setColor('#f7c948',this)"></div>
+        <div class="col-sw"        style="background:#5a9e4a"  onclick="setColor('#5a9e4a',this)"></div>
+        <div class="col-sw"        style="background:#2563eb"  onclick="setColor('#2563eb',this)"></div>
+        <div class="col-sw"        style="background:#9b72cf"  onclick="setColor('#9b72cf',this)"></div>
+        <div class="col-sw"        style="background:#fff;border:1.5px solid #ccc" onclick="setColor('#ffffff',this)"></div>
+        <input type="range" id="brush-size" min="1" max="18" value="3" style="width:60px;margin-left:4px;accent-color:var(--wood-warm)">
+      </div>
+      <div class="card-canvas-wrap"><canvas id="greeting-canvas" width="440" height="200"></canvas></div>
+      <div class="fg" style="margin-top:11px;"><label>Card Message</label><textarea id="card-txt" placeholder="Write your heartfelt message…" style="font-family:'Caveat',cursive;font-size:15px"></textarea></div>
+      <div class="fg"><label>Send To (email)</label><input type="email" id="card-email" placeholder="recipient@email.com"></div>
+      <div class="print-note"><strong>🖨️ Print-on-Demand Available</strong>Professionally printed &amp; shipped worldwide from $3.99 per card.</div>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="closeAll()">Cancel</button>
+        <button class="btn-primary" style="flex:2" onclick="sendCard()">💌 Send Card</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRACKER -->
+<div class="modal-overlay" id="m-tracker">
+  <div class="modal-box">
+    <div class="modal-hdr"><h2>📊 Donation Tracker</h2><p>Your impact history &amp; thank-you notes</p><button class="modal-close" onclick="closeAll()">✕</button></div>
+    <div class="modal-body">
+      <div class="tabs">
+        <button class="tab active" onclick="swTab(this,'tt-hist')">History</button>
+        <button class="tab"        onclick="swTab(this,'tt-ty')">Thank-Yous 💌</button>
+      </div>
+      <div class="tab-panel active" id="tt-hist">
+        <div id="trk-entries"><div class="trk-empty"><div class="trk-empty-icon">🌱</div>No donations yet — make your first!</div></div>
+      </div>
+      <div class="tab-panel" id="tt-ty">
+        <div id="ty-entries"><div class="trk-empty"><div class="trk-empty-icon">💌</div>No thank-you notes yet.</div></div>
+        <div class="divider"><span>Leave a Note</span></div>
+        <div class="fg"><label>Your Message</label><textarea id="ty-msg" placeholder="Thank you so much for the gift! It truly made a difference…" style="font-family:'Caveat',cursive;font-size:15px"></textarea></div>
+        <div class="fg"><label>From (optional)</label><input type="text" id="ty-from" placeholder="A grateful recipient"></div>
+        <button class="btn-primary" onclick="addThankYou()">💌 Post Thank-You Note</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHARITIES -->
+<div class="modal-overlay" id="m-charities">
+  <div class="modal-box">
+    <div class="modal-hdr"><h2>🏛️ Charitable Organizations</h2><p>200+ verified foundations — browse &amp; select</p><button class="modal-close" onclick="closeAll()">✕</button></div>
+    <div class="modal-body">
+      <div class="charity-search"><input type="text" placeholder="Search charities…" oninput="filterCharities(this.value)"></div>
+      <div class="charity-list" id="ch-list"></div>
+      <div class="btn-row" style="margin-top:11px;">
+        <button class="btn-secondary" onclick="closeAll()">Close</button>
+        <button class="btn-primary" style="flex:2" onclick="addCharity()">➕ Add to Charity Bin</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SOCIAL -->
+<div class="modal-overlay" id="m-social">
+  <div class="modal-box">
+    <div class="modal-hdr"><h2>📲 Social Media</h2><p>Link handles &amp; share your FlowerBox</p><button class="modal-close" onclick="closeAll()">✕</button></div>
+    <div class="modal-body">
+      <div class="tabs">
+        <button class="tab active" onclick="swTab(this,'ts-handles')">My Handles</button>
+        <button class="tab"        onclick="swTab(this,'ts-share')">Share Widget</button>
+      </div>
+      <div class="tab-panel active" id="ts-handles">
+        <div class="soc-grid">
+          <div class="soc-card"><span class="s-icon">🐦</span><div class="s-name">Twitter / X</div><div class="s-handle" id="sh-x">@handle</div></div>
+          <div class="soc-card"><span class="s-icon">📸</span><div class="s-name">Instagram</div><div class="s-handle" id="sh-ig">@handle</div></div>
+          <div class="soc-card"><span class="s-icon">▶️</span><div class="s-name">YouTube</div><div class="s-handle" id="sh-yt">@channel</div></div>
+          <div class="soc-card"><span class="s-icon">🎵</span><div class="s-name">TikTok</div><div class="s-handle" id="sh-tt">@handle</div></div>
+          <div class="soc-card"><span class="s-icon">💼</span><div class="s-name">LinkedIn</div><div class="s-handle" id="sh-li">profile</div></div>
+          <div class="soc-card"><span class="s-icon">👾</span><div class="s-name">Discord</div><div class="s-handle" id="sh-dc">server</div></div>
+        </div>
+        <div class="fg"><label>Twitter / X</label><input type="text" placeholder="@yourhandle" oninput="updH('x',this.value)"></div>
+        <div class="fg"><label>Instagram</label><input type="text" placeholder="@yourhandle" oninput="updH('ig',this.value)"></div>
+        <div class="fg"><label>YouTube</label><input type="text" placeholder="@channel" oninput="updH('yt',this.value)"></div>
+        <div class="fg"><label>TikTok</label><input type="text" placeholder="@yourhandle" oninput="updH('tt',this.value)"></div>
+        <button class="btn-primary" onclick="showToast('✅ Handles saved!')">Save Handles</button>
+      </div>
+      <div class="tab-panel" id="ts-share">
+        <p style="font-size:12px;color:var(--text-mid);margin-bottom:12px;">Share your FlowerBox to bring in more donors!</p>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <button class="btn-primary" style="background:linear-gradient(135deg,#1da1f2,#0d8bd9)" onclick="share('twitter')">🐦 Share on Twitter / X</button>
+          <button class="btn-primary" style="background:linear-gradient(135deg,#e1306c,#c13584)" onclick="share('instagram')">📸 Share on Instagram</button>
+          <button class="btn-primary" style="background:linear-gradient(135deg,#0866ff,#1877f2)" onclick="share('facebook')">📘 Share on Facebook</button>
+          <button class="btn-primary" style="background:linear-gradient(135deg,#ff0050,#ff4060)" onclick="share('tiktok')">🎵 Share on TikTok</button>
+          <button class="btn-secondary" onclick="navigator.clipboard.writeText(window.location.href);showToast('🔗 Link copied!')">🔗 Copy Widget Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BUNDLE -->
+<div class="modal-overlay" id="m-bundle">
+  <div class="modal-box">
+    <div class="modal-hdr"><h2>💐 Flower Bundles</h2><p>Earn rewards &amp; gift real arrangements</p><button class="modal-close" onclick="closeAll()">✕</button></div>
+    <div class="modal-body">
+      <div class="rew-prog">
+        <div style="font-size:12px;font-weight:700;color:var(--text-dark);margin-bottom:3px;">🌸 Full Bloom Progress</div>
+        <div style="font-size:11px;color:var(--text-mid);margin-bottom:4px;"><span id="bun-done">0</span>/6 bins at full bloom · Total donated: <strong id="bun-total">$0.00</strong></div>
+        <div class="rew-bar-wrap"><div class="rew-bar-fill" id="bun-bar" style="width:0%"></div></div>
+        <div style="font-size:10.5px;text-align:center;color:var(--text-mid)" id="bun-status">Get all 6 bins to full bloom to unlock a <strong>discounted bundle!</strong></div>
+      </div>
+      <div id="bun-unlock" style="display:none;background:linear-gradient(135deg,#fffbe6,#fff3b0);border:2px solid var(--petal-gold);border-radius:10px;padding:13px;margin-bottom:13px;text-align:center;">
+        <div style="font-size:22px">🎉</div>
+        <div style="font-weight:700;font-size:13px;color:var(--text-dark);margin-top:5px;">Discount Unlocked!</div>
+        <div style="font-size:11px;color:var(--text-mid);margin-top:3px;">Use code <strong style="color:var(--wood-warm);font-size:14px">BLOOM25</strong> for 25% off any bundle!</div>
+      </div>
+      <div class="bun-grid">
+        <div class="bun-card"><div class="bun-icon">🌻</div><div class="bun-name">Sunflower Bunch</div><div class="bun-sub">6 stems, wrapped</div><div class="bun-price" style="color:var(--wood-warm)">$4.99 + ship</div></div>
+        <div class="bun-card"><div class="bun-icon">🌹</div><div class="bun-name">Rose Bouquet</div><div class="bun-sub">12 stems, ribbon</div><div class="bun-price" style="color:var(--wood-warm)">$7.99 + ship</div></div>
+        <div class="bun-card"><div class="bun-icon">💐</div><div class="bun-name">Mixed Bouquet</div><div class="bun-sub">Seasonal, 10 stems</div><div class="bun-price" style="color:var(--wood-warm)">$6.99 + ship</div></div>
+        <div class="bun-card"><div class="bun-icon">🌸</div><div class="bun-name">Digital Bouquet</div><div class="bun-sub">Animated eCard</div><div class="bun-price" style="color:var(--leaf-green)">FREE w/ bundle</div></div>
+      </div>
+      <button class="btn-primary" style="margin-top:13px" onclick="showToast('🛒 Bundle ordering coming soon!')">🛒 Order a Bundle</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ JS ════════════════ -->
+<script>
+/* ── STATE ── */
+const S = {
+  binCounts:      [0,0,0,0,0,0],
+  totalDonated:   0,
+  donations:      [],
+  thankYous:      [],
+  selectedCharity:'',
+  activeBin:      0,
+  canvas:         { tool:'pen', color:'#1a0e05' }
+};
+
+const BIN_META = [
+  { name:'PayPal',          icon:'🅿️',  color:'#009cde' },
+  { name:'Patreon',         icon:'🎭',  color:'#ff424d' },
+  { name:'GoFundMe',        icon:'💚',  color:'#00b964' },
+  { name:'Buy Me a Coffee', icon:'☕',  color:'#ffdd00' },
+  { name:'Charity',         icon:'❤️',  color:'#e8302a' },
+  { name:'Crypto',          icon:'₿',  color:'#f7931a' }
+];
+
+const STAGE_LABELS = ['','🌱 Seedling','🌿 Sprouting','🌼 Budding','🌸 Blooming','🌺 Full Bloom'];
+const PREV_ICONS   = ['🌱','🌱','🌿','🌼','🌸','🌺'];
+const PREV_MSGS    = [
+  'Make your first donation to plant a seed!',
+  'Seedling planted — 4 more to full bloom!',
+  'Growing fast — 3 more to full bloom!',
+  'Budding beautifully — 2 more!',
+  'Almost there — 1 more donation!',
+  '🌺 Full Bloom achieved!'
+];
+
+/* ── SVG FLOWER DEFINITIONS ── */
+// Each bin gets a unique hand-drawn SVG flower type
+const FLOWER_SVGS = [
+  // 0 – Sunflower (PayPal)
+  `<svg viewBox="0 0 54 72" xmlns="http://www.w3.org/2000/svg">
+    <line x1="27" y1="72" x2="27" y2="30" stroke="#4a8c2a" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="19" cy="50" rx="9" ry="5" fill="#5aa030" transform="rotate(-30 19 50)"/>
+    <g transform="translate(27,26)">
+      ${Array.from({length:12},(_,i)=>{const a=i*30*Math.PI/180;const x=Math.cos(a)*11;const y=Math.sin(a)*11;return`<ellipse cx="${x}" cy="${y}" rx="5" ry="3" fill="#f7c948" transform="rotate(${i*30} ${x} ${y})"/>`}).join('')}
+      <circle cx="0" cy="0" r="7" fill="#7a4010"/>
+      <circle cx="0" cy="0" r="4" fill="#5a2e08"/>
+    </g>
+  </svg>`,
+  // 1 – Pink Rose (Patreon)
+  `<svg viewBox="0 0 54 72" xmlns="http://www.w3.org/2000/svg">
+    <line x1="27" y1="72" x2="27" y2="32" stroke="#4a8c2a" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="20" cy="52" rx="8" ry="4" fill="#5aa030" transform="rotate(-25 20 52)"/>
+    <ellipse cx="34" cy="55" rx="7" ry="4" fill="#5aa030" transform="rotate(20 34 55)"/>
+    <g transform="translate(27,28)">
+      <ellipse cx="0" cy="2" rx="8" ry="6" fill="#e87a8c" opacity=".9"/>
+      <ellipse cx="-5" cy="-2" rx="7" ry="5" fill="#f09aaa" opacity=".9" transform="rotate(-30)"/>
+      <ellipse cx="5" cy="-2" rx="7" ry="5" fill="#f09aaa" opacity=".9" transform="rotate(30)"/>
+      <ellipse cx="0" cy="-5" rx="6" ry="4" fill="#f8b8c8" opacity=".95" transform="rotate(10)"/>
+      <ellipse cx="0" cy="0" rx="4" ry="3" fill="#e06080"/>
+    </g>
+  </svg>`,
+  // 2 – Peony (GoFundMe)
+  `<svg viewBox="0 0 54 72" xmlns="http://www.w3.org/2000/svg">
+    <line x1="27" y1="72" x2="27" y2="30" stroke="#4a8c2a" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="18" cy="52" rx="9" ry="4" fill="#5aa030" transform="rotate(-20 18 52)"/>
+    <g transform="translate(27,27)">
+      ${Array.from({length:8},(_,i)=>{const a=i*45*Math.PI/180;const x=Math.cos(a)*9;const y=Math.sin(a)*9;return`<ellipse cx="${x}" cy="${y}" rx="7" ry="5" fill="#d060a0" opacity=".85" transform="rotate(${i*45} ${x} ${y})"/>`}).join('')}
+      ${Array.from({length:6},(_,i)=>{const a=i*60*Math.PI/180;const x=Math.cos(a)*5;const y=Math.sin(a)*5;return`<ellipse cx="${x}" cy="${y}" rx="5" ry="4" fill="#e880c0" opacity=".9" transform="rotate(${i*60} ${x} ${y})"/>`}).join('')}
+      <circle cx="0" cy="0" r="3.5" fill="#f0a0d8"/>
+    </g>
+  </svg>`,
+  // 3 – Daisy (Buy Me a Coffee)
+  `<svg viewBox="0 0 54 72" xmlns="http://www.w3.org/2000/svg">
+    <line x1="27" y1="72" x2="27" y2="30" stroke="#4a8c2a" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="20" cy="53" rx="8" ry="4" fill="#5aa030" transform="rotate(-28 20 53)"/>
+    <g transform="translate(27,26)">
+      ${Array.from({length:10},(_,i)=>{const a=i*36*Math.PI/180;const x=Math.cos(a)*10;const y=Math.sin(a)*10;return`<ellipse cx="${x}" cy="${y}" rx="4.5" ry="2.5" fill="#fff8e0" transform="rotate(${i*36} ${x} ${y})"/>`}).join('')}
+      <circle cx="0" cy="0" r="5.5" fill="#f7c948"/>
+      <circle cx="0" cy="0" r="3" fill="#e8a020"/>
+    </g>
+  </svg>`,
+  // 4 – Tulip (Charity)
+  `<svg viewBox="0 0 54 72" xmlns="http://www.w3.org/2000/svg">
+    <line x1="27" y1="72" x2="27" y2="36" stroke="#4a8c2a" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="20" cy="54" rx="8" ry="4" fill="#5aa030" transform="rotate(-25 20 54)"/>
+    <ellipse cx="34" cy="56" rx="7" ry="4" fill="#5aa030" transform="rotate(22 34 56)"/>
+    <g transform="translate(27,32)">
+      <path d="M0-14 C6-12 10-4 8 4 C6 10 -6 10 -8 4 C-10-4 -6-12 0-14Z" fill="#e84060"/>
+      <path d="M-8 4 C-12 8 -10 14 -6 14 C-2 14 0 10 0 6" fill="#f06080" opacity=".7"/>
+      <path d="M8 4 C12 8 10 14 6 14 C2 14 0 10 0 6" fill="#f06080" opacity=".7"/>
+      <path d="M0-14 C-1-10 -1-4 0-1 C1-4 1-10 0-14Z" fill="#c02040" opacity=".5"/>
+    </g>
+  </svg>`,
+  // 5 – Lavender (Crypto)
+  `<svg viewBox="0 0 54 72" xmlns="http://www.w3.org/2000/svg">
+    <line x1="27" y1="72" x2="27" y2="28" stroke="#4a8c2a" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="18" cy="50" rx="8" ry="4" fill="#5aa030" transform="rotate(-22 18 50)"/>
+    <g transform="translate(27,28)">
+      ${Array.from({length:7},(_,i)=>`
+        <ellipse cx="-3" cy="${-i*4}" rx="3" ry="2" fill="#9b72cf" opacity="${0.6+i*0.057}" transform="rotate(-15 -3 ${-i*4})"/>
+        <ellipse cx="3" cy="${-i*4-2}" rx="3" ry="2" fill="#b090e0" opacity="${0.6+i*0.057}" transform="rotate(15 3 ${-i*4-2})"/>
+      `).join('')}
+      <ellipse cx="0" cy="-28" rx="3" ry="2.5" fill="#c0a0f0"/>
+    </g>
+  </svg>`
+];
+
+/* ── BUILD FLOWER ROW ── */
+function buildFlowerRow() {
+  const row = document.getElementById('flower-row');
+  row.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'flower-slot';
+    const wrap = document.createElement('div');
+    wrap.className = 'flower-svg-wrap';
+    wrap.id = 'fl' + i;
+    wrap.dataset.stage = '0';
+    wrap.innerHTML = FLOWER_SVGS[i];
+    const badge = document.createElement('span');
+    badge.className = 'stage-badge';
+    badge.id = 'sb' + i;
+    slot.appendChild(wrap);
+    slot.appendChild(badge);
+    row.appendChild(slot);
+  }
+}
+
+/* ── GROW FLOWER ── */
+function growFlower(bin) {
+  const n    = S.binCounts[bin];
+  const wrap = document.getElementById('fl' + bin);
+  const badge = document.getElementById('sb' + bin);
+  wrap.dataset.stage = n;
+  badge.textContent = n > 0 ? STAGE_LABELS[n] : '';
+  if (n >= 5) wrap.classList.add('full-bloom');
+  else wrap.classList.remove('full-bloom');
+}
+
+function checkFullBlooms() {
+  const done = S.binCounts.filter(c => c >= 5).length;
+  document.getElementById('bun-done').textContent = done;
+  document.getElementById('bun-total').textContent = '$' + S.totalDonated.toFixed(2);
+  document.getElementById('bun-bar').style.width = (done / 6 * 100) + '%';
+  if (done === 6) {
+    document.getElementById('reward-banner').style.display = 'block';
+    document.getElementById('bun-unlock').style.display = 'block';
+    document.getElementById('bun-status').innerHTML = '🎉 <strong>All bins in full bloom!</strong> Code <strong style="color:var(--wood-warm)">BLOOM25</strong> is active!';
+  } else {
+    const remaining = 6 - done;
+    document.getElementById('bun-status').textContent = `${done}/6 in full bloom — ${remaining} more to unlock the discount!`;
+  }
+}
+
+/* ── DONATE MODAL ── */
+function openDonate(bin) {
+  S.activeBin = bin;
+  const m = BIN_META[bin];
+  document.getElementById('dm-icon').textContent = m.icon;
+  document.getElementById('dm-name').textContent = m.name;
+  document.getElementById('d-charity-wrap').style.display = bin === 4 ? 'block' : 'none';
+  document.getElementById('d-crypto-wrap').style.display  = bin === 5 ? 'block' : 'none';
+  // Reset fields
+  document.getElementById('d-amount').value  = '';
+  document.getElementById('d-recip').value   = '';
+  document.getElementById('d-msg').value     = '';
+  document.getElementById('d-email').value   = '';
+  document.querySelectorAll('.amt-chip').forEach(c => c.classList.remove('active'));
+  refreshDonatePreview(bin);
+  openModal('m-donate');
+}
+
+function refreshDonatePreview(bin) {
+  const n   = Math.min(S.binCounts[bin], 5);
+  const icon = document.getElementById('dm-prev');
+  icon.textContent = PREV_ICONS[n];
+  icon.classList.add('pop');
+  setTimeout(() => icon.classList.remove('pop'), 400);
+  document.getElementById('dm-status').textContent = PREV_MSGS[n];
+  document.getElementById('dm-bar').style.width = (n / 5 * 100) + '%';
+}
+
+function setAmt(v, el) {
+  document.getElementById('d-amount').value = v;
+  document.querySelectorAll('.amt-chip').forEach(c => c.classList.toggle('active', parseInt(c.textContent.replace('$','')) === v));
+}
+
+function submitDonate() {
+  const amt = parseFloat(document.getElementById('d-amount').value) || 5;
+  if (amt <= 0) { showToast('Please enter a valid amount'); return; }
+  const bin = S.activeBin;
+  S.binCounts[bin] = Math.min(S.binCounts[bin] + 1, 5);
+  S.totalDonated += amt;
+  S.donations.push({
+    method:    BIN_META[bin].name,
+    icon:      BIN_META[bin].icon,
+    amount:    amt,
+    date:      new Date().toLocaleDateString(),
+    recipient: document.getElementById('d-recip').value,
+    message:   document.getElementById('d-msg').value,
+    impact:    getImpact(amt)
+  });
+  growFlower(bin);
+  renderTracker();
+  checkFullBlooms();
+  document.getElementById('tracker-dot').classList.add('show');
+  closeAll();
+  confetti();
+  setTimeout(() => showToast(BIN_META[bin].icon + ' $' + amt.toFixed(2) + ' donated · ' + STAGE_LABELS[S.binCounts[bin]]), 300);
+}
+
+function getImpact(amt) {
+  return [
+    `Helped provide ~${Math.round(amt / 2)} meals for families in need`,
+    `Funded ~${Math.round(amt * 3)} hours of volunteer service`,
+    `Contributed to ~${Math.round(amt / 3)} trees planted`,
+    `Helped ~${Math.round(amt / 8)} children access clean water`,
+    `Supported ~${Math.round(amt / 10)} medical supply kits`
+  ][Math.floor(Math.random() * 5)];
+}
+
+/* ── TRACKER ── */
+function renderTracker() {
+  const el = document.getElementById('trk-entries');
+  if (!S.donations.length) {
+    el.innerHTML = '<div class="trk-empty"><div class="trk-empty-icon">🌱</div>No donations yet — make your first donation!</div>';
+    return;
+  }
+  el.innerHTML = S.donations.slice().reverse().map(d => `
+    <div class="trk-entry">
+      <div class="trk-org">${d.icon} ${d.method} · <span style="color:var(--wood-warm)">$${d.amount.toFixed(2)}</span></div>
+      <div class="trk-meta">${d.date}${d.recipient ? ' · For: ' + d.recipient : ''}</div>
+      <div class="trk-impact">✨ ${d.impact}</div>
+    </div>`).join('');
+}
+
+function addThankYou() {
+  const msg  = document.getElementById('ty-msg').value.trim();
+  const from = document.getElementById('ty-from').value.trim() || 'Anonymous';
+  if (!msg) { showToast('Please write a message first'); return; }
+  S.thankYous.push({ message: msg, from });
+  document.getElementById('ty-entries').innerHTML =
+    S.thankYous.slice().reverse().map(t =>
+      `<div class="ty-entry">${t.message}<div class="ty-from">— ${t.from}</div></div>`
+    ).join('');
+  document.getElementById('ty-msg').value  = '';
+  document.getElementById('ty-from').value = '';
+  showToast('💌 Thank-you note posted!');
+}
+
+/* ── CHARITY LIST ── */
+const CHARITIES=["AARP Foundation","Acorns Children's Hospice","Action Against Hunger","ActionAid","Acumen","Alex's Lemonade Stand Foundation","American Heart Association","American Himalayan Foundation","American Indian College Fund","American Red Cross","Amref Health Africa","Andrew W. Mellon Foundation","Best Friends Animal Society","Big Brothers Big Sisters of America","Bill & Melinda Gates Foundation","Bloomberg Philanthropies","Born This Way Foundation","Boys & Girls Clubs of America","Bread for the World","British Heart Foundation","CAFOD","CARE","Caritas","Carter Center","Catholic Charities USA","Catholic Relief Services","Child's Play","Children International","Children's Defense Fund","Children's Miracle Network Hospitals","Church World Service","City Year","Clinton Foundation","Comic Relief","Compassion International","Conrad N. Hilton Foundation","Cystic Fibrosis Foundation","Daniels Fund","David Suzuki Foundation","Direct Relief","Do Something","Dream Center","Dubai Cares","East Meets West","Edhi Foundation","Engineers Without Borders","Epilepsy Foundation","Eye Care Foundation","Feeding America","Feed My Starving Children","FINCA International","Food Allergy Initiative","Ford Foundation","The Fred Hollows Foundation","Girl Scouts of the USA","The Global Fund to Fight AIDS, Tuberculosis and Malaria","GlobalGiving","Greenpeace","Habitat for Humanity","Heal the World Foundation","Heifer International","Helen Keller International","High Fives Foundation","Holt International Children's Services","Howard Hughes Medical Institute","Humanity & Inclusion","International Fund for Animal Welfare","International Literacy Foundation","International Medical Corps","International Planned Parenthood Federation","Invisible Children, Inc.","Islamic Relief","J. Paul Getty Trust","Jane Goodall Institute","Jesuit Refugee Service","Jewish Community Center","John D. and Catherine T. MacArthur Foundation","Kin Canada","LDS Humanitarian Services","Lions Clubs International","Make-A-Wish Foundation","Malteser International","Marie Stopes International","Mastercard Foundation","McKnight Foundation","Médecins Sans Frontières (Doctors Without Borders)","Mercy Corps","Michael & Susan Dell Foundation","National Collegiate Cancer Foundation","Network for Good","Nobel Foundation","Oaktree","Operation Blessing International","Operation Smile","Opportunity International","Oral Cancer Foundation","Orbis International","Oxfam","The Pew Charitable Trusts","Plan International","Ratanak International","Robert Wood Johnson Foundation","Rockefeller Foundation","Rotary Foundation","Royal Flying Doctor Service of Australia","Royal Society for the Prevention of Cruelty to Animals","Saint Camillus Foundation","The Salvation Army","Samaritan's Purse","Save the Children","Save the Manatee Club","Silicon Valley Community Foundation","Smile Train","Society of Saint Vincent de Paul","SOS Children's Villages","St. Baldrick's Foundation","St. Jude Children's Research Hospital","Starlight Children's Foundation","Surdna Foundation","Susan G. Komen for the Cure","Taproot Foundation","Tom Joyner Foundation","Toys for Tots","UNICEF","United Methodist Committee on Relief","United Nations Foundation","United Way Worldwide","Vancouver Foundation","Varkey Foundation","Volunteers of America","Wellcome Trust","Wetlands International","Wikimedia Foundation","WildAid","Wildlife Conservation Society","William and Flora Hewlett Foundation","World Literacy Foundation","World Medical Relief","World Vision International","World Wide Fund for Nature","Wounded Warrior Project","YouthBuild"];
+
+function buildCharityList(list) {
+  const el = document.getElementById('ch-list');
+  let html = '', last = '';
+  list.forEach(n => {
+    const f = n[0].toUpperCase();
+    if (f !== last) { last = f; html += `<div class="ch-letter">${f}</div>`; }
+    html += `<div class="ch-item" onclick="selCh('${n.replace(/'/g,"\\'")}',this)">${n}<span style="display:none;color:var(--petal-gold);margin-left:6px">✓</span></div>`;
+  });
+  el.innerHTML = html;
+}
+function filterCharities(q) { buildCharityList(CHARITIES.filter(c => c.toLowerCase().includes(q.toLowerCase()))); }
+function selCh(name, el) {
+  document.querySelectorAll('.ch-item').forEach(i => { i.classList.remove('sel'); i.querySelector('span').style.display = 'none'; });
+  el.classList.add('sel');
+  el.querySelector('span').style.display = 'inline';
+  S.selectedCharity = name;
+}
+function addCharity() {
+  if (!S.selectedCharity) { showToast('Please select a charity first'); return; }
+  showToast('✅ "' + S.selectedCharity + '" added to Charity bin!');
+  closeAll();
+}
+function populateCharitySelect() {
+  const sel = document.getElementById('d-charity');
+  CHARITIES.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+}
+
+/* ── CANVAS ── */
+let ctx, cDrawing = false;
+function initCanvas() {
+  const cv = document.getElementById('greeting-canvas');
+  if (!cv) return;
+  ctx = cv.getContext('2d');
+  setCardBg(null, '#fff8f0', '#fdebd0');
+  const pt = e => {
+    const r = cv.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * (cv.width / r.width), y: (e.clientY - r.top) * (cv.height / r.height) };
+  };
+  cv.addEventListener('mousedown', e => { const p = pt(e); startC(p.x, p.y); });
+  cv.addEventListener('mousemove', e => { const p = pt(e); moveC(p.x, p.y); });
+  cv.addEventListener('mouseup',    () => { cDrawing = false; if(ctx) ctx.beginPath(); });
+  cv.addEventListener('mouseleave', () => { cDrawing = false; if(ctx) ctx.beginPath(); });
+  cv.addEventListener('touchstart', e => { e.preventDefault(); const p = pt(e.touches[0]); startC(p.x, p.y); }, { passive: false });
+  cv.addEventListener('touchmove',  e => { e.preventDefault(); const p = pt(e.touches[0]); moveC(p.x, p.y); }, { passive: false });
+  cv.addEventListener('touchend',   () => { cDrawing = false; if(ctx) ctx.beginPath(); });
+}
+function startC(x, y) {
+  if (!ctx) return;
+  if (S.canvas.tool === 'sticker') {
+    ctx.font = '26px serif';
+    const s = ['🌻','🌸','🌼','🌺','🌷','✨','🦋','💛','❤️'][Math.floor(Math.random() * 9)];
+    ctx.fillText(s, x - 13, y + 13);
+    return;
+  }
+  if (S.canvas.tool === 'text') {
+    ctx.font = "22px 'Caveat',cursive";
+    ctx.fillStyle = S.canvas.color;
+    ctx.fillText(document.getElementById('card-txt').value || 'Hello!', x, y);
+    return;
+  }
+  cDrawing = true;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+}
+function moveC(x, y) {
+  if (!cDrawing || !ctx) return;
+  const bs = parseInt(document.getElementById('brush-size').value);
+  ctx.lineTo(x, y);
+  if (S.canvas.tool === 'erase') {
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.lineWidth = bs * 3;
+  } else {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.strokeStyle = S.canvas.color;
+    ctx.lineWidth = bs;
+  }
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  ctx.globalCompositeOperation = 'source-over';
+}
+function setTool(t) {
+  S.canvas.tool = t;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('t-' + t);
+  if (el) el.classList.add('active');
+}
+function setColor(c, el) {
+  S.canvas.color = c;
+  document.querySelectorAll('.col-sw').forEach(s => s.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+function setCardBg(el, c1, c2) {
+  if (el) { document.querySelectorAll('.card-bg-opt').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
+  if (!ctx) return;
+  const cv = document.getElementById('greeting-canvas');
+  const g  = ctx.createLinearGradient(0, 0, cv.width, cv.height);
+  g.addColorStop(0, c1);
+  g.addColorStop(1, c2 || c1);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, cv.width, cv.height);
+}
+function clearCanvas() {
+  if (!ctx) return;
+  const cv = document.getElementById('greeting-canvas');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  setCardBg(null, '#fff8f0', '#fdebd0');
+}
+function sendCard() {
+  const email = document.getElementById('card-email').value.trim();
+  if (!email) { showToast('Please enter a recipient email'); return; }
+  showToast('💌 Card sent to ' + email + '! Print-on-demand queued.');
+  closeAll();
+}
+
+/* ── SOCIAL ── */
+function updH(id, v) { document.getElementById('sh-' + id).textContent = v || '@handle'; }
+function share(p) {
+  const u = encodeURIComponent(window.location.href);
+  const t = encodeURIComponent('Support my causes with FlowerBox! 🌻 Donate & watch flowers grow!');
+  const urls = {
+    twitter:  `https://twitter.com/intent/tweet?text=${t}&url=${u}`,
+    facebook: `https://facebook.com/sharer/sharer.php?u=${u}`
+  };
+  if (urls[p]) window.open(urls[p], '_blank');
+  else showToast('Open ' + p + ' and paste your FlowerBox link!');
+}
+
+/* ── TABS ── */
+function swTab(btn, panelId) {
+  btn.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.closest('.modal-body').querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById(panelId);
+  if (panel) panel.classList.add('active');
+}
+
+/* ── MODALS ── */
+function openModal(id) {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('open');
+}
+function closeAll() {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+}
+function hideBanner() {
+  document.getElementById('reward-banner').style.display = 'none';
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) closeAll(); });
+});
+
+/* ── TOAST ── */
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#3d1f0d,#6b3a1f);color:#fdf6ec;padding:11px 22px;border-radius:30px;font-family:DM Sans,sans-serif;font-size:12.5px;font-weight:700;z-index:99999;box-shadow:0 8px 28px rgba(0,0,0,.45);transition:all .35s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;opacity:0;white-space:nowrap;max-width:90vw;border:1px solid rgba(200,140,60,.3);';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => { t.style.transform = 'translateX(-50%) translateY(0)'; t.style.opacity = '1'; });
+  setTimeout(() => { t.style.transform = 'translateX(-50%) translateY(10px)'; t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 3200);
+}
+
+/* ── CONFETTI ── */
+function confetti() {
+  const c = ['#f7c948','#e87a8c','#5a9e4a','#9b72cf','#f07040','#3ab8a8'];
+  for (let i = 0; i < 28; i++) {
+    const el = document.createElement('div');
+    const size = 5 + Math.random() * 9;
+    el.style.cssText = `position:fixed;left:${Math.random()*100}vw;top:-12px;width:${size}px;height:${size}px;background:${c[Math.floor(Math.random()*c.length)]};border-radius:${Math.random()>.5?'50%':'2px'};pointer-events:none;z-index:99998;animation:fall ${1.2+Math.random()*1.2}s ease-in ${Math.random()*.5}s forwards;`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2800);
+  }
+}
+
+/* ── BOOT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  buildFlowerRow();
+  buildCharityList(CHARITIES);
+  populateCharitySelect();
+});
+</script>
+</body>
+</html>

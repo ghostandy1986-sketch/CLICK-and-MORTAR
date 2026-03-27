@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Brand Interactive Layout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+            overflow-x: auto;
+            background: #000;
+            color: #fff;
+        }
+
+        .container {
+            position: relative;
+            width: 1920px;
+            height: 1392px;
+            background-image: url('NEW PLAT3.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0 auto;
+        }
+
+        /* Premium Brand Buttons */
+        .brand-button {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 2px 8px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+            transform: translateZ(0);
+            overflow: hidden;
+        }
+
+        .brand-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .brand-button:hover::before {
+            left: 100%;
+        }
+
+        .brand-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 16px 48px rgba(0, 0, 0, 0.4),
+                0 8px 16px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .brand-button:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* Luxury Preview Window */
+        .preview-window {
+            position: absolute;
+            background: linear-gradient(145deg, rgba(20, 20, 40, 0.95), rgba(10, 10, 20, 0.98));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+            min-width: 280px;
+            max-width: 350px;
+            backdrop-filter: blur(30px);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.6),
+                0 12px 25px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(15px) scale(0.9);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 1500;
+            pointer-events: none;
+        }
+
+        .preview-window.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .preview-window::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(8px);
+        }
+
+        .preview-window h3 {
+            color: #fff;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.5px;
+        }
+
+        .preview-window p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .preview-window .brand-logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 28px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Luxury Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 2500;
+            backdrop-filter: blur(15px);
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            padding: 50px;
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.7) translateY(80px) rotateX(15deg);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 
+                0 40px 80px rgba(0, 0, 0, 0.7),
+                0 20px 40px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1) translateY(0) rotateX(0deg);
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .modal-content .brand-logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 42px;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .modal-content h2 {
+            color: #fff;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.5px;
+        }
+
+        .modal-content p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 35px;
+            font-weight: 300;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            text-decoration: none;
+            display: inline-block;
+            min-width: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enter-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .enter-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        .exit-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .exit-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        /* Sliding Display Areas */
+        .slide-area {
+            position: absolute;
+            background: linear-gradient(145deg, rgba(15, 15, 30, 0.95), rgba(25, 25, 50, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            backdrop-filter: blur(25px);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 800;
+            overflow: hidden;
+        }
+
+        .top-slide {
+            left: 786px;
+            top: 36px;
+            width: 300px;
+            height: 108px;
+            transform: translateY(-120px);
+        }
+
+        .bottom-slide {
+            left: 803px;
+            top: 187px;
+            width: 263px;
+            height: 124px;
+            transform: translateY(140px);
+        }
+
+        .slide-area.active {
+            transform: translateY(0);
+        }
+
+        .slide-content {
+            padding: 20px;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-content h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .slide-content p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+            font-weight: 300;
+        }
+
+        /* Scrolling Windows */
+        .scroll-window {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            backdrop-filter: blur(15px);
+            overflow: hidden;
+            box-shadow: 
+                0 12px 24px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .scroll-content {
+            display: flex;
+            animation: scroll 20s linear infinite;
+            height: 100%;
+        }
+
+        .scroll-item {
+            min-width: 120px;
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            margin-right: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .left-scroll {
+            left: 540px;
+            top: 38px;
+            width: 213px;
+            height: 110px;
+        }
+
+        .right-scroll {
+            left: 1108px;
+            top: 37px;
+            width: 230px;
+            height: 108px;
+        }
+
+        .scroll-window:hover .scroll-content {
+            animation-play-state: paused;
+        }
+
+        /* Flowerbox Modal */
+        .flowerbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 3000;
+            backdrop-filter: blur(20px);
+        }
+
+        .flowerbox-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .flowerbox-content {
+            background: linear-gradient(145deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            padding: 60px;
+            max-width: 650px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.6) translateY(100px) rotateY(20deg);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 
+                0 50px 100px rgba(255, 154, 158, 0.4),
+                0 25px 50px rgba(254, 207, 239, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flowerbox-modal.show .flowerbox-content {
+            transform: scale(1) translateY(0) rotateY(0deg);
+        }
+
+        .flowerbox-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .flowerbox-logo {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 54px;
+            box-shadow: 0 20px 40px rgba(255, 107, 157, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .flowerbox-logo::before {
+            content: '🌸';
+            position: absolute;
+            font-size: 28px;
+            top: -12px;
+            right: -12px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .flowerbox-logo::after {
+            content: '🌺';
+            position: absolute;
+            font-size: 24px;
+            bottom: -8px;
+            left: -8px;
+            animation: float 4s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            50% { transform: translateY(-15px) rotate(10deg) scale(1.1); }
+        }
+
+        .flowerbox-content h2 {
+            color: #2d3436;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .flowerbox-content p {
+            color: #636e72;
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        .flowerbox-buttons {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .flowerbox-btn {
+            padding: 18px 40px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            text-decoration: none;
+            display: inline-block;
+            min-width: 160px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .flowerbox-enter {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            box-shadow: 0 12px 30px rgba(255, 107, 157, 0.4);
+        }
+
+        .flowerbox-enter:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 16px 40px rgba(255, 107, 157, 0.6);
+        }
+
+        .flowerbox-exit {
+            background: rgba(45, 52, 54, 0.8);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .flowerbox-exit:hover {
+            background: rgba(45, 52, 54, 1);
+            transform: translateY(-4px) scale(1.05);
+        }
+
+        /* Ad Windows */
+        .ad-window {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 8px 16px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .ad-window:hover {
+            background: rgba(0, 0, 0, 0.8);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Inside Left Column -->
+        <div class="brand-button" style="left: 1337px; top: 1150px; width: 232px; height: 33px;" data-brand="right26"></div>
+        <div class="brand-button" style="left: 1345px; top: 1192px; width: 233px; height: 34px;" data-brand="right27"></div>
+
+        <!-- Outer Right Column -->
+        <div class="brand-button" style="left: 1342px; top: 250px; width: 180px; height: 29px;" data-brand="outer-right1"></div>
+        <div class="brand-button" style="left: 1352px; top: 285px; width: 178px; height: 23px;" data-brand="outer-right2"></div>
+        <div class="brand-button" style="left: 1359px; top: 312px; width: 183px; height: 22px;" data-brand="outer-right3"></div>
+        <div class="brand-button" style="left: 1367px; top: 341px; width: 189px; height: 22px;" data-brand="outer-right4"></div>
+        <div class="brand-button" style="left: 1381px; top: 370px; width: 190px; height: 28px;" data-brand="outer-right5"></div>
+        <div class="brand-button" style="left: 1383px; top: 402px; width: 196px; height: 28px;" data-brand="outer-right6"></div>
+        <div class="brand-button" style="left: 1399px; top: 433px; width: 194px; height: 37px;" data-brand="outer-right7"></div>
+        <div class="brand-button" style="left: 1413px; top: 472px; width: 197px; height: 36px;" data-brand="outer-right8"></div>
+        <div class="brand-button" style="left: 1425px; top: 512px; width: 200px; height: 34px;" data-brand="outer-right9"></div>
+        <div class="brand-button" style="left: 1432px; top: 553px; width: 212px; height: 29px;" data-brand="outer-right10"></div>
+        <div class="brand-button" style="left: 1445px; top: 584px; width: 211px; height: 31px;" data-brand="outer-right11"></div>
+        <div class="brand-button" style="left: 1459px; top: 621px; width: 210px; height: 28px;" data-brand="outer-right12"></div>
+        <div class="brand-button" style="left: 1471px; top: 654px; width: 213px; height: 34px;" data-brand="outer-right13"></div>
+        <div class="brand-button" style="left: 1476px; top: 693px; width: 222px; height: 27px;" data-brand="outer-right14"></div>
+        <div class="brand-button" style="left: 1489px; top: 724px; width: 228px; height: 39px;" data-brand="outer-right15"></div>
+        <div class="brand-button" style="left: 1506px; top: 767px; width: 226px; height: 31px;" data-brand="outer-right16"></div>
+        <div class="brand-button" style="left: 1518px; top: 804px; width: 234px; height: 32px;" data-brand="outer-right17"></div>
+        <div class="brand-button" style="left: 1527px; top: 844px; width: 242px; height: 32px;" data-brand="outer-right18"></div>
+        <div class="brand-button" style="left: 1542px; top: 884px; width: 239px; height: 34px;" data-brand="outer-right19"></div>
+        <div class="brand-button" style="left: 1550px; top: 927px; width: 255px; height: 28px;" data-brand="outer-right20"></div>
+        <div class="brand-button" style="left: 1571px; top: 964px; width: 246px; height: 24px;" data-brand="outer-right21"></div>
+        <div class="brand-button" style="left: 1579px; top: 1000px; width: 260px; height: 31px;" data-brand="outer-right22"></div>
+        <div class="brand-button" style="left: 1595px; top: 1039px; width: 257px; height: 33px;" data-brand="outer-right23"></div>
+        <div class="brand-button" style="left: 1603px; top: 1080px; width: 265px; height: 30px;" data-brand="outer-right24"></div>
+        <div class="brand-button" style="left: 1618px; top: 1124px; width: 265px; height: 33px;" data-brand="outer-right25"></div>
+
+        <!-- Navigation Elements -->
+        <div class="brand-button ad-window" style="left: 763px; top: 154px; width: 339px; height: 29px;" data-brand="navbar-frame"></div>
+        <div class="brand-button nav-trigger" style="left: 784px; top: 156px; width: 96px; height: 25px;" data-brand="nav-b1"></div>
+        <div class="brand-button nav-trigger" style="left: 889px; top: 158px; width: 90px; height: 22px;" data-brand="nav-b2"></div>
+        <div class="brand-button nav-trigger" style="left: 989px; top: 159px; width: 93px; height: 21px;" data-brand="nav-b3"></div>
+
+        <!-- Sliding Display Areas -->
+        <div class="slide-area top-slide" id="topSlide">
+            <div class="slide-content">
+                <h3>Premium Showcase</h3>
+                <p>Exclusive luxury brands and featured partnerships await your discovery</p>
+            </div>
+        </div>
+
+        <div class="slide-area bottom-slide" id="bottomSlide">
+            <div class="slide-content">
+                <h3>Navigation Hub</h3>
+                <p>Explore our curated collection of world-class brands and services</p>
+            </div>
+        </div>
+
+        <!-- Scrolling Windows -->
+        <div class="scroll-window left-scroll">
+            <div class="scroll-content">
+                <div class="scroll-item">Luxury Fashion</div>
+                <div class="scroll-item">Premium Tech</div>
+                <div class="scroll-item">Elite Beauty</div>
+                <div class="scroll-item">Designer Home</div>
+                <div class="scroll-item">Exclusive Travel</div>
+                <div class="scroll-item">Fine Jewelry</div>
+                <div class="scroll-item">Gourmet Food</div>
+                <div class="scroll-item">Art Gallery</div>
+                <div class="scroll-item">Luxury Fashion</div>
+                <div class="scroll-item">Premium Tech</div>
+                <div class="scroll-item">Elite Beauty</div>
+                <div class="scroll-item">Designer Home</div>
+            </div>
+        </div>
+
+        <div class="scroll-window right-scroll">
+            <div class="scroll-content">
+                <div class="scroll-item">Innovation Hub</div>
+                <div class="scroll-item">Digital Solutions</div>
+                <div class="scroll-item">Future Tech</div>
+                <div class="scroll-item">Smart Living</div>
+                <div class="scroll-item">AI Services</div>
+                <div class="scroll-item">Cloud Systems</div>
+                <div class="scroll-item">Data Analytics</div>
+                <div class="scroll-item">Automation</div>
+                <div class="scroll-item">Innovation Hub</div>
+                <div class="scroll-item">Digital Solutions</div>
+                <div class="scroll-item">Future Tech</div>
+                <div class="scroll-item">Smart Living</div>
+            </div>
+        </div>
+
+        <!-- Flowerbox -->
+        <div class="brand-button flowerbox-trigger" style="left: 797px; top: 1170px; width: 290px; height: 158px;" data-brand="flowerbox"></div>
+
+        <!-- Other Ad Windows -->
+        <div class="brand-button" style="left: 533px; top: 264px; width: 154px; height: 29px;" data-brand="blankslate-left"></div>
+        <div class="brand-button" style="left: 1160px; top: 264px; width: 153px; height: 24px;" data-brand="blankslate-right"></div>
+        <div class="brand-button ad-window" style="left: 692px; top: 222px; width: 172px; height: 16px;" data-brand="text-ad-scroll-left"></div>
+        <div class="brand-button ad-window" style="left: 1009px; top: 219px; width: 153px; height: 22px;" data-brand="text-ad-scroll-right"></div>
+    </div>
+
+    <!-- Flowerbox Modal -->
+    <div class="flowerbox-modal" id="flowerboxModal">
+        <div class="flowerbox-content">
+            <div class="flowerbox-logo">F</div>
+            <h2>Flowerbox Luxury</h2>
+            <p>Immerse yourself in the world of exquisite floral artistry. From hand-selected premium roses to rare exotic blooms, each arrangement is a masterpiece crafted for the most discerning tastes.</p>
+            <div class="flowerbox-buttons">
+                <a href="https://flowerbox-luxury.com" class="flowerbox-btn flowerbox-enter" target="_blank">Enter Garden</a>
+                <button class="flowerbox-btn flowerbox-exit" id="flowerboxExit">Exit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Window -->
+    <div class="preview-window" id="previewWindow">
+        <div class="brand-logo" id="previewLogo">B</div>
+        <h3 id="previewTitle">Brand Name</h3>
+        <p id="previewDescription">Discover premium experiences and luxury services.</p>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="brandModal">
+        <div class="modal-content">
+            <div class="brand-logo" id="modalLogo">B</div>
+            <h2 id="modalTitle">Brand Name</h2>
+            <p id="modalDescription">Experience luxury and innovation with our premium brand collection.</p>
+            <div class="modal-buttons">
+                <a href="#" class="modal-btn enter-btn" id="enterBtn" target="_blank">Enter Site</a>
+                <button class="modal-btn exit-btn" id="exitBtn">Exit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Brand Data
+        const brandData = {
+            'inside-left1': { name: 'Hermès Collection', desc: 'Luxury fashion and timeless elegance', url: 'https://hermes.com', color: '#ff6b6b' },
+            'left2': { name: 'Tesla Innovation', desc: 'Revolutionary electric vehicles', url: 'https://tesla.com', color: '#4ecdc4' },
+            'left3': { name: 'Apple Premium', desc: 'Cutting-edge technology design', url: 'https://apple.com', color: '#45b7d1' },
+            'left4': { name: 'Nike Elite', desc: 'Performance athletic wear', url: 'https://nike.com', color: '#96ceb4' },
+            'left5': { name: 'Chanel Beauty', desc: 'Luxury cosmetics and fragrance', url: 'https://chanel.com', color: '#ffeaa7' },
+            'left6': { name: 'Dom Pérignon', desc: 'Champagne and fine wines', url: 'https://domperignon.com', color: '#fd79a8' },
+            'left7': { name: 'Porsche Design', desc: 'Luxury automotive excellence', url: 'https://porsche.com', color: '#6c5ce7' },
+            'left8': { name: 'Louis Vuitton', desc: 'Heritage luxury travel', url: 'https://louisvuitton.com', color: '#74b9ff' },
+            'left9': { name: 'Rolex Timepieces', desc: 'Swiss luxury watchmaking', url: 'https://rolex.com', color: '#00b894' },
+            'left10': { name: 'Bang & Olufsen', desc: 'Premium audio systems', url: 'https://bang-olufsen.com', color: '#e17055' },
+            'left11': { name: 'Tiffany & Co.', desc: 'Fine jewelry and diamonds', url: 'https://tiffany.com', color: '#81ecec' },
+            'left12': { name: 'Michelin Star', desc: 'Gourmet dining experiences', url: 'https://guide.michelin.com', color: '#fab1a0' },
+            'left13': { name: 'Four Seasons', desc: 'Luxury hospitality worldwide', url: 'https://fourseasons.com', color: '#6c5ce7' },
+            'left14': { name: 'Bentley Motors', desc: 'Handcrafted luxury automobiles', url: 'https://bentley.com', color: '#00b894' },
+            'left15': { name: 'Cartier', desc: 'High jewelry and watches', url: 'https://cartier.com', color: '#fd79a8' },
+            'left16': { name: 'Giorgio Armani', desc: 'Italian luxury fashion', url: 'https://armani.com', color: '#74b9ff' },
+            'left17': { name: 'Steinway & Sons', desc: 'Handcrafted pianos', url: 'https://steinway.com', color: '#a29bfe' },
+            'left18': { name: 'Cristal Champagne', desc: 'Premium French champagne', url: 'https://cristal.fr', color: '#ff7675' },
+            'left19': { name: 'Patek Philippe', desc: 'Swiss haute horlogerie', url: 'https://patek.com', color: '#55a3ff' },
+            'left20': { name: 'Hermès Birkin', desc: 'Exclusive handbag collection', url: 'https://hermes.com', color: '#fdcb6e' },
+            'left21': { name: 'Private Jets', desc: 'Luxury aviation services', url: 'https://netjets.com', color: '#fd79a8' },
+            'left22': { name: 'Yacht Charter', desc: 'Superyacht experiences', url: 'https://charterworld.com', color: '#74b9ff' },
+            'left23': { name: 'Art Auctions', desc: 'Fine art and collectibles', url: 'https://sothebys.com', color: '#6c5ce7' },
+            'left24': { name: 'Private Banking', desc: 'Wealth management services', url: 'https://privatebank.com', color: '#00b894' },
+            'left25': { name: 'Exclusive Resorts', desc: 'Private luxury destinations', url: 'https://exclusiveresorts.com', color: '#e17055' },
+
+            'inside-right1': { name: 'Google Cloud', desc: 'Enterprise cloud solutions', url: 'https://cloud.google.com', color: '#4285f4' },
+            'right2': { name: 'Microsoft Azure', desc: 'Cloud computing platform', url: 'https://azure.microsoft.com', color: '#0078d4' },
+            'right3': { name: 'Amazon AWS', desc: 'Web services and infrastructure', url: 'https://aws.amazon.com', color: '#ff9900' },
+            'right4': { name: 'Salesforce CRM', desc: 'Customer relationship management', url: 'https://salesforce.com', color: '#00a1e0' },
+            'right5': { name: 'Oracle Systems', desc: 'Enterprise software solutions', url: 'https://oracle.com', color: '#f80000' },
+            'right6': { name: 'SAP Solutions', desc: 'Business process software', url: 'https://sap.com', color: '#0faaff' },
+            'right7': { name: 'IBM Watson', desc: 'AI and machine learning', url: 'https://ibm.com', color: '#1261fe' },
+            'right8': { name: 'Adobe Creative', desc: 'Design and creativity tools', url: 'https://adobe.com', color: '#ff0000' },
+            'right9': { name: 'Autodesk CAD', desc: '3D design and engineering', url: 'https://autodesk.com', color: '#0696d7' },
+            'right10': { name: 'Cisco Networks', desc: 'Networking and security', url: 'https://cisco.com', color: '#1ba0d7' },
+            'right11': { name: 'VMware Cloud', desc: 'Virtualization technology', url: 'https://vmware.com', color: '#607078' },
+            'right12': { name: 'Slack Teams', desc: 'Business communication', url: 'https://slack.com', color: '#4a154b' },
+            'right13': { name: 'Zoom Meetings', desc: 'Video conferencing platform', url: 'https://zoom.us', color: '#2d8cff' },
+            'right14': { name: 'HubSpot CRM', desc: 'Inbound marketing platform', url: 'https://hubspot.com', color: '#ff7a59' },
+            'right15': { name: 'Shopify Plus', desc: 'E-commerce platform', url: 'https://shopify.com', color: '#96bf48' },
+            'right16': { name: 'Stripe Payments', desc: 'Online payment processing', url: 'https://stripe.com', color: '#635bff' },
+            'right17': { name: 'PayPal Business', desc: 'Digital payment solutions', url: 'https://paypal.com', color: '#003087' },
+            'right18': { name: 'Square POS', desc: 'Point of sale systems', url: 'https://squareup.com', color: '#3e4348' },
+            'right19': { name: 'Mailchimp Pro', desc: 'Email marketing automation', url: 'https://mailchimp.com', color: '#ffe01b' },
+            'right20': { name: 'Dropbox Business', desc: 'Cloud storage solutions', url: 'https://dropbox.com', color: '#0061ff' },
+            'right21': { name: 'GitHub Enterprise', desc: 'Developer collaboration', url: 'https://github.com', color: '#24292e' },
+            'right22': { name: 'Atlassian Suite', desc: 'Team collaboration tools', url: 'https://atlassian.com', color: '#0052cc' },
+            'right23': { name: 'ServiceNow', desc: 'Digital workflow platform', url: 'https://servicenow.com', color: '#62d84e' },
+            'right24': { name: 'Workday HCM', desc: 'Human capital management', url: 'https://workday.com', color: '#f68b1f' },
+            'right25': { name: 'Tableau Analytics', desc: 'Data visualization platform', url: 'https://tableau.com', color: '#e97627' },
+            'right26': { name: 'Palantir Data', desc: 'Big data analytics', url: 'https://palantir.com', color: '#101010' },
+            'right27': { name: 'Snowflake Cloud', desc: 'Cloud data platform', url: 'https://snowflake.com', color: '#29b5e8' },
+
+            // Add outer right and navigation data
+            'outer-right1': { name: 'McKinsey & Co', desc: 'Global management consulting', url: 'https://mckinsey.com', color: '#003366' },
+            'outer-right2': { name: 'Goldman Sachs', desc: 'Investment banking services', url: 'https://goldmansachs.com', color: '#1e3a5f' },
+            'nav-b1': { name: 'Home Portal', desc: 'Return to main dashboard', url: '/', color: '#4ecdc4' },
+            'nav-b2': { name: 'Brand Directory', desc: 'Explore all premium brands', url: '/brands', color: '#45b7d1' },
+            'nav-b3': { name: 'About Excellence', desc: 'Discover our luxury mission', url: '/about', color: '#96ceb4' },
+            'navbar-frame': { name: 'Navigation Hub', desc: 'Premium navigation interface', url: '#', color: '#667eea' },
+            'flowerbox': { name: 'Flowerbox Luxury', desc: 'Exquisite floral arrangements', url: 'https://flowerbox-luxury.com', color: '#ff6b9d' },
+            'blankslate-left': { name: 'Premium Space', desc: 'Available for luxury brands', url: '#', color: '#96ceb4' },
+            'blankslate-right': { name: 'Elite Placement', desc: 'Reserved for top-tier brands', url: '#', color: '#ffeaa7' },
+            'text-ad-scroll-left': { name: 'Luxury Showcase', desc: 'Rotating premium advertisements', url: '#', color: '#fd79a8' },
+            'text-ad-scroll-right': { name: 'Elite Promotions', desc: 'Exclusive brand spotlights', url: '#', color: '#6c5ce7' }
+        };
+
+        // Element selectors
+        const buttons = document.querySelectorAll('.brand-button');
+        const previewWindow = document.getElementById('previewWindow');
+        const modal = document.getElementById('brandModal');
+        const exitBtn = document.getElementById('exitBtn');
+        const enterBtn = document.getElementById('enterBtn');
+        const flowerboxModal = document.getElementById('flowerboxModal');
+        const flowerboxExit = document.getElementById('flowerboxExit');
+        const topSlide = document.getElementById('topSlide');
+        const bottomSlide = document.getElementById('bottomSlide');
+
+        let currentBrand = null;
+        let hoverTimeout = null;
+        let slideTimeout = null;
+
+        // Navigation triggers for sliding displays
+        const navTriggers = document.querySelectorAll('.nav-trigger');
+        navTriggers.forEach(trigger => {
+            trigger.addEventListener('mouseenter', () => {
+                clearTimeout(slideTimeout);
+                bottomSlide.classList.add('active');
+            });
+        });
+
+        // Top slide triggers (scroll windows)
+        const scrollWindows = document.querySelectorAll('.scroll-window');
+        scrollWindows.forEach(window => {
+            window.addEventListener('mouseenter', () => {
+                clearTimeout(slideTimeout);
+                topSlide.classList.add('active');
+            });
+        });
+
+        // Auto-hide slides when leaving navigation area
+        document.addEventListener('mousemove', (e) => {
+            const navFrame = document.querySelector('[data-brand="navbar-frame"]');
+            const navRect = navFrame.getBoundingClientRect();
+            const containerRect = document.querySelector('.container').getBoundingClientRect();
+            
+            const buffer = 50;
+            const isInNavArea = e.clientX >= navRect.left - buffer && 
+                               e.clientX <= navRect.right + buffer && 
+                               e.clientY >= navRect.top - buffer && 
+                               e.clientY <= navRect.bottom + 200;
+            
+            const isInTopArea = e.clientY >= containerRect.top && 
+                               e.clientY <= containerRect.top + 200 &&
+                               e.clientX >= navRect.left - 150 &&
+                               e.clientX <= navRect.right + 150;
+
+            if (!isInNavArea && !isInTopArea) {
+                clearTimeout(slideTimeout);
+                slideTimeout = setTimeout(() => {
+                    bottomSlide.classList.remove('active');
+                    topSlide.classList.remove('active');
+                }, 500);
+            }
+        });
+
+        // Flowerbox special handling
+        const flowerboxTrigger = document.querySelector('.flowerbox-trigger');
+        flowerboxTrigger.addEventListener('mouseenter', (e) => {
+            clearTimeout(hoverTimeout);
+            const brand = brandData['flowerbox'];
+            hoverTimeout = setTimeout(() => {
+                showPreview(e, brand, 'flowerbox');
+            }, 300);
+        });
+
+        flowerboxTrigger.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimeout);
+            hoverTimeout = setTimeout(() => {
+                hidePreview();
+            }, 200);
+        });
+
+        flowerboxTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showFlowerboxModal();
+        });
+
+        function showFlowerboxModal() {
+            hidePreview();
+            flowerboxModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideFlowerboxModal() {
+            flowerboxModal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Brand button interactions
+        buttons.forEach(button => {
+            const brandKey = button.dataset.brand;
+            
+            // Skip special elements
+            if (button.classList.contains('flowerbox-trigger') || 
+                button.classList.contains('nav-trigger')) {
+                return;
+            }
+            
+            const brand = brandData[brandKey] || { 
+                name: brandKey.charAt(0).toUpperCase() + brandKey.slice(1).replace(/-/g, ' '), 
+                desc: 'Premium luxury experience awaits', 
+                url: 'https://example.com',
+                color: '#667eea'
+            };
+
+            button.addEventListener('mouseenter', (e) => {
+                clearTimeout(hoverTimeout);
+                hoverTimeout = setTimeout(() => {
+                    showPreview(e, brand, brandKey);
+                }, 200);
+            });
+
+            button.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+                hoverTimeout = setTimeout(() => {
+                    hidePreview();
+                }, 150);
+            });
+
+            button.addEventListener('click', () => {
+                showModal(brand, brandKey);
+            });
+        });
+
+        // Preview window interactions
+        previewWindow.addEventListener('mouseenter', () => {
+            clearTimeout(hoverTimeout);
+        });
+
+        previewWindow.addEventListener('mouseleave', () => {
+            hoverTimeout = setTimeout(() => {
+                hidePreview();
+            }, 150);
+        });
+
+        function showPreview(e, brand, brandKey) {
+            const rect = e.target.getBoundingClientRect();
+            const containerRect = document.querySelector('.container').getBoundingClientRect();
+            
+            document.getElementById('previewLogo').textContent = brand.name.charAt(0);
+            document.getElementById('previewLogo').style.background = `linear-gradient(135deg, ${brand.color}, ${adjustColor(brand.color, -30)})`;
+            document.getElementById('previewTitle').textContent = brand.name;
+            document.getElementById('previewDescription').textContent = brand.desc;
+            
+            let left = rect.left - containerRect.left + rect.width + 20;
+            let top = rect.top - containerRect.top;
+            
+            // Smart positioning
+            if (left + 350 > 1920) {
+                left = rect.left - containerRect.left - 370;
+            }
+            if (top + 200 > 1392) {
+                top = 1392 - 220;
+            }
+            if (top < 0) {
+                top = 10;
+            }
+            
+            previewWindow.style.left = left + 'px';
+            previewWindow.style.top = top + 'px';
+            previewWindow.classList.add('show');
+        }
+
+        function hidePreview() {
+            previewWindow.classList.remove('show');
+        }
+
+        function showModal(brand, brandKey) {
+            currentBrand = brand;
+            document.getElementById('modalLogo').textContent = brand.name.charAt(0);
+            document.getElementById('modalLogo').style.background = `linear-gradient(135deg, ${brand.color}, ${adjustColor(brand.color, -30)})`;
+            document.getElementById('modalTitle').textContent = brand.name;
+            document.getElementById('modalDescription').textContent = `Experience the pinnacle of luxury with ${brand.name}. ${brand.desc}. Discover exclusive collections and premium services crafted for the most discerning clientele.`;
+            document.getElementById('enterBtn').href = brand.url;
+            
+            hidePreview();
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModal() {
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+            currentBrand = null;
+        }
+
+        function adjustColor(color, amount) {
+            const usePound = color[0] === '#';
+            const col = usePound ? color.slice(1) : color;
+            const num = parseInt(col, 16);
+            let r = (num >> 16) + amount;
+            let g = (num >> 8 & 0x00FF) + amount;
+            let b = (num & 0x0000FF) + amount;
+            r = r > 255 ? 255 : r < 0 ? 0 : r;
+            g = g > 255 ? 255 : g < 0 ? 0 : g;
+            b = b > 255 ? 255 : b < 0 ? 0 : b;
+            return (usePound ? '#' : '') + (r << 16 | g << 8 | b).toString(16).padStart(6, '0');
+        }
+
+        // Modal event listeners
+        exitBtn.addEventListener('click', hideModal);
+        flowerboxExit.addEventListener('click', hideFlowerboxModal);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                hideModal();
+            }
+        });
+
+        flowerboxModal.addEventListener('click', (e) => {
+            if (e.target === flowerboxModal) {
+                hideFlowerboxModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (flowerboxModal.classList.contains('show')) {
+                    hideFlowerboxModal();
+                } else if (modal.classList.contains('show')) {
+                    hideModal();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

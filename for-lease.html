@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Lease Modal - Enhanced Interactive Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: auto;
+            position: relative;
+        }
+        
+        .top-coupons {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+        
+        .coupon {
+            background: linear-gradient(145deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .coupon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .side-ads {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 120px;
+            height: 500px;
+            background: linear-gradient(145deg, #f8f9ff, #e8eaff);
+            border: 2px dashed #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #667eea;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 12px;
+            z-index: 90;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .side-ads:hover {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-50%) scale(1.02);
+        }
+        
+        .ad-left {
+            left: 10px;
+        }
+        
+        .ad-right {
+            right: 10px;
+        }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 60px 160px 20px 160px;
+            min-height: 100vh;
+        }
+        
+        .image-container {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+        }
+        
+        .main-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .clickable-area {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .clickable-area:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #4CAF50;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            margin: 2% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+            position: relative;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            transition: color 0.3s ease;
+        }
+        
+        .close:hover {
+            color: #ff4757;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 28px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-button {
+            display: block;
+            width: 100%;
+            padding: 15px 25px;
+            margin: 10px 0;
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(145deg, #764ba2, #667eea);
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .category-header {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .category-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .category-items {
+            display: none;
+            grid-column: 1 / -1;
+        }
+        
+        .category-items.active {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .merchandise-item {
+            background: linear-gradient(145deg, #f8f9ff, #e8eaff);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-align: center;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .merchandise-item:hover {
+            transform: translateY(-3px);
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+        
+        .domain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .domain-item {
+            background: linear-gradient(145deg, #f8f9ff, #e8eaff);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-align: center;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .domain-item:hover {
+            transform: translateY(-3px);
+            border-color: #667eea;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+        
+        .domain-modal {
+            max-width: 400px;
+        }
+        
+        .purchase-options {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .purchase-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .purchase-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .buy-now {
+            background: linear-gradient(145deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .buy-now:hover {
+            background: linear-gradient(145deg, #2ecc71, #27ae60);
+            transform: translateY(-2px);
+        }
+        
+        .share-btn, .save-btn {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .share-btn:hover, .save-btn:hover {
+            background: linear-gradient(145deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+        }
+        
+        .detail-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .detail-list li {
+            background: linear-gradient(145deg, #f8f9ff, #e8eaff);
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .detail-list li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .coordinates-info {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 60px 10px 20px 10px;
+            }
+            
+            .side-ads {
+                display: none;
+            }
+            
+            .top-coupons {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Discount Coupons -->
+    <div class="top-coupons">
+        <div class="coupon" onclick="showCoupon('product1')">25% OFF Premium Spaces</div>
+        <div class="coupon" onclick="showCoupon('product2')">FREE Setup - Ad Services</div>
+        <div class="coupon" onclick="showCoupon('product3')">Buy 2 Get 1 FREE Domains</div>
+    </div>
+    
+    <!-- Side Advertisements -->
+    <div class="side-ads ad-left" onclick="showAd('left')">
+        <div>
+            Your Ad Here<br>
+            <small>Premium Placement</small><br>
+            <small>Click for Details</small>
+        </div>
+    </div>
+    
+    <div class="side-ads ad-right" onclick="showAd('right')">
+        <div>
+            Advertise Here<br>
+            <small>High Visibility</small><br>
+            <small>Click for Rates</small>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="image-container">
+            <img src="./logos resized/FOR LEASE MODAL.png" alt="For Lease Modal" class="main-image">
+            
+            <!-- Responsive button positioning based on image scale -->
+            <div class="clickable-area" onclick="openModal('premiumModal')" 
+                 style="left: 15%; top: 85%; width: 12.5%; height: 4.8%;" 
+                 title="Premium Space for Rent">
+            </div>
+            
+            <div class="clickable-area" onclick="openModal('adModal')" 
+                 style="left: 31%; top: 84.8%; width: 13%; height: 5.1%;" 
+                 title="Advertisement Opportunities">
+            </div>
+            
+            <div class="clickable-area" onclick="openModal('giftShopModal')" 
+                 style="left: 47.8%; top: 84.6%; width: 12.5%; height: 4.7%;" 
+                 title="C&M Gift Shop">
+            </div>
+            
+            <div class="clickable-area" onclick="openModal('domainModal')" 
+                 style="left: 64%; top: 84.8%; width: 12.6%; height: 4.5%;" 
+                 title="Domain Names For Sale">
+            </div>
+            
+            <div class="clickable-area" onclick="openModal('learnMoreModal')" 
+                 style="left: 80.8%; top: 84.6%; width: 12.4%; height: 4.8%;" 
+                 title="Learn More">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Coordinates Information Panel -->
+    <div class="coordinates-info">
+        <h4>Button Positions:</h4>
+        <div class="coord-item"><strong>Premium:</strong> 15%, 85%</div>
+        <div class="coord-item"><strong>Ads:</strong> 31%, 84.8%</div>
+        <div class="coord-item"><strong>Gift Shop:</strong> 47.8%, 84.6%</div>
+        <div class="coord-item"><strong>Domains:</strong> 64%, 84.8%</div>
+        <div class="coord-item"><strong>Learn More:</strong> 80.8%, 84.6%</div>
+    </div>
+    
+    <!-- Modal 1: Premium Space for Rent -->
+    <div id="premiumModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('premiumModal')">&times;</span>
+            <h2>Premium Space for Rent</h2>
+            <button class="modal-button" onclick="selectOption('Month to Month')">Rent Month to Month</button>
+            <button class="modal-button" onclick="selectOption('Year to Year')">Lease Year to Year</button>
+            <button class="modal-button" onclick="selectOption('Kiosks')">Rent Kiosks</button>
+        </div>
+    </div>
+    
+    <!-- Modal 2: Advertisement Opportunities -->
+    <div id="adModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('adModal')">&times;</span>
+            <h2>Advertisement Opportunities</h2>
+            <button class="modal-button" onclick="selectOption('Advertiser Rates')">Advertiser Rates</button>
+            <button class="modal-button" onclick="selectOption('Why Advertise')">Why Advertise on C&M</button>
+            <button class="modal-button" onclick="selectOption('Ad Network')">Join Ad Network</button>
+        </div>
+    </div>
+    
+    <!-- Modal 3: C&M Gift Shop -->
+    <div id="giftShopModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('giftShopModal')">&times;</span>
+            <h2>C&M Gift Shop - 64 Merchandise Options</h2>
+            <div id="merchandiseContainer">
+                <!-- Categories will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal 4: Domain Names For Sale -->
+    <div id="domainModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('domainModal')">&times;</span>
+            <h2>Domain Names For Sale</h2>
+            <div class="domain-grid" id="domainGrid">
+                <!-- Domain names will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal 5: Learn More -->
+    <div id="learnMoreModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('learnMoreModal')">&times;</span>
+            <h2>Learn More About C&M</h2>
+            <button class="modal-button" onclick="selectOption('Print on Demand Service')">Print on Demand Service Providers</button>
+            <button class="modal-button" onclick="selectOption('Affiliate Partnerships')">Affiliate Partnerships</button>
+            <button class="modal-button" onclick="selectOption('Affiliate Program')">Join Our Affiliate Program</button>
+            <button class="modal-button" onclick="selectOption('C&M Jobs')">C&M Jobs Available</button>
+        </div>
+    </div>
+    
+    <!-- Domain Purchase Modal -->
+    <div id="domainPurchaseModal" class="modal">
+        <div class="modal-content domain-modal">
+            <span class="close" onclick="closeModal('domainPurchaseModal')">&times;</span>
+            <h3 id="domainName">Domain Name</h3>
+            <div class="purchase-options">
+                <p><strong>Premium Domain Available</strong></p>
+                <p>Perfect for your business or investment portfolio</p>
+                <div class="purchase-buttons">
+                    <button class="purchase-btn buy-now" onclick="buyNow()">Buy Now</button>
+                    <button class="purchase-btn share-btn" onclick="shareDomain()">Share</button>
+                    <button class="purchase-btn save-btn" onclick="saveDomain()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Gift Shop Categories and Items
+        const merchandiseData = {
+            "T-Shirts": [
+                "Classic Logo Tee", "Vintage Style Shirt", "Premium Cotton Tee", "Graphic Design Shirt",
+                "Long Sleeve Shirt", "V-Neck Tee", "Tank Top", "Hoodie"
+            ],
+            "Stickers": [
+                "Vinyl Logo Sticker", "Holographic Sticker", "Matte Finish Sticker", "Clear Sticker",
+                "Bumper Sticker", "Laptop Sticker", "Phone Sticker", "Die-Cut Sticker"
+            ],
+            "Coffee Mugs": [
+                "Ceramic Logo Mug", "Travel Mug", "Color Changing Mug", "Stainless Steel Mug",
+                "Glass Mug", "Enamel Camping Mug", "Double Wall Mug", "Custom Photo Mug"
+            ],
+            "Phone Cases": [
+                "iPhone Case", "Samsung Case", "Clear Case", "Tough Case",
+                "Wallet Case", "Wireless Charging Case", "Pop Socket Case", "Ring Holder Case"
+            ],
+            "Toys": [
+                "Plush Mascot", "Action Figure", "Stress Ball", "Fidget Spinner",
+                "Puzzle Game", "Building Blocks", "Mini Figurine", "Collectible Toy"
+            ],
+            "Pet Accessories": [
+                "Food Dish", "Water Bowl", "Pet Bandana", "Collar Tag",
+                "Pet Toy", "Leash", "Pet Bed", "Treat Container"
+            ],
+            "VHS Cases": [
+                "Custom VHS Case", "Retro Movie Case", "Blank VHS Case", "Vintage Design Case",
+                "Clear VHS Case", "Colored VHS Case", "Label Set", "Storage Box"
+            ],
+            "Posters": [
+                "Premium Poster", "Canvas Print", "Metal Sign", "Vintage Poster",
+                "Motivational Poster", "Art Print", "Photo Poster", "Banner"
+            ],
+            "Office Supplies": [
+                "Notebook", "Pen Set", "Mouse Pad", "Desk Organizer",
+                "Paper Clips", "Sticky Notes", "Folder", "Calendar"
+            ],
+            "Bags & Accessories": [
+                "Tote Bag", "Backpack", "Messenger Bag", "Fanny Pack",
+                "Wallet", "Keychain", "Badge Holder", "Lanyard"
+            ],
+            "Home Decor": [
+                "Throw Pillow", "Wall Clock", "Picture Frame", "Candle",
+                "Coaster Set", "Decorative Sign", "Plant Pot", "Door Mat"
+            ],
+            "Electronics": [
+                "USB Drive", "Power Bank", "Bluetooth Speaker", "Phone Stand",
+                "Cable Organizer", "Wireless Charger", "LED Light", "Tech Sleeve"
+            ]
+        };
+        
+        // Domain names
+        const domains = [
+            'premium-business.com', 'tech-solutions.net', 'creative-agency.org', 'digital-marketing.co',
+            'e-commerce-hub.com', 'startup-central.net', 'innovation-lab.org', 'business-growth.co',
+            'market-leader.com', 'success-stories.net', 'profit-zone.org', 'wealth-builder.co',
+            'future-tech.com', 'smart-solutions.net', 'next-level.org', 'game-changer.co',
+            'brand-masters.com', 'vision-quest.net', 'power-moves.org', 'elite-network.co',
+            'gold-standard.com', 'apex-group.net', 'prime-choice.org', 'top-tier.co'
+        ];
+        
+        // Initialize merchandise categories
+        function initializeMerchandise() {
+            const container = document.getElementById('merchandiseContainer');
+            
+            Object.keys(merchandiseData).forEach((category, index) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category-grid';
+                
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'category-header';
+                headerDiv.textContent = category;
+                headerDiv.onclick = () => toggleCategory(`category-${index}`);
+                
+                const itemsDiv = document.createElement('div');
+                itemsDiv.className = 'category-items';
+                itemsDiv.id = `category-${index}`;
+                
+                merchandiseData[category].forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'merchandise-item';
+                    itemDiv.textContent = item;
+                    itemDiv.onclick = () => selectMerchandise(item);
+                    itemsDiv.appendChild(itemDiv);
+                });
+                
+                categoryDiv.appendChild(headerDiv);
+                categoryDiv.appendChild(itemsDiv);
+                container.appendChild(categoryDiv);
+            });
+        }
+        
+        function toggleCategory(categoryId) {
+            const category = document.getElementById(categoryId);
+            const isActive = category.classList.contains('active');
+            
+            // Close all categories
+            document.querySelectorAll('.category-items').forEach(cat => {
+                cat.classList.remove('active');
+            });
+            
+            // Open clicked category if it wasn't active
+            if (!isActive) {
+                category.classList.add('active');
+            }
+        }
+        
+        function selectMerchandise(item) {
+            alert(`Selected: ${item}\nAdding to cart...`);
+        }
+        
+        // Populate domain grid
+        function populateDomains() {
+            const grid = document.getElementById('domainGrid');
+            domains.forEach((domain, index) => {
+                const domainDiv = document.createElement('div');
+                domainDiv.className = 'domain-item';
+                domainDiv.textContent = domain;
+                domainDiv.onclick = () => openDomainPurchase(domain);
+                grid.appendChild(domainDiv);
+            });
+        }
+        
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function selectOption(option) {
+            alert(`You selected: ${option}\nRedirecting...`);
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => modal.style.display = 'none');
+        }
+        
+        function openDomainPurchase(domain) {
+            document.getElementById('domainName').textContent = domain;
+            closeModal('domainModal');
+            openModal('domainPurchaseModal');
+        }
+        
+        function buyNow() {
+            const domain = document.getElementById('domainName').textContent;
+            alert(`Purchasing ${domain}...\nRedirecting to payment gateway.`);
+            closeModal('domainPurchaseModal');
+        }
+        
+        function shareDomain() {
+            const domain = document.getElementById('domainName').textContent;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Premium Domain for Sale',
+                    text: `Check out this premium domain: ${domain}`,
+                    url: window.location.href
+                });
+            } else {
+                alert(`Share ${domain} with others!`);
+            }
+        }
+        
+        function saveDomain() {
+            const domain = document.getElementById('domainName').textContent;
+            alert(`${domain} has been saved to your favorites!`);
+            closeModal('domainPurchaseModal');
+        }
+        
+        function showCoupon(product) {
+            let message = '';
+            switch(product) {
+                case 'product1':
+                    message = '25% OFF Premium Spaces!\nCode: PREMIUM25\nValid until end of month';
+                    break;
+                case 'product2':
+                    message = 'FREE Setup for Ad Services!\nCode: FREESETUP\nNew customers only';
+                    break;
+                case 'product3':
+                    message = 'Buy 2 Get 1 FREE Domains!\nCode: DOMAIN321\nLimited time offer';
+                    break;
+            }
+            alert(message);
+        }
+        
+        function showAd(side) {
+            alert(`${side === 'left' ? 'Left' : 'Right'} Side Advertisement Space\n\nPremium placement available!\nHigh visibility and engagement\n\nContact us for rates and availability.`);
+        }
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+        
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMerchandise();
+            populateDomains();
+        });
+    </script>
+</body>
+</html>
