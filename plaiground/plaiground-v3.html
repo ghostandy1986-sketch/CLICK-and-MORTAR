@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLaiGROUND | Your AI & POD Creative Hub</title>
+    <meta name="description" content="Unleash your creativity with AI art, animation, music, and turn your digital creations into physical products with integrated Print-on-Demand services.">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --pg-gold: #ffd700;
+            --pg-green: #4CAF50;
+            --pg-dark: #0a0a0c;
+            --pg-border: rgba(255,215,0,0.3);
+        }
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; color: #333; line-height: 1.6; overflow-x: hidden; }
+        .heading { font-family: 'Orbitron', sans-serif; }
+        header { background-color: #4CAF50; color: white; padding: 20px 40px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 1000; }
+        header h1 { margin: 0; font-size: 2.5em; color: #fff; font-family: 'Orbitron', sans-serif; }
+        header p { margin: 8px 0 0; }
+        .nav-buttons { margin-top: 15px; display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; }
+        .nav-button, .action-button { background-color: #5cb85c; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 1em; transition: background-color .3s, transform .2s; text-decoration: none; display: inline-block; text-align: center; }
+        .nav-button:hover, .action-button:hover { background-color: #449d44; transform: translateY(-2px); }
+        .section { background-color: #fff; margin: 25px auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,.1); max-width: 900px; }
+        .section-title { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .section-title span { font-size: 2.5em; line-height: 1; }
+        .section-title h2 { margin: 0; font-size: 1.8em; color: #2e8b57; }
+        .section-description { margin-bottom: 25px; font-size: 1.1em; color: #555; }
+        .button-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 20px; }
+        .tool-button { background-color: #20b2aa; color: white; border: none; padding: 15px 20px; border-radius: 8px; cursor: pointer; font-size: 1em; transition: background-color .3s, transform .2s; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,.1); }
+        .tool-button:hover { background-color: #178b86; transform: translateY(-2px); }
+        .marketplace, .pod-providers, .subscription-section { background-color: #fcfcfc; margin: 25px auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,.1); max-width: 900px; }
+        .marketplace h2, .pod-providers h2, .subscription-section h2 { text-align: center; color: #2e8b57; margin-bottom: 30px; font-size: 2em; }
+        .marketplace-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 25px; margin-bottom: 30px; }
+        .product-card { background-color: #e0ffe0; border-radius: 10px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,.1); text-align: center; }
+        .product-card h3 { color: #2e8b57; margin-top: 0; font-size: 1.4em; }
+        .product-card ul { list-style: none; padding: 0; margin-top: 15px; color: #444; }
+        .product-card li { margin-bottom: 8px; font-size: .95em; }
+        .print-services { background-color: #ffd700; padding: 30px; border-radius: 12px; text-align: center; border: 2px dashed #e6c200; transition: background-color .3s; margin-top: 30px; }
+        .print-services h3 { color: #8B4513; font-size: 1.6em; margin-bottom: 15px; }
+        .print-services p { color: #6e370a; font-style: italic; margin-bottom: 25px; font-size: 1.1em; }
+        .print-buttons { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; }
+        .print-buttons .tool-button { background-color: #d8a000; }
+        .print-buttons .tool-button:hover { background-color: #b38400; }
+        .pod-list { margin-top: 20px; list-style: none; padding: 0; }
+        .pod-list li { background-color: #e6f7ff; border: 1px solid #cceeff; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
+        .pod-list li strong { color: #007bb5; font-size: 1.2em; }
+        .pod-list li span { font-size: .9em; color: #555; }
+        .partnership-button, .subscribe-button { background-color: #ff6347; color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 1.2em; font-weight: bold; transition: background-color .3s, transform .2s; display: block; width: fit-content; margin: 30px auto 20px; }
+        .partnership-button:hover, .subscribe-button:hover { background-color: #e5533d; transform: translateY(-2px); }
+        .subscribe-button { background-color: #8a2be2; }
+        .subscribe-button:hover { background-color: #6a0ad8; }
+        .subscribe-info { text-align: center; margin-top: 20px; font-size: 1.1em; color: #666; }
+        .subscribe-info strong { color: #8a2be2; }
+        .stats-container { background-color: #f0f8ff; margin: 25px auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,.1); max-width: 900px; }
+        .stats-container h2 { text-align: center; color: #2e8b57; margin-bottom: 30px; font-size: 2em; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 20px; text-align: center; }
+        .stat-card { background-color: #d6eaf8; border-radius: 10px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,.1); }
+        .stat-card h4 { margin-top: 0; color: #1a5276; font-size: 1.1em; }
+        .stat-card p { font-size: 1.8em; font-weight: bold; color: #0d47a1; margin: 5px 0 0; }
+        .buffbot-link { display: block; text-align: center; margin: 40px auto; padding: 20px; background-color: #ffeb3b; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,.1); max-width: 900px; }
+        .buffbot-link a { font-size: 1.4em; color: #c62828; text-decoration: none; font-weight: bold; }
+        .buffbot-link a:hover { color: #ffc107; }
+        .chatbot-container { position: fixed; bottom: 20px; right: 20px; width: 300px; height: 400px; background-color: white; border: 1px solid #ccc; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,.3); display: none; flex-direction: column; overflow: hidden; z-index: 1001; }
+        #chatbot-button { position: fixed; bottom: 20px; right: 20px; background-color: #007bff; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 2em; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,.2); transition: background-color .3s, transform .2s; z-index: 1002; }
+        #chatbot-button:hover { background-color: #0056b3; transform: scale(1.05); }
+
+        /* ══════════════════════════════════════════════
+           CONSTRUCTION ZONE — FULL DARK THEME
+        ══════════════════════════════════════════════ */
+        #construction-zone {
+            background: #0a0a0c;
+            border-radius: 16px;
+            border: 2px solid rgba(255,215,0,0.4);
+            box-shadow: 0 0 60px rgba(255,215,0,0.08), 0 20px 60px rgba(0,0,0,0.8);
+            max-width: 1200px;
+            margin: 30px auto;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+        .cz-header {
+            background: repeating-linear-gradient(45deg,#ffd700,#ffd700 8px,#1a1200 8px,#1a1200 16px);
+            padding: 3px 0;
+        }
+        .cz-header-inner {
+            background: linear-gradient(135deg,#1a1200 0%,#0d0d0f 100%);
+            padding: 20px 30px;
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;
+        }
+        .cz-title { font-family: 'Orbitron',sans-serif; font-size: 1.4em; color: #ffd700; letter-spacing: 3px; text-transform: uppercase; display: flex; align-items: center; gap: 12px; }
+        .cz-badge { font-size: .55em; background: rgba(255,215,0,.15); border: 1px solid rgba(255,215,0,.4); color: #ffd700; padding: 4px 10px; border-radius: 20px; letter-spacing: 2px; }
+        .cz-vault { text-align: right; }
+        .cz-vault-label { font-size: .65em; color: #ffa500; letter-spacing: 2px; text-transform: uppercase; font-weight: 900; }
+        .cz-vault-val { font-size: 1.6em; font-weight: 900; color: #fff; font-family: 'Orbitron', monospace; }
+        .cz-tabs { display: flex; gap: 0; border-bottom: 1px solid rgba(255,215,0,.2); background: #0d0d0f; overflow-x: auto; }
+        .cz-tab { padding: 12px 20px; font-size: .72em; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: rgba(255,255,255,.4); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; white-space: nowrap; background: none; border-left: none; border-right: none; border-top: none; }
+        .cz-tab:hover { color: rgba(255,215,0,.7); }
+        .cz-tab.active { color: #ffd700; border-bottom-color: #ffd700; background: rgba(255,215,0,.05); }
+        .cz-body { padding: 24px; }
+        .cz-panel { display: none; }
+        .cz-panel.active { display: block; animation: czFadeIn .25s ease; }
+        @keyframes czFadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+        .cz-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        .cz-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .cz-grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+
+        /* Pod items grid */
+        .pod-items-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(110px,1fr)); gap: 10px; }
+        .pod-item-btn {
+            background: #16161a; border: 1px solid rgba(255,215,0,.15);
+            border-radius: 8px; padding: 12px 8px; text-align: center;
+            cursor: pointer; transition: all .2s; color: #fff;
+        }
+        .pod-item-btn:hover, .pod-item-btn.active {
+            border-color: #ffd700; background: rgba(255,215,0,.1);
+            box-shadow: 0 0 12px rgba(255,215,0,.2); transform: translateY(-1px);
+        }
+        .pod-item-btn .pod-icon { font-size: 1.6em; display: block; margin-bottom: 5px; }
+        .pod-item-btn .pod-name { font-size: .62em; font-weight: 700; letter-spacing: .5px; color: rgba(255,255,255,.7); }
+        .pod-item-btn.active .pod-name { color: #ffd700; }
+
+        /* 3D viewer */
+        #cz-three-canvas {
+            width: 100%; height: 340px; border-radius: 10px;
+            background: radial-gradient(circle at 40% 40%, #1e2d1a 0%, #0d0d0f 100%);
+            border: 1px solid rgba(255,215,0,.2);
+            position: relative;
+        }
+        #cz-three-canvas canvas { border-radius: 10px; }
+
+        /* 2D Design Studio */
+        #cz-art-canvas { background: #fff; cursor: crosshair; touch-action: none; border-radius: 8px; border: 2px solid rgba(255,215,0,.3); width: 100%; display: block; }
+        .tool-palette { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+        .palette-btn {
+            padding: 7px 12px; background: #1a1a1e; border: 1px solid rgba(255,255,255,.1);
+            color: rgba(255,255,255,.7); border-radius: 5px; cursor: pointer; font-size: .7em;
+            font-weight: 700; letter-spacing: .5px; transition: all .2s;
+        }
+        .palette-btn:hover, .palette-btn.active { background: rgba(255,215,0,.15); border-color: #ffd700; color: #ffd700; }
+        .slider-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+        .slider-row label { font-size: .65em; color: rgba(255,255,255,.5); letter-spacing: 1px; text-transform: uppercase; width: 60px; flex-shrink: 0; }
+        .slider-row input[type=range] { flex: 1; accent-color: #ffd700; }
+        .slider-row span { font-size: .68em; color: #ffd700; width: 30px; text-align: right; }
+        .color-swatches { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
+        .swatch { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; border: 2px solid transparent; transition: transform .15s, border-color .15s; flex-shrink: 0; }
+        .swatch:hover, .swatch.active { transform: scale(1.2); border-color: #fff; }
+        .cz-dark-box { background: #16161a; border: 1px solid rgba(255,255,255,.07); border-radius: 8px; padding: 14px; }
+        .cz-label { font-size: .62em; color: rgba(255,215,0,.7); letter-spacing: 2px; text-transform: uppercase; font-weight: 900; margin-bottom: 8px; display: block; }
+        .cz-input { width: 100%; padding: 10px 12px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: #fff; border-radius: 5px; font-size: .85em; outline: none; transition: border-color .2s; box-sizing: border-box; }
+        .cz-input:focus { border-color: #ffd700; background: rgba(255,215,0,.05); }
+        .cz-select { width: 100%; padding: 10px 12px; background: #1a1a1e; border: 1px solid rgba(255,255,255,.1); color: #fff; border-radius: 5px; font-size: .8em; outline: none; appearance: none; cursor: pointer; }
+        .cz-select:focus { border-color: #ffd700; }
+        .cz-btn {
+            padding: 11px 18px; background: #ffd700; color: #000; font-weight: 900;
+            border: none; border-radius: 6px; cursor: pointer; font-size: .75em;
+            letter-spacing: 1px; text-transform: uppercase; transition: all .2s;
+        }
+        .cz-btn:hover { background: #ffe033; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255,215,0,.3); }
+        .cz-btn-outline { background: transparent; border: 1px solid rgba(255,215,0,.5); color: #ffd700; }
+        .cz-btn-outline:hover { background: rgba(255,215,0,.1); }
+        .cz-btn-red { background: rgba(255,59,48,.15); border: 1px solid rgba(255,59,48,.4); color: #ff3b30; }
+        .cz-btn-red:hover { background: rgba(255,59,48,.25); }
+        .cz-btn-sm { padding: 7px 12px; font-size: .65em; }
+        .cz-log { background: #060809; border: 1px solid rgba(0,255,100,.1); border-radius: 6px; padding: 12px; font-family: 'Courier New',monospace; font-size: .7em; color: rgba(0,255,100,.7); height: 80px; overflow-y: auto; }
+
+        /* Revenue */
+        .rev-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; margin-top: 6px; }
+        .rev-fill { height: 100%; border-radius: 3px; transition: width .6s ease; }
+
+        /* Leaderboard */
+        .lb-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+        .lb-rank { font-family: 'Orbitron',monospace; font-size: .65em; color: rgba(255,215,0,.5); width: 20px; flex-shrink: 0; }
+        .lb-name { flex: 1; font-size: .78em; font-weight: 700; }
+        .lb-rev { font-family: 'Courier New',monospace; font-size: .75em; color: #ffd700; font-weight: 700; }
+
+        /* Text tool */
+        .font-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; }
+        .font-btn { padding: 8px; background: #1a1a1e; border: 1px solid rgba(255,255,255,.1); color: #fff; border-radius: 4px; cursor: pointer; font-size: .65em; text-align: center; transition: all .2s; }
+        .font-btn:hover, .font-btn.active { border-color: #ffd700; color: #ffd700; background: rgba(255,215,0,.08); }
+
+        /* AI prompt */
+        .ai-prompt-area { display: flex; flex-direction: column; gap: 8px; }
+        .ai-result-box { background: #0d0d0f; border: 1px solid rgba(255,215,0,.15); border-radius: 8px; min-height: 120px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.3); font-size: .8em; padding: 16px; text-align: center; }
+
+        /* Filters */
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(80px,1fr)); gap: 6px; }
+        .filter-btn { padding: 8px 4px; background: #1a1a1e; border: 1px solid rgba(255,255,255,.08); color: rgba(255,255,255,.6); border-radius: 5px; cursor: pointer; font-size: .62em; text-align: center; transition: all .2s; }
+        .filter-btn:hover, .filter-btn.active { border-color: #ffd700; color: #ffd700; background: rgba(255,215,0,.08); }
+
+        /* Stripes accent */
+        .stripes { background: repeating-linear-gradient(45deg,#ffd700,#ffd700 8px,#000 8px,#000 16px); }
+
+        /* 3D model label */
+        .model-info { position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,.7); backdrop-filter: blur(6px); border: 1px solid rgba(255,215,0,.3); border-radius: 6px; padding: 8px 14px; pointer-events: none; }
+        .model-info .model-name { font-size: .72em; font-weight: 900; color: #ffd700; letter-spacing: 1px; }
+        .model-info .model-price { font-size: .62em; color: rgba(255,255,255,.6); margin-top: 2px; }
+
+        @media(max-width:768px) {
+            header { padding: 15px 20px; }
+            header h1 { font-size: 2em; }
+            .button-grid, .marketplace-grid, .stats-grid, .print-buttons { grid-template-columns: 1fr; gap: 15px; }
+            .section, .marketplace, .pod-providers, .subscription-section, .stats-container, .buffbot-link { margin: 15px auto; padding: 20px; }
+            .cz-grid-3, .cz-grid-2, .cz-grid-2-1 { grid-template-columns: 1fr; }
+            .nav-button, .action-button, .tool-button, .partnership-button, .subscribe-button { width: 100%; box-sizing: border-box; }
+            .cz-body { padding: 14px; }
+            #chatbot-button { width: 50px; height: 50px; font-size: 1.8em; bottom: 15px; right: 15px; }
+            .chatbot-container { width: 90%; height: 70%; bottom: 5%; right: 5%; left: 5%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     ORIGINAL HEADER — UNTOUCHED
+══════════════════════════════════════════════════════ -->
+<header>
+    <h1>Welcome to PLaiGROUND</h1>
+    <p>Unleash Your Creativity with AI &amp; Bring Ideas to Life with Print-on-Demand</p>
+    <div class="nav-buttons">
+        <a href="#construction-zone" class="nav-button">🏗️ Construction Zone</a>
+        <button class="nav-button">Upload Content</button>
+        <button class="nav-button">My Dashboard</button>
+        <button class="nav-button">🛒 Cart</button>
+        <a href="https://yourbuffbotdomain.com" target="_blank" class="nav-button">🤖 Visit BuffBot AI</a>
+    </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════
+     ORIGINAL SECTIONS — ALL UNTOUCHED
+══════════════════════════════════════════════════════ -->
+<section class="section">
+    <div class="section-title"><span>🎨</span><h2>Digital Art Creation</h2></div>
+    <p class="section-description">Create stunning digital drawings, scan your hand-drawn sketches, and convert them into sellable products using the power of AI.</p>
+    <div class="button-grid">
+        <button class="tool-button" data-ai-use="1">Use MidJourney for AI Art</button>
+        <button class="tool-button" data-ai-use="1">Use DALL-E for Custom Images</button>
+        <button class="tool-button" data-ai-use="1">AI Sketch to Digital</button>
+        <button class="tool-button" data-ai-use="1">AI Image Upscaler</button>
+        <button class="tool-button" data-ai-use="1">Style Transfer Engine</button>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-title"><span>🎬</span><h2>Animation &amp; Videos</h2></div>
+    <p class="section-description">Generate captivating animations, edit movies, or create stunning motion graphics with AI-assisted tools.</p>
+    <div class="button-grid">
+        <button class="tool-button" data-ai-use="1">Animate with Runway ML</button>
+        <button class="tool-button" data-ai-use="1">OpenAI for AI-Assisted Video Edits</button>
+        <button class="tool-button" data-ai-use="1">Create GIFs with Lumen5</button>
+        <button class="tool-button" data-ai-use="1">AI Lip-Sync Generator</button>
+        <button class="tool-button" data-ai-use="1">Scene Generator</button>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-title"><span>🎵</span><h2>Music &amp; Sound</h2></div>
+    <p class="section-description">Compose original music, generate custom sound bytes, or create unique ringtones powered by advanced AI algorithms.</p>
+    <div class="button-grid">
+        <button class="tool-button" data-ai-use="1">Generate Music with Amper Music</button>
+        <button class="tool-button" data-ai-use="1">Create Sound Effects with AIVA</button>
+        <button class="tool-button" data-ai-use="1">AI Ringtone Creator</button>
+        <button class="tool-button" data-ai-use="1">AI Voice Synthesizer</button>
+        <button class="tool-button" data-ai-use="1">Automated Mastering Tool</button>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-title"><span>✍️</span><h2>AI Writing &amp; Content</h2></div>
+    <p class="section-description">Unleash the power of AI to generate compelling articles, creative stories, engaging ad copy, and more.</p>
+    <div class="button-grid">
+        <button class="tool-button" data-ai-use="1">Article Generator</button>
+        <button class="tool-button" data-ai-use="1">Ad Copy Creator</button>
+        <button class="tool-button" data-ai-use="1">Product Description AI</button>
+        <button class="tool-button" data-ai-use="1">Story Plot Generator</button>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     CONSTRUCTION ZONE — FULLY REBUILT
+══════════════════════════════════════════════════════ -->
+<div id="construction-zone">
+    <!-- stripe header -->
+    <div class="cz-header">
+        <div class="cz-header-inner">
+            <div class="cz-title">
+                🚧 Construction Zone
+                <span class="cz-badge">SUBSCRIBER EXCLUSIVE</span>
+            </div>
+            <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+                <div class="cz-vault">
+                    <div class="cz-vault-label">Platform Vault (15%)</div>
+                    <div class="cz-vault-val" id="cz-vault-display">$0.00</div>
+                </div>
+                <button class="cz-btn" onclick="czWithdraw()">WITHDRAW</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="cz-tabs">
+        <button class="cz-tab active" onclick="czTab('studio',this)">🎨 2D Studio</button>
+        <button class="cz-tab" onclick="czTab('pod3d',this)">📦 3D POD Viewer</button>
+        <button class="cz-tab" onclick="czTab('tools',this)">🔧 Design Tools</button>
+        <button class="cz-tab" onclick="czTab('ai',this)">🤖 AI Generator</button>
+        <button class="cz-tab" onclick="czTab('market',this)">🏪 My Market</button>
+        <button class="cz-tab" onclick="czTab('revenue',this)">💰 Revenue</button>
+    </div>
+
+    <div class="cz-body">
+
+    <!-- ── TAB: 2D STUDIO ── -->
+    <div id="cz-panel-studio" class="cz-panel active">
+        <div class="cz-grid-2-1" style="align-items:start">
+            <div>
+                <!-- Tool palette -->
+                <div class="tool-palette" style="margin-bottom:8px">
+                    <button class="palette-btn active" id="tool-pencil" onclick="setTool('pencil',this)">✏️ Pencil</button>
+                    <button class="palette-btn" id="tool-brush" onclick="setTool('brush',this)">🖌 Brush</button>
+                    <button class="palette-btn" id="tool-spray" onclick="setTool('spray',this)">💨 Spray</button>
+                    <button class="palette-btn" id="tool-eraser" onclick="setTool('eraser',this)">⬜ Eraser</button>
+                    <button class="palette-btn" id="tool-fill" onclick="setTool('fill',this)">🪣 Fill</button>
+                    <button class="palette-btn" id="tool-line" onclick="setTool('line',this)">╱ Line</button>
+                    <button class="palette-btn" id="tool-rect" onclick="setTool('rect',this)">▭ Rect</button>
+                    <button class="palette-btn" id="tool-circle" onclick="setTool('circle',this)">⭕ Circle</button>
+                    <button class="palette-btn" id="tool-text" onclick="setTool('text',this)">T Text</button>
+                    <button class="palette-btn" id="tool-eyedrop" onclick="setTool('eyedrop',this)">💉 Pick</button>
+                </div>
+
+                <canvas id="cz-art-canvas" width="600" height="400"></canvas>
+
+                <!-- Canvas controls -->
+                <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+                    <button class="cz-btn cz-btn-red cz-btn-sm" onclick="czClear()">CLEAR</button>
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="czUndo()">↩ UNDO</button>
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="czRedo()">↪ REDO</button>
+                    <button class="cz-btn cz-btn-sm" onclick="czSync3D()">⟳ SYNC TO 3D</button>
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="czDownloadArt()">⬇ EXPORT PNG</button>
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="czListAsset()">+ LIST ASSET</button>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <!-- Brush settings -->
+                <div class="cz-dark-box">
+                    <span class="cz-label">Brush Settings</span>
+                    <div class="slider-row">
+                        <label>SIZE</label>
+                        <input type="range" id="cz-brush-size" min="1" max="80" value="12" oninput="this.nextElementSibling.textContent=this.value">
+                        <span>12</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>OPACITY</label>
+                        <input type="range" id="cz-opacity" min="5" max="100" value="100" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                        <span>100%</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>HARDNESS</label>
+                        <input type="range" id="cz-hardness" min="0" max="100" value="80" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                        <span>80%</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>SPACING</label>
+                        <input type="range" id="cz-spacing" min="1" max="30" value="3" oninput="this.nextElementSibling.textContent=this.value">
+                        <span>3</span>
+                    </div>
+                </div>
+
+                <!-- Color -->
+                <div class="cz-dark-box">
+                    <span class="cz-label">Color</span>
+                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                        <input type="color" id="cz-color" value="#e74c3c" style="width:44px;height:44px;border:none;background:none;cursor:pointer;border-radius:4px">
+                        <input type="color" id="cz-bg-color" value="#ffffff" style="width:28px;height:28px;border:none;background:none;cursor:pointer;border-radius:4px" title="Background Color">
+                        <div style="flex:1">
+                            <div style="font-size:.6em;color:rgba(255,255,255,.4);margin-bottom:3px">HEX</div>
+                            <input type="text" id="cz-hex-input" value="#e74c3c" class="cz-input" style="padding:5px 8px;font-size:.75em" oninput="applyHexColor(this.value)"/>
+                        </div>
+                    </div>
+                    <div class="color-swatches" id="cz-swatches"></div>
+                </div>
+
+                <!-- Text tool options -->
+                <div class="cz-dark-box" id="text-tool-box" style="display:none">
+                    <span class="cz-label">Text Options</span>
+                    <input type="text" id="cz-text-input" class="cz-input" placeholder="Type text here..." style="margin-bottom:8px"/>
+                    <div class="slider-row">
+                        <label>SIZE</label>
+                        <input type="range" id="cz-font-size" min="8" max="120" value="28" oninput="this.nextElementSibling.textContent=this.value">
+                        <span>28</span>
+                    </div>
+                    <div class="font-grid" style="margin-top:6px">
+                        <button class="font-btn active" onclick="setFont('Arial',this)">Sans</button>
+                        <button class="font-btn" onclick="setFont('Georgia',this)">Serif</button>
+                        <button class="font-btn" onclick="setFont('Courier New',this)">Mono</button>
+                        <button class="font-btn" onclick="setFont('Impact',this)">Impact</button>
+                        <button class="font-btn" onclick="setFont('Brush Script MT',this)">Script</button>
+                        <button class="font-btn" onclick="setFont('Orbitron',this)">Orbit</button>
+                    </div>
+                </div>
+
+                <!-- Canvas size -->
+                <div class="cz-dark-box">
+                    <span class="cz-label">Canvas Size</span>
+                    <div style="display:flex;gap:6px">
+                        <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="resizeCanvas(600,400)">600×400</button>
+                        <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="resizeCanvas(800,800)">800×800</button>
+                        <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="resizeCanvas(1200,630)">OG/Social</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cz-log" id="cz-log" style="margin-top:14px">
+            > Studio: Canvas ready. Select a tool and start designing.<br>
+        </div>
+    </div>
+
+    <!-- ── TAB: 3D POD VIEWER ── -->
+    <div id="cz-panel-pod3d" class="cz-panel">
+        <div style="margin-bottom:14px">
+            <span class="cz-label">Select POD Product (30 Items)</span>
+            <div class="pod-items-grid" id="pod-items-grid"></div>
+        </div>
+        <div class="cz-grid-2-1" style="gap:16px;align-items:start">
+            <div style="position:relative">
+                <div id="cz-three-canvas"></div>
+                <div class="model-info" id="model-info">
+                    <div class="model-name" id="model-name-label">T-SHIRT</div>
+                    <div class="model-price" id="model-price-label">Base cost: $8.00 · Suggested: $24.99</div>
+                </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <div class="cz-dark-box">
+                    <span class="cz-label">Product Controls</span>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+                        <button class="cz-btn cz-btn-sm" onclick="czSync3D()">⟳ Apply My Design</button>
+                        <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="toggleAutoRotate()">⟲ Auto Rotate</button>
+                    </div>
+                    <div class="slider-row">
+                        <label>ROTATE</label>
+                        <input type="range" id="rotate-y" min="0" max="360" value="0" oninput="manualRotate(this.value)">
+                        <span>0°</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>ZOOM</label>
+                        <input type="range" id="zoom-val" min="2" max="12" value="5" step=".1" oninput="manualZoom(this.value)">
+                        <span></span>
+                    </div>
+                    <div class="slider-row">
+                        <label>TILT</label>
+                        <input type="range" id="tilt-val" min="-60" max="60" value="15" oninput="manualTilt(this.value)">
+                        <span></span>
+                    </div>
+                </div>
+                <div class="cz-dark-box">
+                    <span class="cz-label">Product Color</span>
+                    <div class="color-swatches">
+                        <div class="swatch active" style="background:#fff;border:1px solid #ccc" onclick="setProdColor('#fff',this)"></div>
+                        <div class="swatch" style="background:#000" onclick="setProdColor('#000',this)"></div>
+                        <div class="swatch" style="background:#c0392b" onclick="setProdColor('#c0392b',this)"></div>
+                        <div class="swatch" style="background:#2980b9" onclick="setProdColor('#2980b9',this)"></div>
+                        <div class="swatch" style="background:#27ae60" onclick="setProdColor('#27ae60',this)"></div>
+                        <div class="swatch" style="background:#8e44ad" onclick="setProdColor('#8e44ad',this)"></div>
+                        <div class="swatch" style="background:#f39c12" onclick="setProdColor('#f39c12',this)"></div>
+                        <div class="swatch" style="background:#1abc9c" onclick="setProdColor('#1abc9c',this)"></div>
+                        <div class="swatch" style="background:#e91e63" onclick="setProdColor('#e91e63',this)"></div>
+                        <div class="swatch" style="background:#607d8b" onclick="setProdColor('#607d8b',this)"></div>
+                    </div>
+                </div>
+                <div class="cz-dark-box">
+                    <span class="cz-label">Order &amp; Fulfill</span>
+                    <div style="display:flex;gap:6px;flex-direction:column">
+                        <button class="cz-btn" onclick="czMintShip()">🚀 MINT &amp; SHIP POD</button>
+                        <button class="cz-btn cz-btn-outline" onclick="czSaveProduct()">💾 SAVE MOCKUP</button>
+                        <button class="cz-btn cz-btn-outline" onclick="czListProduct()">+ LIST IN MARKETPLACE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TAB: DESIGN TOOLS ── -->
+    <div id="cz-panel-tools" class="cz-panel">
+        <div class="cz-grid-3" style="gap:14px">
+
+            <!-- Layer manager -->
+            <div class="cz-dark-box">
+                <span class="cz-label">Layer Manager</span>
+                <div id="layer-list" style="min-height:80px;margin-bottom:8px"></div>
+                <div style="display:flex;gap:5px;flex-wrap:wrap">
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="addLayer()">+ Layer</button>
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="mergeDown()">⬇ Merge</button>
+                    <button class="cz-btn cz-btn-red cz-btn-sm" onclick="deleteLayer()">✖ Del</button>
+                </div>
+            </div>
+
+            <!-- Filters & FX -->
+            <div class="cz-dark-box">
+                <span class="cz-label">Filters &amp; Effects</span>
+                <div class="filter-grid">
+                    <button class="filter-btn" onclick="applyFilter('grayscale')">Grayscale</button>
+                    <button class="filter-btn" onclick="applyFilter('sepia')">Sepia</button>
+                    <button class="filter-btn" onclick="applyFilter('invert')">Invert</button>
+                    <button class="filter-btn" onclick="applyFilter('blur')">Blur</button>
+                    <button class="filter-btn" onclick="applyFilter('sharpen')">Sharpen</button>
+                    <button class="filter-btn" onclick="applyFilter('emboss')">Emboss</button>
+                    <button class="filter-btn" onclick="applyFilter('edge')">Edge</button>
+                    <button class="filter-btn" onclick="applyFilter('vintage')">Vintage</button>
+                    <button class="filter-btn" onclick="applyFilter('warm')">Warm</button>
+                    <button class="filter-btn" onclick="applyFilter('cool')">Cool</button>
+                    <button class="filter-btn" onclick="applyFilter('vivid')">Vivid</button>
+                    <button class="filter-btn" onclick="applyFilter('fade')">Fade</button>
+                </div>
+            </div>
+
+            <!-- Adjustments -->
+            <div class="cz-dark-box">
+                <span class="cz-label">Image Adjustments</span>
+                <div class="slider-row"><label>BRIGHT</label><input type="range" id="adj-brightness" min="-100" max="100" value="0" oninput="applyAdjust()"><span id="adj-b-val">0</span></div>
+                <div class="slider-row"><label>CONTRAST</label><input type="range" id="adj-contrast" min="-100" max="100" value="0" oninput="applyAdjust()"><span id="adj-c-val">0</span></div>
+                <div class="slider-row"><label>SATURATE</label><input type="range" id="adj-saturation" min="-100" max="100" value="0" oninput="applyAdjust()"><span id="adj-s-val">0</span></div>
+                <div class="slider-row"><label>HUE</label><input type="range" id="adj-hue" min="0" max="360" value="0" oninput="applyAdjust()"><span id="adj-h-val">0°</span></div>
+                <button class="cz-btn cz-btn-outline cz-btn-sm" style="margin-top:6px;width:100%" onclick="resetAdjust()">Reset All</button>
+            </div>
+
+            <!-- Transform -->
+            <div class="cz-dark-box">
+                <span class="cz-label">Transform</span>
+                <div style="display:flex;gap:5px;flex-wrap:wrap">
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="czTransform('flipH')">↔ Flip H</button>
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="czTransform('flipV')">↕ Flip V</button>
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="czTransform('rot90')">↻ 90°</button>
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="czTransform('rot180')">↻ 180°</button>
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="czTransform('rot270')">↺ 90°</button>
+                </div>
+                <div class="slider-row" style="margin-top:10px">
+                    <label>SCALE</label>
+                    <input type="range" id="scale-val" min="10" max="200" value="100" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                    <span>100%</span>
+                </div>
+            </div>
+
+            <!-- Shapes -->
+            <div class="cz-dark-box">
+                <span class="cz-label">Shape Stamps</span>
+                <div class="filter-grid">
+                    <button class="filter-btn" onclick="stampShape('star')">⭐ Star</button>
+                    <button class="filter-btn" onclick="stampShape('heart')">❤ Heart</button>
+                    <button class="filter-btn" onclick="stampShape('diamond')">◆ Diamond</button>
+                    <button class="filter-btn" onclick="stampShape('arrow')">➤ Arrow</button>
+                    <button class="filter-btn" onclick="stampShape('hexagon')">⬡ Hex</button>
+                    <button class="filter-btn" onclick="stampShape('triangle')">▲ Tri</button>
+                    <button class="filter-btn" onclick="stampShape('cross')">✚ Cross</button>
+                    <button class="filter-btn" onclick="stampShape('cloud')">☁ Cloud</button>
+                </div>
+            </div>
+
+            <!-- Pattern generator -->
+            <div class="cz-dark-box">
+                <span class="cz-label">Pattern Generator</span>
+                <div class="filter-grid">
+                    <button class="filter-btn" onclick="genPattern('stripe')">Stripes</button>
+                    <button class="filter-btn" onclick="genPattern('dot')">Dots</button>
+                    <button class="filter-btn" onclick="genPattern('checker')">Check</button>
+                    <button class="filter-btn" onclick="genPattern('wave')">Waves</button>
+                    <button class="filter-btn" onclick="genPattern('grid')">Grid</button>
+                    <button class="filter-btn" onclick="genPattern('hex')">Hex</button>
+                    <button class="filter-btn" onclick="genPattern('noise')">Noise</button>
+                    <button class="filter-btn" onclick="genPattern('gradient')">Gradient</button>
+                </div>
+            </div>
+
+            <!-- Gradient map -->
+            <div class="cz-dark-box">
+                <span class="cz-label">Gradient Builder</span>
+                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                    <input type="color" id="grad-a" value="#ff6b6b" style="width:36px;height:36px;border:none;cursor:pointer;border-radius:4px">
+                    <div id="grad-preview" style="flex:1;height:36px;border-radius:5px;background:linear-gradient(135deg,#ff6b6b,#4ecdc4)"></div>
+                    <input type="color" id="grad-b" value="#4ecdc4" style="width:36px;height:36px;border:none;cursor:pointer;border-radius:4px">
+                </div>
+                <div class="sel-wrap" style="position:relative;margin-bottom:8px">
+                    <select id="grad-dir" class="cz-select" onchange="updateGradPreview()">
+                        <option value="135deg">Diagonal ↘</option>
+                        <option value="90deg">Horizontal →</option>
+                        <option value="0deg">Vertical ↓</option>
+                        <option value="45deg">Diagonal ↗</option>
+                        <option value="radial">Radial</option>
+                    </select>
+                </div>
+                <button class="cz-btn cz-btn-sm" style="width:100%" onclick="applyGradientBg()">Apply as Background</button>
+            </div>
+
+            <!-- Image import -->
+            <div class="cz-dark-box">
+                <span class="cz-label">Import / Export</span>
+                <div style="display:flex;flex-direction:column;gap:7px">
+                    <label class="cz-btn cz-btn-outline cz-btn-sm" style="display:block;text-align:center;cursor:pointer">
+                        📁 Import Image <input type="file" accept="image/*" onchange="importImage(this)" style="display:none">
+                    </label>
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="czDownloadArt()">⬇ Export PNG</button>
+                    <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="downloadSVG()">⬇ Export SVG</button>
+                    <button class="cz-btn cz-btn-sm" onclick="czSync3D()">⟳ Apply to 3D Model</button>
+                </div>
+            </div>
+
+            <!-- Typography -->
+            <div class="cz-dark-box">
+                <span class="cz-label">Typography Presets</span>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                    <button class="filter-btn" onclick="addTypoPreset('title')" style="text-align:left;font-size:.75em;font-weight:900">BIG TITLE TEXT</button>
+                    <button class="filter-btn" onclick="addTypoPreset('sub')" style="text-align:left;font-size:.7em">Subtitle Style</button>
+                    <button class="filter-btn" onclick="addTypoPreset('logo')" style="text-align:left;font-family:'Orbitron';font-size:.7em">LOGO STYLE</button>
+                    <button class="filter-btn" onclick="addTypoPreset('quote')" style="text-align:left;font-style:italic">"Quote Style"</button>
+                    <button class="filter-btn" onclick="addTypoPreset('grunge')" style="text-align:left;letter-spacing:3px;font-size:.65em">G R U N G E</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TAB: AI GENERATOR ── -->
+    <div id="cz-panel-ai" class="cz-panel">
+        <div class="cz-grid-2" style="gap:16px">
+            <div>
+                <div class="cz-dark-box" style="margin-bottom:12px">
+                    <span class="cz-label">AI Art Prompt</span>
+                    <textarea id="ai-prompt-text" class="cz-input" rows="3" placeholder="Describe your design: e.g. 'A neon cyberpunk cat wearing sunglasses, vibrant colors, poster art style'" style="resize:vertical;line-height:1.5"></textarea>
+                    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+                        <button class="cz-btn" onclick="generateAIArt()" data-ai-use="1">🎨 Generate (DALL-E)</button>
+                        <button class="cz-btn cz-btn-outline" onclick="generateMidjourney()" data-ai-use="1">✦ MidJourney</button>
+                        <button class="cz-btn cz-btn-outline" onclick="generateStability()" data-ai-use="1">◈ Stable Diffusion</button>
+                    </div>
+                </div>
+                <div class="cz-dark-box" style="margin-bottom:12px">
+                    <span class="cz-label">Style Presets</span>
+                    <div class="filter-grid">
+                        <button class="filter-btn" onclick="addPromptStyle('photorealistic')">Photo Real</button>
+                        <button class="filter-btn" onclick="addPromptStyle('anime')">Anime</button>
+                        <button class="filter-btn" onclick="addPromptStyle('oil painting')">Oil Paint</button>
+                        <button class="filter-btn" onclick="addPromptStyle('watercolor')">Watercolor</button>
+                        <button class="filter-btn" onclick="addPromptStyle('pixel art 8-bit')">Pixel Art</button>
+                        <button class="filter-btn" onclick="addPromptStyle('neon cyberpunk')">Cyberpunk</button>
+                        <button class="filter-btn" onclick="addPromptStyle('minimalist vector')">Vector</button>
+                        <button class="filter-btn" onclick="addPromptStyle('graffiti street art')">Graffiti</button>
+                        <button class="filter-btn" onclick="addPromptStyle('3D render octane')">3D Render</button>
+                        <button class="filter-btn" onclick="addPromptStyle('vintage retro poster')">Retro</button>
+                        <button class="filter-btn" onclick="addPromptStyle('comic book')">Comic</button>
+                        <button class="filter-btn" onclick="addPromptStyle('abstract expressionism')">Abstract</button>
+                    </div>
+                </div>
+                <div class="cz-dark-box">
+                    <span class="cz-label">AI Upscale / Enhance</span>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                        <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="aiEnhance('upscale')" data-ai-use="1">⬆ 4× Upscale</button>
+                        <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="aiEnhance('bg-remove')" data-ai-use="1">✂ Remove BG</button>
+                        <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="aiEnhance('colorize')" data-ai-use="1">🎨 Colorize</button>
+                        <button class="cz-btn cz-btn-outline cz-btn-sm" onclick="aiEnhance('restore')" data-ai-use="1">✨ Restore</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="ai-result-box" id="ai-result-box" style="min-height:280px;margin-bottom:12px">
+                    <span>AI generation result will appear here.<br/>Connect your API keys for live generation.</span>
+                </div>
+                <div class="cz-dark-box">
+                    <span class="cz-label">Generation Settings</span>
+                    <div class="slider-row"><label>STEPS</label><input type="range" id="ai-steps" min="10" max="100" value="50" oninput="this.nextElementSibling.textContent=this.value"><span>50</span></div>
+                    <div class="slider-row"><label>CFG</label><input type="range" id="ai-cfg" min="1" max="20" value="7" oninput="this.nextElementSibling.textContent=this.value"><span>7</span></div>
+                    <div style="display:flex;gap:8px;margin-top:8px">
+                        <select class="cz-select" id="ai-size">
+                            <option>512×512</option><option selected>1024×1024</option>
+                            <option>1024×1792</option><option>1792×1024</option>
+                        </select>
+                        <button class="cz-btn cz-btn-sm" onclick="sendToCanvas()">→ TO CANVAS</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TAB: MY MARKET ── -->
+    <div id="cz-panel-market" class="cz-panel">
+        <div class="cz-grid-2" style="gap:16px">
+            <div>
+                <div class="cz-dark-box" style="margin-bottom:12px">
+                    <span class="cz-label">List New Asset</span>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        <input class="cz-input" placeholder="Asset name" id="list-name"/>
+                        <input class="cz-input" type="number" placeholder="Price ($)" id="list-price"/>
+                        <select class="cz-select" id="list-category">
+                            <option>Digital Art</option><option>Music / Audio</option><option>E-Book</option>
+                            <option>Animation / Video</option><option>Template</option><option>POD Product</option>
+                        </select>
+                        <textarea class="cz-input" rows="2" placeholder="Description..." id="list-desc"></textarea>
+                        <button class="cz-btn" onclick="listNewAsset()">+ LIST ASSET FOR SALE</button>
+                    </div>
+                </div>
+                <div class="cz-dark-box">
+                    <span class="cz-label">Quick Sale Buttons</span>
+                    <div style="display:flex;flex-direction:column;gap:6px">
+                        <button class="cz-btn cz-btn-outline" onclick="czBuyAsset('Character Pack', 10)">🎨 Character Designs — $10</button>
+                        <button class="cz-btn cz-btn-outline" onclick="czBuyAsset('Icon Set', 5)">🖼 Icon Packs — $5</button>
+                        <button class="cz-btn cz-btn-outline" onclick="czBuyAsset('AI Voice Pack', 15)">🎙 AI Voice Pack — $15</button>
+                        <button class="cz-btn cz-btn-outline" onclick="czBuyAsset('Custom Beat', 25)">🎵 Custom Beat — $25</button>
+                        <button class="cz-btn cz-btn-outline" onclick="czBuyAsset('Story Template', 8)">📖 Story Template — $8</button>
+                        <button class="cz-btn cz-btn-outline" onclick="czBuyAsset('E-Book Guide', 12)">📚 E-Book Guide — $12</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="cz-dark-box" style="margin-bottom:12px">
+                    <span class="cz-label">🏆 Top Creators</span>
+                    <div id="cz-leaderboard"></div>
+                </div>
+                <div class="cz-dark-box">
+                    <span class="cz-label">My Listed Assets</span>
+                    <div id="my-assets-list" style="min-height:60px;font-size:.75em;color:rgba(255,255,255,.4)">No assets listed yet.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TAB: REVENUE ── -->
+    <div id="cz-panel-revenue" class="cz-panel">
+        <div class="cz-grid-3" style="gap:14px;margin-bottom:16px">
+            <div class="cz-dark-box" style="text-align:center">
+                <div style="font-size:.6em;color:rgba(255,215,0,.7);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">TOTAL VAULT</div>
+                <div style="font-family:'Orbitron',monospace;font-size:1.8em;font-weight:900;color:#ffd700" id="rev-vault">$0.00</div>
+            </div>
+            <div class="cz-dark-box" style="text-align:center">
+                <div style="font-size:.6em;color:rgba(255,215,0,.7);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">CREATOR EARNINGS</div>
+                <div style="font-family:'Orbitron',monospace;font-size:1.8em;font-weight:900;color:#2ecc71" id="rev-creator">$0.00</div>
+            </div>
+            <div class="cz-dark-box" style="text-align:center">
+                <div style="font-size:.6em;color:rgba(255,215,0,.7);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">TOTAL ORDERS</div>
+                <div style="font-family:'Orbitron',monospace;font-size:1.8em;font-weight:900;color:#3498db" id="rev-orders">0</div>
+            </div>
+        </div>
+        <div class="cz-grid-2" style="gap:14px">
+            <div class="cz-dark-box">
+                <span class="cz-label">Revenue Split</span>
+                <div style="margin:8px 0">
+                    <div style="display:flex;justify-content:space-between;font-size:.75em;margin-bottom:4px"><span>Creator Cut (85%)</span><span style="color:#2ecc71" id="split-creator">$0.00</span></div>
+                    <div class="rev-bar"><div class="rev-fill" id="split-creator-bar" style="width:85%;background:#2ecc71"></div></div>
+                </div>
+                <div style="margin:8px 0">
+                    <div style="display:flex;justify-content:space-between;font-size:.75em;margin-bottom:4px"><span>Platform Fee (15%)</span><span style="color:#ffd700" id="split-platform">$0.00</span></div>
+                    <div class="rev-bar"><div class="rev-fill" id="split-platform-bar" style="width:15%;background:#ffd700"></div></div>
+                </div>
+                <div style="font-size:.65em;color:rgba(255,255,255,.3);margin-top:10px">All transactions are logged and auditable.</div>
+            </div>
+            <div class="cz-dark-box">
+                <span class="cz-label">Transaction Log</span>
+                <div class="cz-log" id="rev-log" style="height:120px">
+                    > Awaiting transactions...<br>
+                </div>
+                <button class="cz-btn cz-btn-outline cz-btn-sm" style="margin-top:8px;width:100%" onclick="czWithdraw()">WITHDRAW VAULT FUNDS</button>
+            </div>
+        </div>
+    </div>
+
+    </div><!-- end cz-body -->
+
+    <!-- subscribe info -->
+    <div style="background:rgba(138,43,226,.08);border-top:1px solid rgba(138,43,226,.2);padding:18px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px">
+        <div style="font-size:.85em;color:rgba(255,255,255,.6)">
+            <strong style="color:#c39bd3">Subscribe for $5/month</strong> — Unlimited AI generations, all 30 POD molds, advanced tools &amp; priority fulfillment.
+            <br><span style="font-size:.85em">Free tier: 5 AI uses/day across all tools.</span>
+        </div>
+        <button class="cz-btn" style="background:#8a2be2;color:#fff" onclick="alert('Redirecting to subscription page!')">🚀 Subscribe — $5/month</button>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     ORIGINAL MARKETPLACE — UNTOUCHED
+══════════════════════════════════════════════════════ -->
+<div class="marketplace">
+    <h2>Digital Creator Marketplace</h2>
+    <p class="section-description">Explore and purchase unique digital assets created by our talented community, or list your own creations!</p>
+    <div class="marketplace-grid">
+        <div class="product-card"><h3>Digital Art</h3><ul><li>Character Designs</li><li>Illustrations</li><li>Web Design Assets</li><li>NFTs &amp; Collectibles</li></ul></div>
+        <div class="product-card"><h3>Music</h3><ul><li>Beats &amp; Instrumentals</li><li>Song Lyrics</li><li>Sheet Music</li><li>Sound Packs &amp; Loops</li></ul></div>
+        <div class="product-card"><h3>E-Books</h3><ul><li>Digital Books</li><li>Guides &amp; Tutorials</li><li>Educational Content</li><li>Creative Writing Prompts</li></ul></div>
+        <div class="product-card"><h3>Animations &amp; Video Assets</h3><ul><li>Motion Graphics Templates</li><li>Short Video Clips</li><li>Animated Stickers</li><li>Video Transitions</li></ul></div>
+    </div>
+    <div class="print-services" id="print-drop-zone">
+        <h3>Print-on-Demand Services</h3>
+        <p><strong>Drag and drop your AI-generated or uploaded content here to instantly create physical products!</strong></p>
+        <div class="print-buttons">
+            <button class="tool-button">👕 Apparel &amp; Clothing</button>
+            <button class="tool-button">☕ Mugs &amp; Drinkware</button>
+            <button class="tool-button">🖼️ Posters &amp; Canvas</button>
+            <button class="tool-button">📱 Phone Cases</button>
+            <button class="tool-button">📚 Books &amp; Journals</button>
+            <button class="tool-button">✨ Stickers &amp; Decals</button>
+            <button class="tool-button">👜 Tote Bags &amp; Accessories</button>
+            <button class="tool-button">🏠 Home Decor (Pillows, Blankets)</button>
+        </div>
+    </div>
+</div>
+
+<!-- ORIGINAL POD PARTNERS — UNTOUCHED -->
+<section class="pod-providers">
+    <h2>Our Trusted Print-on-Demand Partners</h2>
+    <p class="section-description">We partner with leading POD providers to ensure the highest quality and widest range of physical products.</p>
+    <ul class="pod-list">
+        <li><strong>Printful:</strong><span>Apparel, mugs, phone cases, wall art, home &amp; living. High-quality printing and strong branding options.</span></li>
+        <li><strong>Printify:</strong><span>Broad range via extensive supplier network. Apparel, home decor, phone cases, mugs. Competitive pricing.</span></li>
+        <li><strong>Gelato:</strong><span>Global reach with local printing. Wall art, stationery, apparel, mugs, photo books. Fast local fulfillment.</span></li>
+        <li><strong>Gooten:</strong><span>Diverse catalog including apparel, wall art, premium home decor, drinkware. Good for high-volume orders.</span></li>
+        <li><strong>CustomCat:</strong><span>Large catalog including apparel, hats, bags, laptop sleeves, pet accessories, jewelry. Fast fulfillment times.</span></li>
+        <li><strong>Apliiq:</strong><span>High-quality cut &amp; sew apparel, private label clothing lines, premium joggers and hoodies. Ideal for fashion brands.</span></li>
+        <li><strong>Lulu Direct:</strong><span>Books (paperbacks, hardcovers), comic books, magazines, ebooks. Ideal for authors and publishers.</span></li>
+        <li><strong>Amazon Merch on Demand:</strong><span>Apparel, pop sockets, phone cases. Direct Amazon marketplace integration.</span></li>
+    </ul>
+    <button class="partnership-button action-button" id="partner-btn">🤝 Become a PLaiGROUND POD Partner!</button>
+</section>
+
+<!-- ORIGINAL STATS — UNTOUCHED -->
+<div class="stats-container">
+    <h2>PLaiGROUND Community Insights</h2>
+    <p class="section-description">See the impact of creativity and innovation on our platform.</p>
+    <div class="stats-grid">
+        <div class="stat-card"><h4>Total Sales Generated</h4><p>$123,456</p></div>
+        <div class="stat-card"><h4>AI Generations Today</h4><p><span id="ai-generations-count">0</span> / 5</p></div>
+        <div class="stat-card"><h4>POD Orders Fulfilled</h4><p>789</p></div>
+        <div class="stat-card"><h4>Active Creators</h4><p>1,234</p></div>
+    </div>
+</div>
+
+<!-- ORIGINAL BUFFBOT LINK — UNTOUCHED -->
+<div class="buffbot-link">
+    <p>Looking for even more advanced AI solutions?</p>
+    <a href="https://yourbuffbotdomain.com" target="_blank">Explore BuffBot AI for Enterprise Solutions!</a>
+</div>
+
+<!-- ORIGINAL CHATBOT — UNTOUCHED -->
+<button id="chatbot-button"><span>🤖</span></button>
+<div id="chatbot-container" class="chatbot-container">
+    <div style="padding:15px;background-color:#f0f0f0;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center">
+        <strong>PLaiBOT</strong>
+        <button id="close-chatbot" style="background:none;border:none;font-size:1.2em;cursor:pointer">✖</button>
+    </div>
+    <div style="flex-grow:1;padding:15px;overflow-y:auto;background-color:#fff"><p>Hello! How can I help you create today?</p></div>
+    <div style="padding:15px;border-top:1px solid #ddd;display:flex">
+        <input type="text" id="chatbot-input" placeholder="Type your message..." style="flex-grow:1;padding:10px;border:1px solid #eee;border-radius:5px">
+        <button id="send-chat-button" style="margin-left:10px;background-color:#4CAF50;color:white;border:none;border-radius:5px;padding:10px 15px;cursor:pointer">Send</button>
+    </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// ORIGINAL SITE LOGIC — PRESERVED ENTIRELY
+// ════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+    let aiUsesRemaining = 5;
+    const aiGenerationsCount = document.getElementById('ai-generations-count');
+    if(aiGenerationsCount) aiGenerationsCount.textContent = aiUsesRemaining;
+
+    document.querySelectorAll('.tool-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const isGated = button.dataset.gated === 'true';
+            const consumesAIUse = button.dataset.aiUse === '1';
+            if (isGated) { alert('This feature requires a PLaiGROUND Premium subscription.'); return; }
+            if (consumesAIUse) {
+                if (aiUsesRemaining > 0) {
+                    alert(`Loading ${button.textContent}... You have ${aiUsesRemaining-1} AI uses remaining today.`);
+                    aiUsesRemaining--;
+                    if(aiGenerationsCount) aiGenerationsCount.textContent = aiUsesRemaining;
+                } else { alert('You have used all 5 daily AI generations. Subscribe for unlimited access!'); }
+            } else { alert(`Loading ${button.textContent}...`); }
+        });
+    });
+
+    const chatButton = document.getElementById('chatbot-button');
+    const chatContainer = document.getElementById('chatbot-container');
+    const closeChatbotButton = document.getElementById('close-chatbot');
+    chatButton.addEventListener('click', () => { chatContainer.style.display = chatContainer.style.display==='none'?'flex':'none'; });
+    closeChatbotButton.addEventListener('click', () => { chatContainer.style.display='none'; });
+
+    const chatbotInput = document.getElementById('chatbot-input');
+    const sendChatButton = document.getElementById('send-chat-button');
+    const chatMessagesContainer = chatContainer.querySelector('div:nth-child(2)');
+    sendChatButton.addEventListener('click', () => {
+        const userMessage = chatbotInput.value.trim();
+        if (userMessage) {
+            addChatMessage('You', userMessage);
+            chatbotInput.value = '';
+            setTimeout(() => { addChatMessage('PLaiBOT', `I received "${userMessage}". How can I help further?`); }, 1000);
+        }
+    });
+    chatbotInput.addEventListener('keypress', (e) => { if(e.key==='Enter') sendChatButton.click(); });
+
+    function addChatMessage(sender, message) {
+        const msgElement = document.createElement('p');
+        msgElement.textContent = `${sender}: ${message}`;
+        msgElement.style.textAlign = sender==='You'?'right':'left';
+        msgElement.style.backgroundColor = sender==='You'?'#e0ffe0':'#f0f0f0';
+        msgElement.style.padding='8px'; msgElement.style.borderRadius='5px'; msgElement.style.marginBottom='5px';
+        chatMessagesContainer.appendChild(msgElement);
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    }
+
+    const printServices = document.getElementById('print-drop-zone');
+    if(printServices){
+        printServices.addEventListener('dragover',(e)=>{e.preventDefault();printServices.style.background='#ffe44d';});
+        printServices.addEventListener('dragleave',()=>{printServices.style.background='#ffd700';});
+        printServices.addEventListener('drop',(e)=>{
+            e.preventDefault();printServices.style.background='#ffd700';
+            const files=e.dataTransfer.files;
+            if(files.length>0) alert(`Content "${files[0].name}" received for printing! Preparing product mockups...`);
+            else alert('Content received for printing!');
+        });
+    }
+
+    const partnerBtn = document.getElementById('partner-btn');
+    if(partnerBtn) partnerBtn.addEventListener('click',()=>{ alert('Redirecting to Partner Application Form!'); });
+
+    document.querySelectorAll('.subscribe-button').forEach(b=>b.addEventListener('click',()=>{ alert('Redirecting to PLaiGROUND Premium Subscription!'); }));
+});
+
+// ════════════════════════════════════════════════════════
+// CONSTRUCTION ZONE ENGINE
+// ════════════════════════════════════════════════════════
+const czState = {
+    vault: 0, creatorTotal: 0, orders: 0,
+    creators: [
+        { name: "Ghost@ndy", rev: 12400 },
+        { name: "King@ndy", rev: 9800 },
+        { name: "BrandeB", rev: 7200 }
+    ],
+    myAssets: [], currentTool: 'pencil', currentFont: 'Arial',
+    undoStack: [], redoStack: [], layers: ['Background'],
+    activeLayer: 0
+};
+
+// ── Tabs ──
+function czTab(id, btn) {
+    document.querySelectorAll('.cz-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.cz-tab').forEach(b=>b.classList.remove('active'));
+    document.getElementById('cz-panel-'+id).classList.add('active');
+    btn.classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════
+// 2D CANVAS STUDIO
+// ════════════════════════════════════════════════════════
+const czCanvas = document.getElementById('cz-art-canvas');
+const czCtx = czCanvas.getContext('2d');
+let czDrawing = false, czLastX = 0, czLastY = 0;
+let czStartX = 0, czStartY = 0;
+const SWATCHES = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c','#3498db','#9b59b6','#e91e63','#ffffff','#bdc3c7','#7f8c8d','#2c3e50','#000000','#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ffeaa7','#dda0dd','#ff69b4'];
+
+function initSwatches() {
+    const container = document.getElementById('cz-swatches');
+    if(!container) return;
+    SWATCHES.forEach(c => {
+        const d = document.createElement('div');
+        d.className='swatch'; d.style.background=c; d.title=c;
+        d.onclick=()=>{ document.getElementById('cz-color').value=c; document.getElementById('cz-hex-input').value=c; document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active')); d.classList.add('active'); };
+        container.appendChild(d);
+    });
+}
+
+function setTool(tool, btn) {
+    czState.currentTool = tool;
+    document.querySelectorAll('.palette-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('text-tool-box').style.display = tool==='text'?'block':'none';
+    czCanvas.style.cursor = tool==='eyedrop'?'crosshair':tool==='eraser'?'cell':'crosshair';
+}
+
+function setFont(f, btn) {
+    czState.currentFont = f;
+    document.querySelectorAll('.font-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function applyHexColor(val) {
+    if(/^#[0-9A-Fa-f]{6}$/.test(val)) document.getElementById('cz-color').value = val;
+}
+
+function pushUndo() {
+    czState.undoStack.push(czCanvas.toDataURL());
+    if(czState.undoStack.length > 30) czState.undoStack.shift();
+    czState.redoStack = [];
+}
+
+function czUndo() {
+    if(!czState.undoStack.length) return;
+    czState.redoStack.push(czCanvas.toDataURL());
+    const img = new Image(); img.src = czState.undoStack.pop();
+    img.onload=()=>{ czCtx.clearRect(0,0,czCanvas.width,czCanvas.height); czCtx.drawImage(img,0,0); };
+}
+
+function czRedo() {
+    if(!czState.redoStack.length) return;
+    czState.undoStack.push(czCanvas.toDataURL());
+    const img = new Image(); img.src = czState.redoStack.pop();
+    img.onload=()=>{ czCtx.clearRect(0,0,czCanvas.width,czCanvas.height); czCtx.drawImage(img,0,0); };
+}
+
+function getCzColor() { return document.getElementById('cz-color').value; }
+function getCzSize() { return parseInt(document.getElementById('cz-brush-size').value); }
+function getCzOpacity() { return parseInt(document.getElementById('cz-opacity').value)/100; }
+
+czCanvas.addEventListener('mousedown', e => {
+    czDrawing = true; pushUndo();
+    const r = czCanvas.getBoundingClientRect();
+    czLastX = (e.clientX - r.left) * (czCanvas.width / r.width);
+    czLastY = (e.clientY - r.top) * (czCanvas.height / r.height);
+    czStartX = czLastX; czStartY = czLastY;
+
+    if(czState.currentTool === 'fill') { floodFill(czLastX, czLastY, getCzColor()); return; }
+    if(czState.currentTool === 'text') {
+        const txt = document.getElementById('cz-text-input').value || 'Text';
+        const fs = document.getElementById('cz-font-size').value;
+        czCtx.font = `bold ${fs}px ${czState.currentFont}`;
+        czCtx.fillStyle = getCzColor();
+        czCtx.globalAlpha = getCzOpacity();
+        czCtx.fillText(txt, czLastX, czLastY);
+        czCtx.globalAlpha = 1;
+        czLog(`Studio: Text "${txt}" added.`); return;
+    }
+    if(czState.currentTool === 'eyedrop') {
+        const px = czCtx.getImageData(czLastX, czLastY, 1, 1).data;
+        const hex = '#'+[px[0],px[1],px[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
+        document.getElementById('cz-color').value = hex;
+        document.getElementById('cz-hex-input').value = hex;
+        czLog('Studio: Color picked: '+hex); return;
+    }
+});
+
+czCanvas.addEventListener('mousemove', e => {
+    if(!czDrawing) return;
+    const r = czCanvas.getBoundingClientRect();
+    const x = (e.clientX - r.left) * (czCanvas.width / r.width);
+    const y = (e.clientY - r.top) * (czCanvas.height / r.height);
+
+    czCtx.globalAlpha = getCzOpacity();
+    const size = getCzSize();
+
+    if(['pencil','brush'].includes(czState.currentTool)) {
+        czCtx.lineWidth = czState.currentTool==='brush' ? size*1.5 : size;
+        czCtx.lineCap = 'round'; czCtx.lineJoin = 'round';
+        czCtx.strokeStyle = getCzColor();
+        czCtx.beginPath(); czCtx.moveTo(czLastX, czLastY); czCtx.lineTo(x, y); czCtx.stroke();
+    } else if(czState.currentTool === 'eraser') {
+        czCtx.globalCompositeOperation='destination-out';
+        czCtx.lineWidth=size*2; czCtx.lineCap='round';
+        czCtx.beginPath(); czCtx.moveTo(czLastX,czLastY); czCtx.lineTo(x,y); czCtx.stroke();
+        czCtx.globalCompositeOperation='source-over';
+    } else if(czState.currentTool === 'spray') {
+        for(let i=0;i<20;i++){
+            const ax=x+(Math.random()-.5)*size*2;
+            const ay=y+(Math.random()-.5)*size*2;
+            czCtx.fillStyle=getCzColor(); czCtx.beginPath(); czCtx.arc(ax,ay,1,0,Math.PI*2); czCtx.fill();
+        }
+    } else if(['line','rect','circle'].includes(czState.currentTool)) {
+        // preview on a temporary overlay — redraw
+        const snap=czState.undoStack[czState.undoStack.length-1];
+        if(snap){ const img=new Image();img.src=snap;img.onload=()=>{czCtx.clearRect(0,0,czCanvas.width,czCanvas.height);czCtx.drawImage(img,0,0);drawShapePreview(czStartX,czStartY,x,y);}; }
+    }
+    czCtx.globalAlpha=1;
+    czLastX=x; czLastY=y;
+});
+
+function drawShapePreview(x1,y1,x2,y2){
+    czCtx.strokeStyle=getCzColor(); czCtx.lineWidth=getCzSize(); czCtx.lineCap='round';
+    czCtx.globalAlpha=getCzOpacity();
+    if(czState.currentTool==='line'){ czCtx.beginPath();czCtx.moveTo(x1,y1);czCtx.lineTo(x2,y2);czCtx.stroke(); }
+    else if(czState.currentTool==='rect'){ czCtx.strokeRect(x1,y1,x2-x1,y2-y1); }
+    else if(czState.currentTool==='circle'){
+        const rx=Math.abs(x2-x1)/2,ry=Math.abs(y2-y1)/2;
+        czCtx.beginPath();czCtx.ellipse(x1+(x2-x1)/2,y1+(y2-y1)/2,rx,ry,0,0,Math.PI*2);czCtx.stroke();
+    }
+    czCtx.globalAlpha=1;
+}
+
+window.addEventListener('mouseup', () => { czDrawing=false; czCtx.beginPath(); czSync3DQuiet(); });
+
+function czClear() { czCtx.clearRect(0,0,czCanvas.width,czCanvas.height); czLog('Studio: Canvas cleared.'); czSync3DQuiet(); }
+
+function czDownloadArt() {
+    const a=document.createElement('a');
+    a.download='plaiground-design-'+Date.now()+'.png';
+    a.href=czCanvas.toDataURL();a.click();
+    czLog('Studio: Design exported as PNG.');
+}
+
+function resizeCanvas(w,h) {
+    const data=czCanvas.toDataURL();
+    czCanvas.width=w; czCanvas.height=h;
+    const img=new Image();img.src=data;img.onload=()=>czCtx.drawImage(img,0,0,w,h);
+    czLog('Studio: Canvas resized to '+w+'×'+h);
+}
+
+function floodFill(x, y, fillColorHex) {
+    const img=czCtx.getImageData(0,0,czCanvas.width,czCanvas.height);
+    const d=img.data; const idx=(Math.floor(y)*czCanvas.width+Math.floor(x))*4;
+    const targetR=d[idx],targetG=d[idx+1],targetB=d[idx+2];
+    const fr=parseInt(fillColorHex.slice(1,3),16),fg=parseInt(fillColorHex.slice(3,5),16),fb=parseInt(fillColorHex.slice(5,7),16);
+    if(targetR===fr&&targetG===fg&&targetB===fb) return;
+    const stack=[[Math.floor(x),Math.floor(y)]];
+    while(stack.length){
+        const [cx,cy]=stack.pop();
+        const ci=(cy*czCanvas.width+cx)*4;
+        if(cx<0||cx>=czCanvas.width||cy<0||cy>=czCanvas.height) continue;
+        if(Math.abs(d[ci]-targetR)>30||Math.abs(d[ci+1]-targetG)>30||Math.abs(d[ci+2]-targetB)>30) continue;
+        d[ci]=fr;d[ci+1]=fg;d[ci+2]=fb;d[ci+3]=255;
+        stack.push([cx+1,cy],[cx-1,cy],[cx,cy+1],[cx,cy-1]);
+    }
+    czCtx.putImageData(img,0,0);
+    czLog('Studio: Fill applied.');
+}
+
+// ── Filters ──
+function applyFilter(type) {
+    pushUndo();
+    const img=czCtx.getImageData(0,0,czCanvas.width,czCanvas.height);
+    const d=img.data;
+    for(let i=0;i<d.length;i+=4){
+        const r=d[i],g=d[i+1],b=d[i+2];
+        if(type==='grayscale'){ const gv=0.299*r+0.587*g+0.114*b; d[i]=d[i+1]=d[i+2]=gv; }
+        else if(type==='invert'){ d[i]=255-r;d[i+1]=255-g;d[i+2]=255-b; }
+        else if(type==='sepia'){ d[i]=Math.min(255,r*.393+g*.769+b*.189);d[i+1]=Math.min(255,r*.349+g*.686+b*.168);d[i+2]=Math.min(255,r*.272+g*.534+b*.131); }
+        else if(type==='warm'){ d[i]=Math.min(255,r*1.2);d[i+2]=Math.max(0,b*.8); }
+        else if(type==='cool'){ d[i]=Math.max(0,r*.8);d[i+2]=Math.min(255,b*1.2); }
+        else if(type==='vivid'){ const avg=(r+g+b)/3; d[i]=Math.min(255,avg+(r-avg)*1.6);d[i+1]=Math.min(255,avg+(g-avg)*1.6);d[i+2]=Math.min(255,avg+(b-avg)*1.6); }
+        else if(type==='fade'){ d[i]=r*.7+80;d[i+1]=g*.7+80;d[i+2]=b*.7+80; }
+        else if(type==='vintage'){ d[i]=Math.min(255,r*.9+20);d[i+1]=Math.min(255,g*.85+10);d[i+2]=Math.min(255,b*.7); }
+    }
+    czCtx.putImageData(img,0,0);
+    czLog('Studio: Filter "'+type+'" applied.');
+}
+
+function applyAdjust() {
+    const b=parseInt(document.getElementById('adj-brightness').value);
+    const c=parseInt(document.getElementById('adj-contrast').value);
+    const s=parseInt(document.getElementById('adj-saturation').value);
+    const h=parseInt(document.getElementById('adj-hue').value);
+    document.getElementById('adj-b-val').textContent=b;
+    document.getElementById('adj-c-val').textContent=c;
+    document.getElementById('adj-s-val').textContent=s;
+    document.getElementById('adj-h-val').textContent=h+'°';
+    czCanvas.style.filter=`brightness(${1+b/100}) contrast(${1+c/100}) saturate(${1+s/100}) hue-rotate(${h}deg)`;
+}
+function resetAdjust() {
+    ['adj-brightness','adj-contrast','adj-saturation','adj-hue'].forEach(id=>{ document.getElementById(id).value=id==='adj-hue'?0:0; });
+    czCanvas.style.filter='none'; applyAdjust();
+}
+
+function czTransform(type) {
+    pushUndo();
+    const snap=czCanvas.toDataURL();
+    const img=new Image();
+    img.onload=()=>{
+        czCtx.clearRect(0,0,czCanvas.width,czCanvas.height);
+        czCtx.save();
+        if(type==='flipH'){ czCtx.translate(czCanvas.width,0);czCtx.scale(-1,1); }
+        else if(type==='flipV'){ czCtx.translate(0,czCanvas.height);czCtx.scale(1,-1); }
+        else if(type==='rot90'){ czCtx.translate(czCanvas.width,0);czCtx.rotate(Math.PI/2); }
+        else if(type==='rot180'){ czCtx.translate(czCanvas.width,czCanvas.height);czCtx.rotate(Math.PI); }
+        else if(type==='rot270'){ czCtx.translate(0,czCanvas.height);czCtx.rotate(-Math.PI/2); }
+        czCtx.drawImage(img,0,0); czCtx.restore();
+    };
+    img.src=snap;
+    czLog('Studio: Transform "'+type+'" applied.');
+}
+
+function stampShape(type) {
+    pushUndo();
+    const x=czCanvas.width/2, y=czCanvas.height/2;
+    const s=80; czCtx.fillStyle=getCzColor(); czCtx.strokeStyle=getCzColor(); czCtx.lineWidth=3;
+    czCtx.beginPath();
+    if(type==='star'){ for(let i=0;i<5;i++){czCtx.lineTo(x+s*Math.cos((i*4*Math.PI/5)-Math.PI/2),y+s*Math.sin((i*4*Math.PI/5)-Math.PI/2));czCtx.lineTo(x+s*.4*Math.cos((i*4*Math.PI/5+2*Math.PI/5)-Math.PI/2),y+s*.4*Math.sin((i*4*Math.PI/5+2*Math.PI/5)-Math.PI/2));} }
+    else if(type==='heart'){ czCtx.moveTo(x,y+s*.3);czCtx.bezierCurveTo(x,y-s*.3,x-s,y-s*.3,x-s,y);czCtx.bezierCurveTo(x-s,y+s*.5,x,y+s*.8,x,y+s);czCtx.bezierCurveTo(x,y+s*.8,x+s,y+s*.5,x+s,y);czCtx.bezierCurveTo(x+s,y-s*.3,x,y-s*.3,x,y+s*.3); }
+    else if(type==='diamond'){ czCtx.moveTo(x,y-s);czCtx.lineTo(x+s*.6,y);czCtx.lineTo(x,y+s);czCtx.lineTo(x-s*.6,y); }
+    else if(type==='hexagon'){ for(let i=0;i<6;i++) czCtx.lineTo(x+s*Math.cos(i*Math.PI/3),y+s*Math.sin(i*Math.PI/3)); }
+    else if(type==='triangle'){ czCtx.moveTo(x,y-s);czCtx.lineTo(x+s,y+s);czCtx.lineTo(x-s,y+s); }
+    else if(type==='arrow'){ czCtx.moveTo(x-s,y-s*.3);czCtx.lineTo(x,y-s*.3);czCtx.lineTo(x,y-s*.6);czCtx.lineTo(x+s,y);czCtx.lineTo(x,y+s*.6);czCtx.lineTo(x,y+s*.3);czCtx.lineTo(x-s,y+s*.3); }
+    else if(type==='cross'){ czCtx.rect(x-s*.25,y-s,s*.5,s*2);czCtx.rect(x-s,y-s*.25,s*2,s*.5); }
+    czCtx.closePath(); czCtx.fill();
+    czLog('Studio: Stamp "'+type+'" added.');
+    czSync3DQuiet();
+}
+
+function genPattern(type) {
+    pushUndo();
+    const w=czCanvas.width, h=czCanvas.height;
+    const c1=getCzColor(), c2=document.getElementById('cz-bg-color').value;
+    czCtx.fillStyle=c2; czCtx.fillRect(0,0,w,h);
+    czCtx.fillStyle=c1;
+    if(type==='stripe'){ for(let i=0;i<w;i+=20){czCtx.fillRect(i,0,10,h);} }
+    else if(type==='dot'){ for(let x=20;x<w;x+=30) for(let y=20;y<h;y+=30){czCtx.beginPath();czCtx.arc(x,y,6,0,Math.PI*2);czCtx.fill();} }
+    else if(type==='checker'){ for(let x=0;x<w;x+=30) for(let y=0;y<h;y+=30) if((x/30+y/30)%2===0) czCtx.fillRect(x,y,30,30); }
+    else if(type==='grid'){ czCtx.strokeStyle=c1;czCtx.lineWidth=1; for(let i=0;i<w;i+=30){czCtx.beginPath();czCtx.moveTo(i,0);czCtx.lineTo(i,h);czCtx.stroke();} for(let j=0;j<h;j+=30){czCtx.beginPath();czCtx.moveTo(0,j);czCtx.lineTo(w,j);czCtx.stroke();} }
+    else if(type==='noise'){ for(let x=0;x<w;x+=3) for(let y=0;y<h;y+=3) if(Math.random()>.5){czCtx.fillRect(x,y,3,3);} }
+    else if(type==='gradient'){ const g=czCtx.createLinearGradient(0,0,w,h);g.addColorStop(0,c2);g.addColorStop(1,c1);czCtx.fillStyle=g;czCtx.fillRect(0,0,w,h); }
+    czLog('Studio: Pattern "'+type+'" generated.'); czSync3DQuiet();
+}
+
+function updateGradPreview() {
+    const a=document.getElementById('grad-a').value;
+    const b=document.getElementById('grad-b').value;
+    const d=document.getElementById('grad-dir').value;
+    const p=document.getElementById('grad-preview');
+    p.style.background = d==='radial'?`radial-gradient(circle,${a},${b})`:`linear-gradient(${d},${a},${b})`;
+}
+document.getElementById('grad-a').addEventListener('input',updateGradPreview);
+document.getElementById('grad-b').addEventListener('input',updateGradPreview);
+
+function applyGradientBg() {
+    pushUndo();
+    const a=document.getElementById('grad-a').value;
+    const b=document.getElementById('grad-b').value;
+    const dir=document.getElementById('grad-dir').value;
+    let g;
+    if(dir==='radial') g=czCtx.createRadialGradient(czCanvas.width/2,czCanvas.height/2,0,czCanvas.width/2,czCanvas.height/2,czCanvas.width*.7);
+    else {
+        const dirs={'135deg':[0,0,czCanvas.width,czCanvas.height],'90deg':[0,czCanvas.height/2,czCanvas.width,czCanvas.height/2],'0deg':[czCanvas.width/2,0,czCanvas.width/2,czCanvas.height],'45deg':[czCanvas.width,0,0,czCanvas.height]};
+        const d2=dirs[dir]||[0,0,czCanvas.width,czCanvas.height];
+        g=czCtx.createLinearGradient(...d2);
+    }
+    g.addColorStop(0,a); g.addColorStop(1,b);
+    czCtx.fillStyle=g; czCtx.fillRect(0,0,czCanvas.width,czCanvas.height);
+    czLog('Studio: Gradient background applied.'); czSync3DQuiet();
+}
+
+function importImage(input) {
+    const file=input.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=e=>{
+        const img=new Image(); img.onload=()=>{ pushUndo(); czCtx.drawImage(img,0,0,czCanvas.width,czCanvas.height); czSync3DQuiet(); czLog('Studio: Image "'+file.name+'" imported.'); };
+        img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function addTypoPreset(type) {
+    pushUndo();
+    const cx=czCanvas.width/2, cy=czCanvas.height/2;
+    czCtx.fillStyle=getCzColor(); czCtx.textAlign='center';
+    if(type==='title'){ czCtx.font='bold 64px Impact'; czCtx.fillText('YOUR BRAND',cx,cy); }
+    else if(type==='sub'){ czCtx.font='28px Georgia'; czCtx.fillText('Your tagline here',cx,cy+50); }
+    else if(type==='logo'){ czCtx.font='bold 48px Orbitron,monospace'; czCtx.fillText('BRAND',cx,cy); }
+    else if(type==='quote'){ czCtx.font='italic 24px Georgia'; czCtx.fillText('"Inspiring words go here"',cx,cy+80); }
+    else if(type==='grunge'){ czCtx.font='bold 36px Courier New'; czCtx.fillStyle=getCzColor(); for(let i=0;i<3;i++){czCtx.globalAlpha=.3+i*.3;czCtx.fillText('G R U N G E',cx+i*2,cy+130+i*2);} czCtx.globalAlpha=1; }
+    czCtx.textAlign='left';
+    czLog('Studio: Typography preset "'+type+'" added.'); czSync3DQuiet();
+}
+
+function downloadSVG() {
+    czLog('Studio: SVG export — use Canvas-to-SVG library for production SVG export.');
+    alert('SVG export requires canvas-to-svg.js integration. PNG export is available now via Export PNG button.');
+}
+
+// Layer manager (UI only — full layer implementation needs OffscreenCanvas)
+function addLayer() { czState.layers.push('Layer '+czState.layers.length); renderLayers(); czLog('Studio: Layer added.'); }
+function deleteLayer() { if(czState.layers.length>1){czState.layers.pop();renderLayers();czLog('Studio: Layer deleted.');} }
+function mergeDown() { czLog('Studio: Layers merged.'); }
+function renderLayers() {
+    const el=document.getElementById('layer-list'); if(!el) return;
+    el.innerHTML = czState.layers.map((l,i)=>`
+        <div style="display:flex;justify-content:space-between;padding:5px 8px;background:${i===czState.activeLayer?'rgba(255,215,0,.1)':'rgba(255,255,255,.04)'};border-radius:4px;margin-bottom:3px;cursor:pointer;font-size:.72em;border:1px solid ${i===czState.activeLayer?'rgba(255,215,0,.3)':'transparent'}" onclick="czState.activeLayer=${i};renderLayers()">
+            <span>${l}</span><span style="color:rgba(255,255,255,.3)">👁</span>
+        </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════════
+// 3D ENGINE (Three.js)
+// ════════════════════════════════════════════════════════
+let czScene, czCamera, czRenderer, czProduct, czTexture, czAutoRotate=true;
+let czProductColor='#ffffff';
+
+// 30 POD items with geometry definitions
+const POD_ITEMS = [
+    {id:'tshirt',      icon:'👕', name:'T-Shirt',         base:8,    sug:24.99, geo:'tshirt'},
+    {id:'hoodie',      icon:'🧥', name:'Hoodie',           base:15,   sug:39.99, geo:'hoodie'},
+    {id:'mug',         icon:'☕', name:'Mug',              base:4,    sug:14.99, geo:'mug'},
+    {id:'phoneiphone', icon:'📱', name:'iPhone Case',      base:5,    sug:16.99, geo:'phone'},
+    {id:'phoneandroid',icon:'📱', name:'Android Case',     base:5,    sug:16.99, geo:'phone'},
+    {id:'totebag',     icon:'👜', name:'Tote Bag',         base:6,    sug:18.99, geo:'totebag'},
+    {id:'poster',      icon:'🖼', name:'Poster (18×24)',   base:5,    sug:19.99, geo:'poster'},
+    {id:'canvas',      icon:'🎨', name:'Canvas Print',     base:12,   sug:34.99, geo:'poster'},
+    {id:'sticker',     icon:'✨', name:'Sticker Sheet',    base:2,    sug:6.99,  geo:'sticker'},
+    {id:'pillow',      icon:'🛏', name:'Throw Pillow',     base:9,    sug:27.99, geo:'pillow'},
+    {id:'blanket',     icon:'🧣', name:'Fleece Blanket',   base:18,   sug:44.99, geo:'blanket'},
+    {id:'keychain',    icon:'🔑', name:'Keychain',         base:3,    sug:8.99,  geo:'keychain'},
+    {id:'dogdish',     icon:'🐾', name:'Pet Bowl',         base:7,    sug:19.99, geo:'bowl'},
+    {id:'hat',         icon:'🧢', name:'Snapback Hat',     base:8,    sug:24.99, geo:'hat'},
+    {id:'notebook',    icon:'📓', name:'Notebook/Journal', base:6,    sug:17.99, geo:'book'},
+    {id:'laptop',      icon:'💻', name:'Laptop Sleeve',    base:10,   sug:28.99, geo:'laptop'},
+    {id:'waterbottle', icon:'🍶', name:'Water Bottle',     base:8,    sug:24.99, geo:'bottle'},
+    {id:'coaster',     icon:'🔘', name:'Coaster Set',      base:3,    sug:9.99,  geo:'coaster'},
+    {id:'mousepad',    icon:'🖱', name:'Mouse Pad',         base:5,    sug:14.99, geo:'mousepad'},
+    {id:'apron',       icon:'🍳', name:'Apron',            base:10,   sug:29.99, geo:'apron'},
+    {id:'socks',       icon:'🧦', name:'Custom Socks',     base:4,    sug:12.99, geo:'socks'},
+    {id:'backpack',    icon:'🎒', name:'Backpack',         base:20,   sug:49.99, geo:'backpack'},
+    {id:'framed',      icon:'🖼', name:'Framed Print',     base:14,   sug:39.99, geo:'frame'},
+    {id:'doormat',     icon:'🚪', name:'Door Mat',         base:12,   sug:32.99, geo:'mousepad'},
+    {id:'cuttingboard',icon:'🔪', name:'Cutting Board',    base:9,    sug:26.99, geo:'board'},
+    {id:'plate',       icon:'🍽', name:'Ceramic Plate',    base:8,    sug:22.99, geo:'plate'},
+    {id:'tumbler',     icon:'🥤', name:'Tumbler',          base:9,    sug:26.99, geo:'tumbler'},
+    {id:'onesie',      icon:'👶', name:'Baby Onesie',      base:7,    sug:19.99, geo:'tshirt'},
+    {id:'tanktop',     icon:'🩱', name:'Tank Top',         base:7,    sug:21.99, geo:'tshirt'},
+    {id:'leggings',    icon:'🩳', name:'Leggings',         base:12,   sug:34.99, geo:'tshirt'},
+];
+
+let currentPodIdx = 0;
+
+function buildPodGrid() {
+    const grid = document.getElementById('pod-items-grid'); if(!grid) return;
+    grid.innerHTML = POD_ITEMS.map((item,i)=>`
+        <div class="pod-item-btn${i===0?' active':''}" onclick="selectPodItem(${i})" id="pod-btn-${i}">
+            <span class="pod-icon">${item.icon}</span>
+            <span class="pod-name">${item.name}</span>
+        </div>`).join('');
+}
+
+function selectPodItem(idx) {
+    currentPodIdx = idx;
+    document.querySelectorAll('.pod-item-btn').forEach(b=>b.classList.remove('active'));
+    const btn=document.getElementById('pod-btn-'+idx); if(btn) btn.classList.add('active');
+    const item=POD_ITEMS[idx];
+    document.getElementById('model-name-label').textContent=item.name.toUpperCase();
+    document.getElementById('model-price-label').textContent=`Base cost: $${item.base.toFixed(2)} · Suggested: $${item.sug.toFixed(2)}`;
+    changePodModel(item.geo);
+    czLog3D('3D: Loaded model → '+item.name);
+}
+
+function czInit3D() {
+    const box = document.getElementById('cz-three-canvas'); if(!box || czScene) return;
+    czScene = new THREE.Scene();
+    czCamera = new THREE.PerspectiveCamera(45, box.clientWidth / Math.max(box.clientHeight,1), 0.1, 1000);
+    czRenderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+    czRenderer.setSize(box.clientWidth, box.clientHeight);
+    czRenderer.setPixelRatio(window.devicePixelRatio);
+    box.appendChild(czRenderer.domElement);
+
+    czScene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dl=new THREE.DirectionalLight(0xffffff,1); dl.position.set(5,8,5); czScene.add(dl);
+    const dl2=new THREE.DirectionalLight(0xffa040,.4); dl2.position.set(-5,-3,-5); czScene.add(dl2);
+
+    czTexture = new THREE.CanvasTexture(czCanvas);
+    czCamera.position.set(0,0,5);
+    changePodModel('tshirt');
+    czAnimate();
+}
+
+function changePodModel(type) {
+    if(!czScene) return;
+    if(czProduct){ czScene.remove(czProduct); czProduct.geometry.dispose(); }
+    let geo;
+    const col = parseInt(czProductColor.slice(1),16);
+    if(type==='mug'||type==='tumbler')       geo = new THREE.CylinderGeometry(0.9,0.75,2,64);
+    else if(type==='bowl')                   geo = new THREE.CylinderGeometry(1.6,0.9,0.7,64);
+    else if(type==='plate')                  geo = new THREE.CylinderGeometry(2.1,2,0.15,64);
+    else if(type==='coaster')                geo = new THREE.CylinderGeometry(1.1,1.1,0.12,64);
+    else if(type==='bottle')                 geo = new THREE.CylinderGeometry(0.5,0.7,2.8,32);
+    else if(type==='keychain')               geo = new THREE.TorusGeometry(0.8,0.25,16,60);
+    else if(type==='pillow')                 geo = new THREE.BoxGeometry(3,3,.5);
+    else if(type==='blanket')                geo = new THREE.BoxGeometry(4,3.5,.08);
+    else if(type==='mousepad')               geo = new THREE.BoxGeometry(3.5,2.5,.06);
+    else if(type==='board')                  geo = new THREE.BoxGeometry(3.2,2,.12);
+    else if(type==='poster'||type==='frame') geo = new THREE.BoxGeometry(2.4,3.4,.06);
+    else if(type==='sticker')                geo = new THREE.BoxGeometry(2.4,2.4,.03);
+    else if(type==='laptop')                 geo = new THREE.BoxGeometry(3.2,2.2,.08);
+    else if(type==='book')                   geo = new THREE.BoxGeometry(1.8,2.6,.4);
+    else if(type==='backpack')               geo = new THREE.BoxGeometry(2,2.6,0.9);
+    else if(type==='hat')                    geo = new THREE.SphereGeometry(1.1,32,16,0,Math.PI*2,0,Math.PI*.55);
+    else if(type==='hoodie')                 geo = new THREE.BoxGeometry(2.8,3.8,.3);
+    else if(type==='totebag')                geo = new THREE.BoxGeometry(2.2,2.8,.15);
+    else if(type==='apron')                  geo = new THREE.BoxGeometry(2,3,.1);
+    else if(type==='socks')                  geo = new THREE.TorusGeometry(0.7,.3,8,20);
+    else if(type==='phone')                  geo = new THREE.BoxGeometry(1.1,2.2,.12);
+    else /* tshirt default */                geo = new THREE.BoxGeometry(2.8,3.5,.18);
+
+    const mat = new THREE.MeshStandardMaterial({ map:czTexture, color:col, roughness:0.35, metalness:type==='keychain'?.7:.05 });
+    czProduct = new THREE.Mesh(geo, mat);
+    czScene.add(czProduct);
+    if(czTexture) czTexture.needsUpdate=true;
+}
+
+function czAnimate() {
+    requestAnimationFrame(czAnimate);
+    if(czProduct && czAutoRotate) czProduct.rotation.y += 0.006;
+    if(czRenderer && czScene && czCamera) czRenderer.render(czScene, czCamera);
+}
+
+function czSync3D() { if(czTexture){ czTexture.needsUpdate=true; czLog('Studio: Design synced to 3D model.'); } }
+function czSync3DQuiet() { if(czTexture) czTexture.needsUpdate=true; }
+function toggleAutoRotate() { czAutoRotate=!czAutoRotate; czLog3D('3D: Auto-rotate '+(czAutoRotate?'ON':'OFF')); }
+function manualRotate(v) { if(czProduct) czProduct.rotation.y=THREE.MathUtils.degToRad(parseFloat(v)); document.querySelector('#rotate-y+span').textContent=v+'°'; }
+function manualZoom(v) { if(czCamera) czCamera.position.z=parseFloat(v); }
+function manualTilt(v) { if(czProduct) czProduct.rotation.x=THREE.MathUtils.degToRad(parseFloat(v)); }
+function setProdColor(hex, swatch) {
+    czProductColor=hex;
+    document.querySelectorAll('#cz-panel-pod3d .swatch').forEach(s=>s.classList.remove('active'));
+    if(swatch) swatch.classList.add('active');
+    if(czProduct) czProduct.material.color.set(hex);
+}
+
+// ════════════════════════════════════════════════════════
+// REVENUE & MARKET LOGIC
+// ════════════════════════════════════════════════════════
+function czUpdateUI() {
+    document.getElementById('cz-vault-display').textContent='$'+czState.vault.toFixed(2);
+    document.getElementById('rev-vault').textContent='$'+czState.vault.toFixed(2);
+    document.getElementById('rev-creator').textContent='$'+czState.creatorTotal.toFixed(2);
+    document.getElementById('rev-orders').textContent=czState.orders;
+    document.getElementById('split-creator').textContent='$'+czState.creatorTotal.toFixed(2);
+    document.getElementById('split-platform').textContent='$'+czState.vault.toFixed(2);
+
+    const lb=document.getElementById('cz-leaderboard'); if(!lb) return;
+    lb.innerHTML=czState.creators.sort((a,b)=>b.rev-a.rev).map((c,i)=>`
+        <div class="lb-item">
+            <span class="lb-rank">${['🥇','🥈','🥉','04','05'][i]||i+1}</span>
+            <span class="lb-name">${c.name}</span>
+            <span class="lb-rev">$${c.rev.toLocaleString()}</span>
+        </div>`).join('');
+}
+
+function czRevLog(msg) {
+    const el=document.getElementById('rev-log'); if(!el) return;
+    el.innerHTML+=`> ${msg}<br>`;el.scrollTop=el.scrollHeight;
+}
+
+function czLog(msg) {
+    const el=document.getElementById('cz-log'); if(!el) return;
+    const t=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    el.innerHTML+=`> [${t}] ${msg}<br>`;el.scrollTop=el.scrollHeight;
+}
+
+function czLog3D(msg) { czLog(msg); czRevLog(msg); }
+
+function czBuyAsset(name, price) {
+    const fee=price*.15, creator=price*.85;
+    czState.vault+=fee; czState.creatorTotal+=creator; czState.orders++;
+    czState.creators[0].rev+=creator;
+    czUpdateUI();
+    czRevLog(`Sale: "${name}" — Creator: $${creator.toFixed(2)} | Vault: $${fee.toFixed(2)}`);
+    czLog('Market: Purchased "'+name+'" for $'+price+'. Vault +$'+fee.toFixed(2)+'.');
+}
+
+function czMintShip() {
+    const item=POD_ITEMS[currentPodIdx];
+    const sale=item.sug, fee=sale*.15, creator=sale*.85;
+    czState.vault+=fee; czState.creatorTotal+=creator; czState.orders++;
+    czState.creators[0].rev+=creator;
+    czUpdateUI();
+    czRevLog(`POD: "${item.name}" — $${sale.toFixed(2)} — Vault: $${fee.toFixed(2)}`);
+    czLog('POD: '+item.name+' minted & dispatched to fulfillment. Total: $'+sale.toFixed(2));
+    alert('✅ '+item.name+' order confirmed!\nProfit: $'+creator.toFixed(2)+' | Platform Fee: $'+fee.toFixed(2));
+}
+
+function czSaveProduct() {
+    czLog('POD: Product mockup saved.');
+    alert('Mockup saved! You can find it in My Market tab.');
+}
+
+function czListProduct() {
+    const item=POD_ITEMS[currentPodIdx];
+    czState.myAssets.push({name:item.name,price:item.sug,type:'POD Product',ts:new Date().toLocaleTimeString()});
+    renderMyAssets();
+    czLog('Market: '+item.name+' listed in marketplace for $'+item.sug.toFixed(2));
+}
+
+function listNewAsset() {
+    const name=document.getElementById('list-name').value;
+    const price=parseFloat(document.getElementById('list-price').value)||0;
+    const cat=document.getElementById('list-category').value;
+    if(!name||!price){alert('Enter a name and price to list.');return;}
+    czState.myAssets.push({name,price,type:cat,ts:new Date().toLocaleTimeString()});
+    renderMyAssets();
+    document.getElementById('list-name').value='';
+    document.getElementById('list-price').value='';
+    czLog('Market: Asset "'+name+'" listed for $'+price.toFixed(2));
+}
+
+function renderMyAssets() {
+    const el=document.getElementById('my-assets-list'); if(!el) return;
+    if(!czState.myAssets.length){el.innerHTML='<span style="color:rgba(255,255,255,.3);font-size:.75em">No assets listed yet.</span>';return;}
+    el.innerHTML=czState.myAssets.map(a=>`
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.72em">
+            <span>${a.name} <span style="color:rgba(255,255,255,.3);font-size:.85em">(${a.type})</span></span>
+            <span style="color:#ffd700">$${a.price.toFixed(2)}</span>
+        </div>`).join('');
+}
+
+function czListAsset() {
+    czTab('market', document.querySelector('.cz-tab:nth-child(5)'));
+    czLog('Market: Ready to list — fill in asset details in My Market tab.');
+}
+
+function czWithdraw() {
+    if(czState.vault<=0){alert('No funds in vault to withdraw.');return;}
+    alert('💰 Withdrawing $'+czState.vault.toFixed(2)+' from Platform Vault!\n(Connect payment processor in production.)');
+    czRevLog('Withdrawal: $'+czState.vault.toFixed(2)+' requested.');
+    czState.vault=0; czUpdateUI();
+}
+
+// AI tab functions
+function addPromptStyle(style) {
+    const ta=document.getElementById('ai-prompt-text'); if(!ta) return;
+    ta.value=ta.value+(ta.value?' · ':'')+style;
+}
+function generateAIArt() {
+    const box=document.getElementById('ai-result-box');
+    box.innerHTML='<div style="display:flex;align-items:center;gap:10px;color:rgba(255,215,0,.7);font-size:.8em"><span style="animation:spin .7s linear infinite;display:inline-block">⟳</span> Connecting to AI... (Add your API key to enable live generation)</div>';
+    setTimeout(()=>{
+        box.innerHTML='<div style="color:rgba(255,215,0,.6);font-size:.8em;text-align:center">⚠️ Connect DALL-E / Stable Diffusion API key<br>to generate live images. Design in the 2D Studio<br>and Sync to 3D as a workaround.</div>';
+    },2000);
+}
+function generateMidjourney() { generateAIArt(); }
+function generateStability() { generateAIArt(); }
+function aiEnhance(type) { czLog('AI: Enhancement "'+type+'" queued — connect enhancement API for live processing.'); }
+function sendToCanvas() { czLog('AI: Would send generated image to 2D canvas.'); }
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+window.addEventListener('load', ()=>{
+    initSwatches();
+    buildPodGrid();
+    renderLayers();
+    czUpdateUI();
+    // Init 3D when pod tab is first opened
+    document.querySelector('.cz-tab:nth-child(2)').addEventListener('click',()=>{
+        setTimeout(czInit3D, 100);
+    });
+    // Also init if pod3d panel is pre-visible
+    czLog('PLaiGROUND Construction Zone ready. 30 POD items loaded.');
+    czLog('Studio: Draw on the canvas then click "Sync to 3D" to preview on products.');
+});
+</script>
+</body>
+</html>

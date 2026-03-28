@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enhanced Virtual Shopping</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.17/interact.min.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .app-container {
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      justify-content: center;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      border: none;
+      background: linear-gradient(145deg, #e6e6e6, #ffffff);
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.2s ease-in-out;
+      font-weight: bold;
+    }
+
+    .tab:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 12px rgba(0,0,0,0.2);
+    }
+
+    .tab.active {
+      background: #2563eb;
+      color: white;
+    }
+
+    .section {
+      display: none;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    iframe {
+      width: 100%;
+      height: 90vh;
+      border: none;
+      background: transparent;
+    }
+
+    img.full-background {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .section > iframe {
+      position: relative;
+      z-index: 1;
+    }
+
+    .shopping-list {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .list-items {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .microphone-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: white;
+      border: none;
+      font-size: 24px;
+      margin: 20px auto;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+<div class="app-container">
+
+  <nav class="nav-tabs">
+    <button class="tab active" onclick="showSection(event,'mirror'); setBackground('mirror','room.webp')">Virtual Mirror</button>
+    <button class="tab" onclick="showSection(event,'closet'); overlayContent('closet','Shop set.png','clothingact.html')">Luxury Closet</button>
+    <button class="tab" onclick="showSection(event,'layaway'); setBackground('layaway','LAYAWAY.png')">Layaway Room</button>
+    <button class="tab" onclick="showSection(event,'storage'); setBackground('storage','storageshop.jpg')">Storage Unit</button>
+    <button class="tab" onclick="showSection(event,'shopping')">Shopping List</button>
+
+    <button class="tab" onclick="showSection(event,'digitill'); loadHTML('digitill','digitill.html')">Digitill</button>
+
+    <!-- NEWSPAPER FIX -->
+    <button class="tab" onclick="showSection(event,'newspixel'); loadHTML('newspixel','C&M Tribune.html')">C&M Newspixel</button>
+
+    <button class="tab" onclick="showSection(event,'email')">C&M Email</button>
+
+    <!-- COUPON KING FIX -->
+    <button class="tab" onclick="showSection(event,'couponking'); loadHTML('couponking','coupon king.html')">Coupon King</button>
+  </nav>
+
+  <section id="mirror" class="section active"></section>
+  <section id="closet" class="section"></section>
+  <section id="layaway" class="section"></section>
+  <section id="storage" class="section"></section>
+
+  <section id="shopping" class="section">
+    <div class="shopping-list">
+      <button class="microphone-btn">🎤</button>
+      <div class="list-items" id="list-items"></div>
+    </div>
+  </section>
+
+  <section id="digitill" class="section"></section>
+  <section id="newspixel" class="section"></section>
+
+  <section id="email" class="section" style="background:#eef2f5;">
+    <h2>C&M Email</h2>
+    <div style="padding:20px;background:white;border-radius:12px;">
+      <h3>Inbox</h3>
+      <ul>
+        <li><strong>support@candm.com</strong> — Welcome</li>
+        <li><strong>noreply@fashionsale.com</strong> — Coupon Inside</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="couponking" class="section"></section>
+
+</div>
+
+<script>
+
+/* FIXED TAB SYSTEM */
+function showSection(e,id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  e.currentTarget.classList.add('active');
+}
+
+/* BACKGROUND PRESERVE */
+function setBackground(id,img){
+  const section=document.getElementById(id);
+  section.innerHTML=`<img src="${img}" class="full-background">`;
+}
+
+/* OVERLAY SYSTEM PRESERVED */
+function overlayContent(id,bg,html){
+  const section=document.getElementById(id);
+  section.innerHTML=`
+    <img src="${bg}" class="full-background">
+    <iframe src="${html}"></iframe>
+  `;
+}
+
+/* UNIVERSAL LOADER (NEW CORE FIX) */
+function loadHTML(id,file){
+  const section=document.getElementById(id);
+  section.innerHTML=`
+    <iframe src="${file}" 
+      onerror="this.outerHTML='<h2>Failed to load ${file}</h2>'">
+    </iframe>
+  `;
+}
+
+/* VOICE LIST */
+if ('webkitSpeechRecognition' in window) {
+  const rec=new webkitSpeechRecognition();
+  document.querySelector('.microphone-btn').onclick=()=>rec.start();
+
+  rec.onresult=e=>{
+    addItem(e.results[0][0].transcript);
+  };
+}
+
+function addItem(text){
+  const div=document.createElement('div');
+  div.className='list-item';
+  div.innerHTML=`<input type="checkbox"> ${text}`;
+  document.getElementById('list-items').appendChild(div);
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LAWBOT — Legal Defense Analysis</title>
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-dark: #1e3a8a;
+      --wood: #5c4033;
+      --leather: #8b5a2b;
+      --gold: #d4af37;
+    }
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: 'Georgia', serif;
+      background: linear-gradient(to bottom, #1a0f0a, #2c1a0f);
+      color: #e0d4c0;
+      min-height: 100vh;
+      background-image: url('office-bg.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: rgba(30, 20, 15, 0.88);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+      overflow: hidden;
+      backdrop-filter: blur(4px);
+      border: 1px solid #4a3728;
+    }
+    .header {
+      background: linear-gradient(to right, var(--wood), #3d2a1f);
+      padding: 30px;
+      text-align: center;
+      border-bottom: 4px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .header img { width: 80px; height: 80px; object-fit: contain; }
+    .header h1 {
+      font-size: 2.6rem;
+      color: var(--gold);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      letter-spacing: 1px;
+    }
+    .content { padding: 40px; }
+    .disclaimer {
+      background: rgba(139,90,43,0.18);
+      border: 2px solid #8b5a2b;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 30px;
+      color: #f5e8d3;
+    }
+    .disclaimer h3 { color: #ffcc66; margin-bottom: 12px; }
+    .form-group { margin-bottom: 28px; }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #d9c9a8;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #6b4e31;
+      border-radius: 8px;
+      background: #2a1a0f;
+      color: #f0e0c0;
+      font-size: 1.05rem;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(212,175,55,0.25);
+    }
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 16px 36px;
+      border-radius: 8px;
+      font-size: 1.15rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    button:hover { background: var(--primary-dark); transform: translateY(-2px); }
+    button:disabled { background: #555; cursor: not-allowed; }
+    .step { display: none; }
+    .step.active { display: block; }
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 35px;
+    }
+    .analysis-card {
+      background: rgba(40,25,15,0.7);
+      border: 1px solid #6b4e31;
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .analysis-card h4 {
+      color: var(--gold);
+      margin-bottom: 16px;
+      font-size: 1.4rem;
+      border-bottom: 2px solid rgba(212,175,55,0.3);
+      padding-bottom: 10px;
+    }
+    .price-box {
+      background: rgba(30,50,90,0.4);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      margin: 30px 0;
+    }
+    .price { font-size: 2.8rem; color: #a8d0ff; font-weight: bold; }
+    .loopholes-list { list-style: none; padding: 0; }
+    .loopholes-list li {
+      background: rgba(139,90,43,0.2);
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 5px solid #d4af37;
+    }
+    .resources-list { list-style: none; padding: 0; }
+    .resources-list li { margin: 12px 0; color: #d0b090; }
+    .service-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .service-card {
+      background: rgba(20,14,8,0.8);
+      border: 1px solid #5c3d22;
+      border-radius: 10px;
+      padding: 16px;
+      text-decoration: none;
+      display: block;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .service-card:hover {
+      border-color: var(--gold);
+      background: rgba(30,20,10,0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+    }
+    .service-card .sc-name {
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .service-card .sc-desc {
+      font-size: 0.78rem;
+      color: #b09070;
+      line-height: 1.5;
+    }
+    .service-card .sc-cta {
+      font-size: 0.72rem;
+      color: #c8a050;
+      margin-top: 8px;
+      display: inline-block;
+    }
+    .services-label {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #8a6a48;
+      margin: 22px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .services-label::after { content:''; flex:1; height:1px; background: linear-gradient(90deg,#5c3d22,transparent); }
+    @media (max-width: 768px) { .analysis-grid { grid-template-columns: 1fr; } .service-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <img src="lawbot.WEBP" alt="LAWBOT Logo">
+    <h1>LAWBOT — Elite Legal Analysis</h1>
+  </div>
+
+  <div class="content">
+
+    <!-- Step 1: Disclaimer -->
+    <div id="step1" class="step active">
+      <div class="disclaimer">
+        <h3>⚖️ Important Legal Disclaimer</h3>
+        <p>This AI-powered tool provides general information and simulated analysis based on common legal principles and publicly available patterns. It is <strong>NOT legal advice</strong>, does NOT create an attorney-client relationship, and should <strong>never</strong> replace consultation with a licensed attorney in your jurisdiction.</p>
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="agree"> I have read and agree to the disclaimer above
+        </label>
+      </div>
+      <button id="continueBtn" disabled>Continue to Case Intake</button>
+    </div>
+
+    <!-- Step 2: Case Input -->
+    <div id="step2" class="step">
+      <div class="form-group">
+        <label for="zipcode">Incident Zip Code (used for jurisdiction)</label>
+        <input type="text" id="zipcode" placeholder="e.g. 55401" maxlength="5" pattern="\d{5}">
+      </div>
+
+      <div class="form-group">
+        <label for="chargeCategory">Primary Charge Category</label>
+        <select id="chargeCategory">
+          <option value="">Select Category</option>
+          <option value="traffic">Traffic Violations</option>
+          <option value="property">Property Crimes</option>
+          <option value="violent">Violent Crimes</option>
+          <option value="drugs">Drug-Related Offenses</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="specificCharge">Specific Charge</label>
+        <select id="specificCharge" disabled>
+          <option value="">First select category</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="chargeLevel">Charge Level</label>
+        <select id="chargeLevel">
+          <option value="">Select Level</option>
+          <option value="infraction">Infraction</option>
+          <option value="misdemeanor">Misdemeanor</option>
+          <option value="felony">Felony</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Detailed Case Description</label>
+        <textarea id="description" rows="7" placeholder="Describe what happened, including: date/time, location, police interaction, any searches, witnesses, video, your version of events..."></textarea>
+      </div>
+
+      <button id="analyzeBtn">Request Analysis (Fee applies)</button>
+    </div>
+
+    <!-- Step 3: Pay & Report -->
+    <div id="step3" class="step">
+      <div class="price-box">
+        <div style="font-size:1.4rem; margin-bottom:10px;">Estimated Analysis Fee</div>
+        <div class="price" id="priceDisplay">$0</div>
+        <div style="margin-top:16px; font-size:1.1rem; opacity:0.9;">
+          (Stripe integration coming soon — demo unlock below)
+        </div>
+      </div>
+
+      <div id="payWall" style="text-align:center; padding:40px 0;">
+        <button id="unlockBtn" style="background:#8b5a2b; font-size:1.4rem; padding:20px 50px;">
+          Unlock Report (Demo Mode)
+        </button>
+      </div>
+
+      <div id="reportContent" style="display:none;">
+        <div class="analysis-grid">
+          <div class="analysis-card">
+            <h4>Jurisdiction & Summary</h4>
+            <div id="summary"></div>
+          </div>
+
+          <div class="analysis-card">
+            <h4>Estimated Positive Outcome Probability</h4>
+            <div id="outcome" style="font-size:3rem; color:#a8d0ff; font-weight:bold;"></div>
+          </div>
+
+          <div class="analysis-card">
+            <h4>Detected Procedural Issues / Loopholes</h4>
+            <ul id="loopholes" class="loopholes-list"></ul>
+          </div>
+
+          <div class="analysis-card">
+            <h4>State-Relevant Legal Insight</h4>
+            <div id="stateLaw"></div>
+          </div>
+        </div>
+
+        <div class="analysis-card" style="margin-top:30px;">
+          <h4>General Resources & Next Steps</h4>
+          <ul class="resources-list" id="resources">
+            <li>Consult a licensed criminal defense attorney immediately</li>
+            <li>Request full discovery / police reports</li>
+            <li>Preserve all potential evidence (photos, video, witnesses)</li>
+            <li>Consider motion practice if constitutional violations suspected</li>
+          </ul>
+
+          <div class="services-label">Recommended Legal Services</div>
+          <div class="service-grid" id="service-grid">
+            <!-- Populated by JS based on charge category -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ZIP → Jurisdiction (focused on MN + examples)
+const zipMap = {
+  "55401": { state: "MN", county: "Hennepin", court: "4th District Court", codeLink: "https://www.revisor.mn.gov/statutes/" },
+  "55402": { state: "MN", county: "Hennepin", court: "4th District Court", codeLink: "https://www.revisor.mn.gov/statutes/" },
+  "55101": { state: "MN", county: "Ramsey", court: "2nd Judicial District" },
+  "10001": { state: "NY", county: "New York" },
+  // Extend as needed
+};
+
+function getJurisdiction(zip) {
+  return zipMap[zip] || { state: "Unknown", county: "—", court: "—" };
+}
+
+// Charge options (from your v2 style)
+const chargeOptions = {
+  traffic: [
+    {value:"speeding", label:"Speeding"},
+    {value:"dui", label:"Driving Under Influence (DUI)"},
+    {value:"reckless", label:"Reckless Driving"}
+  ],
+  property: [
+    {value:"theft", label:"Theft / Larceny"},
+    {value:"burglary", label:"Burglary"},
+    {value:"trespass", label:"Criminal Trespass"}
+  ],
+  violent: [
+    {value:"assault", label:"Assault"},
+    {value:"battery", label:"Battery / Aggravated Assault"}
+  ],
+  drugs: [
+    {value:"possession", label:"Possession of Controlled Substance"},
+    {value:"distribution", label:"Possession with Intent / Sale"}
+  ]
+};
+
+// Signal detection (original logic)
+function analyzeSignals(text) {
+  const lower = text.toLowerCase();
+  return {
+    illegalStop:    /no reason|random|profiling|pretext/i.test(lower),
+    illegalSearch:  /without (warrant|consent)|no consent|illegal search/i.test(lower),
+    weakEvidence:   /no proof|no evidence|insufficient|fabricated/i.test(lower),
+    video:          /dashcam|bodycam|camera|video|recording/i.test(lower),
+    miranda:        /no miranda|miranda violation/i.test(lower)
+  };
+}
+
+function calculateOutcome(level, signals) {
+  let base = level === "felony" ? 30 : level === "misdemeanor" ? 55 : 85;
+  if (signals.illegalStop)   base += 22;
+  if (signals.illegalSearch) base += 25;
+  if (signals.miranda)       base += 18;
+  if (signals.weakEvidence)  base += 15;
+  if (signals.video)         base -= 18;
+  return Math.min(Math.max(Math.round(base), 5), 95);
+}
+
+// Simulated state law insight
+function getStateInsight(state, desc, chargeCat, specific) {
+  if (state === "MN") {
+    return `In Minnesota (per MN Revisor's Office statutes):\n\n` +
+           `• Potential relevance: ${chargeCat === "traffic" ? "MN Stat. § 169 (Traffic Regulations)" : chargeCat === "drugs" ? "MN Stat. § 152 (Controlled Substances)" : "MN Stat. Chapter relevant to " + specific}\n` +
+           `• Procedural violations (4th Amendment + MN Const. Art. I § 10) may support suppression motion\n` +
+           `• Strongest apparent issues: ${Object.entries(analyzeSignals(desc)).filter(([k,v])=>v).map(([k])=>k.replace(/([A-Z])/g," $1")).join(", ") || "none clearly stated"}.\n\nAlways verify current law at https://www.revisor.mn.gov/statutes/`;
+  }
+  return `In ${state}, consult local statutes (no unified national free API available). Key issues may include 4th Amendment violations or state equivalents.`;
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  const agree = document.getElementById('agree');
+  const continueBtn = document.getElementById('continueBtn');
+  const categorySel = document.getElementById('chargeCategory');
+  const specificSel = document.getElementById('specificCharge');
+
+  agree.addEventListener('change', () => {
+    continueBtn.disabled = !agree.checked;
+  });
+
+  continueBtn.addEventListener('click', () => {
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.add('active');
+  });
+
+  categorySel.addEventListener('change', () => {
+    const cat = categorySel.value;
+    specificSel.innerHTML = '<option value="">Select Specific Charge</option>';
+    specificSel.disabled = !cat;
+    if (cat && chargeOptions[cat]) {
+      chargeOptions[cat].forEach(opt => {
+        const o = document.createElement('option');
+        o.value = opt.value;
+        o.textContent = opt.label;
+        specificSel.appendChild(o);
+      });
+    }
+  });
+
+  document.getElementById('analyzeBtn').addEventListener('click', () => {
+    const zip = document.getElementById('zipcode').value.trim();
+    const level = document.getElementById('chargeLevel').value;
+    const desc = document.getElementById('description').value.trim();
+    const cat = categorySel.value;
+    const specific = specificSel.value;
+
+    if (!level || !desc || !cat || !specific) {
+      alert("Please complete all required fields.");
+      return;
+    }
+
+    const juris = getJurisdiction(zip);
+    const signals = analyzeSignals(desc);
+    const prob = calculateOutcome(level, signals);
+    const price = (level === "felony" ? 399 : level === "misdemeanor" ? 149 : 49) * (juris.state === "federal" ? 2 : 1);
+
+    document.getElementById('priceDisplay').textContent = `$${price}`;
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step3').classList.add('active');
+
+    // Unlock demo
+    document.getElementById('unlockBtn').onclick = () => {
+      document.getElementById('payWall').style.display = 'none';
+      document.getElementById('reportContent').style.display = 'block';
+
+      document.getElementById('summary').innerHTML = `
+        <strong>Jurisdiction:</strong> ${juris.state} – ${juris.county || '—'} County<br>
+        <strong>Court:</strong> ${juris.court || 'State Court'}<br><br>
+        <strong>Charge:</strong> ${specificSel.options[specificSel.selectedIndex].text} (${level})`;
+
+      document.getElementById('outcome').textContent = `${prob}%`;
+
+      const loopholesEl = document.getElementById('loopholes');
+      loopholesEl.innerHTML = '';
+      Object.entries(signals).forEach(([key, val]) => {
+        if (val) {
+          const li = document.createElement('li');
+          li.textContent = key.replace(/([A-Z])/g, ' $1').trim();
+          loopholesEl.appendChild(li);
+        }
+      });
+
+      document.getElementById('stateLaw').textContent = getStateInsight(juris.state, desc, cat, specific);
+
+      // Populate contextual legal service cards
+      renderServiceCards(cat, level);
+    };
+  });
+});
+
+// Affiliate service data — mapped by charge category
+const serviceMap = {
+  default: [
+    {
+      name: 'LegalZoom',
+      desc: 'Attorney-reviewed documents, LLC formation, and legal forms for your situation.',
+      cta: 'Explore Legal Documents →',
+      url: 'https://www.legalzoom.com'
+    },
+    {
+      name: 'Rocket Lawyer',
+      desc: 'Affordable legal advice, document signing, and attorney consultations on demand.',
+      cta: 'Try Free for 7 Days →',
+      url: 'https://www.rocketlawyer.com'
+    },
+    {
+      name: 'DocuSign',
+      desc: 'Securely sign and store legal agreements, court forms, and attorney retainers.',
+      cta: 'Start Free Trial →',
+      url: 'https://www.docusign.com'
+    },
+    {
+      name: 'PandaDoc',
+      desc: 'Create, send, and e-sign legal documents and agreements with your attorney.',
+      cta: 'Sign Documents Free →',
+      url: 'https://www.pandadoc.com'
+    }
+  ],
+  traffic: [
+    {
+      name: 'Rocket Lawyer',
+      desc: 'Traffic violation defense guides, attorney consult, and court document templates.',
+      cta: 'Get Legal Help Now →',
+      url: 'https://www.rocketlawyer.com'
+    },
+    {
+      name: 'LegalZoom',
+      desc: 'Traffic court prep, document filing assistance, and license reinstatement support.',
+      cta: 'Explore Options →',
+      url: 'https://www.legalzoom.com'
+    },
+    {
+      name: 'DocuSign',
+      desc: 'Sign and submit court documents and attorney agreements electronically.',
+      cta: 'Start Free Trial →',
+      url: 'https://www.docusign.com'
+    },
+    {
+      name: 'HelloSign',
+      desc: 'Simple, legally-binding e-signatures for court filings and legal documents.',
+      cta: 'Sign for Free →',
+      url: 'https://www.hellosign.com'
+    }
+  ],
+  drugs: [
+    {
+      name: 'LegalZoom',
+      desc: 'Connect with criminal defense attorneys experienced in drug offense cases.',
+      cta: 'Find an Attorney →',
+      url: 'https://www.legalzoom.com'
+    },
+    {
+      name: 'Rocket Lawyer',
+      desc: 'Drug charge defense resources and on-demand attorney consultations.',
+      cta: 'Talk to a Lawyer →',
+      url: 'https://www.rocketlawyer.com'
+    },
+    {
+      name: 'PandaDoc',
+      desc: 'Securely manage attorney retainer agreements and case documents.',
+      cta: 'Manage Documents →',
+      url: 'https://www.pandadoc.com'
+    },
+    {
+      name: 'DocuSign',
+      desc: 'E-sign court documents, plea agreements, and legal forms safely.',
+      cta: 'Start Free Trial →',
+      url: 'https://www.docusign.com'
+    }
+  ],
+  violent: [
+    {
+      name: 'LegalZoom',
+      desc: 'Serious charge? Connect with experienced criminal defense attorneys fast.',
+      cta: 'Find an Attorney →',
+      url: 'https://www.legalzoom.com'
+    },
+    {
+      name: 'Rocket Lawyer',
+      desc: 'Immediate legal guidance and attorney matching for serious criminal matters.',
+      cta: 'Get Urgent Help →',
+      url: 'https://www.rocketlawyer.com'
+    },
+    {
+      name: 'DocuSign',
+      desc: 'Securely sign and manage all legal correspondence with your defense team.',
+      cta: 'Start Free Trial →',
+      url: 'https://www.docusign.com'
+    },
+    {
+      name: 'PandaDoc',
+      desc: 'Organize retainer agreements, discovery documents, and case files digitally.',
+      cta: 'Manage Case Files →',
+      url: 'https://www.pandadoc.com'
+    }
+  ],
+  property: [
+    {
+      name: 'Rocket Lawyer',
+      desc: 'Property crime defense resources and on-demand attorney access.',
+      cta: 'Talk to a Lawyer →',
+      url: 'https://www.rocketlawyer.com'
+    },
+    {
+      name: 'LegalZoom',
+      desc: 'Criminal defense attorney network and legal document support.',
+      cta: 'Find an Attorney →',
+      url: 'https://www.legalzoom.com'
+    },
+    {
+      name: 'HelloSign',
+      desc: 'E-sign court documents and attorney agreements simply and securely.',
+      cta: 'Sign for Free →',
+      url: 'https://www.hellosign.com'
+    },
+    {
+      name: 'PandaDoc',
+      desc: 'Manage restitution agreements, plea documents, and legal filings.',
+      cta: 'Sign Documents Free →',
+      url: 'https://www.pandadoc.com'
+    }
+  ]
+};
+
+function renderServiceCards(cat, level) {
+  const grid = document.getElementById('service-grid');
+  if (!grid) return;
+  const services = serviceMap[cat] || serviceMap.default;
+  grid.innerHTML = services.map(s => `
+    <a class="service-card" href="${s.url}" target="_blank" rel="noopener">
+      <div class="sc-name">${s.name}</div>
+      <div class="sc-desc">${s.desc}</div>
+      <span class="sc-cta">${s.cta}</span>
+    </a>
+  `).join('');
+}
+</script>
+</body>
+</html>

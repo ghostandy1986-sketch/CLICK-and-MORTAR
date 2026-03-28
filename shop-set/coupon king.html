@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon King - Ultimate Affiliate Terminal</title>
+    <style>
+        :root {
+            --sky-blue: #d6e8f5; --header-black: #000000; --grid-line: #8ba8b8;
+            --gold: #ffd700; --neon: #39ff14; --danger: #ff4444;
+        }
+
+        body {
+            background-color: #222; /* Dark contrast to make the sheet pop */
+            font-family: 'Arial Narrow', sans-serif;
+            display: flex; justify-content: center; padding: 40px;
+        }
+
+        .coupon-sheet {
+            width: 900px; background-color: var(--sky-blue);
+            padding: 30px; border-radius: 5px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            position: relative; border: 1px solid #fff;
+        }
+
+        /* Top Header */
+        .sheet-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
+        
+        .logo-box { text-align: center; }
+        .main-logo { width: 160px; height: 160px; object-fit: contain; }
+        .rank-badge { font-size: 12px; font-weight: bold; color: var(--header-black); margin-top: -10px; }
+
+        .signature-hub {
+            background: #fff; padding: 15px; border: 3px solid #000;
+            box-shadow: 8px 8px 0px var(--grid-line); text-align: center;
+        }
+        #dynamic-qr { width: 110px; height: 110px; transition: transform 0.3s ease; }
+        #dynamic-qr.pulse { transform: scale(1.1); border: 2px solid var(--neon); }
+
+        /* The Grid */
+        .ledger-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .ledger-table thead th {
+            background: var(--header-black); color: #fff; padding: 15px 5px;
+            font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .ledger-table thead th:first-child { border-radius: 12px 0 0 12px; }
+        .ledger-table thead th:last-child { border-radius: 0 12px 12px 0; }
+
+        .ledger-table tbody td {
+            border: 1px solid var(--grid-line); height: 40px;
+            padding: 0 12px; font-weight: bold; font-size: 15px;
+        }
+
+        /* Status Effects */
+        .hot-row { background: rgba(57, 255, 20, 0.15) !important; border-left: 5px solid var(--neon) !important; }
+        .revenue-cell { color: #006400; text-align: right; font-family: 'Courier New', monospace; }
+        .code-cell { cursor: pointer; color: #003366; text-decoration: underline; }
+        .code-cell:hover { color: #d00000; }
+
+        .footer-tools {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 20px; padding-top: 10px; border-top: 2px solid #000;
+        }
+        .btn-action {
+            background: #000; color: #fff; border: none; padding: 8px 15px;
+            border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 11px;
+        }
+        .btn-action:hover { background: var(--gold); color: #000; }
+    </style>
+</head>
+<body>
+
+<div class="coupon-sheet">
+    <div class="sheet-header">
+        <div class="logo-box">
+            <img src="https://via.placeholder.com/160x160?text=COUPON+KING" alt="Coupon King Logo" class="main-logo">
+            <div class="rank-badge" id="rank-text">RANK: BRONZE DISTRIBUTOR</div>
+        </div>
+        
+        <div class="signature-hub">
+            <div style="font-size: 10px; font-weight: 900; margin-bottom: 5px;">VERIFIED QR SIGNATURE</div>
+            <img id="dynamic-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=INITIAL_SETUP" alt="QR">
+            <div style="font-size: 12px; font-weight: bold; margin-top: 8px;" id="active-code">SELECT A CODE BELOW</div>
+        </div>
+    </div>
+
+    <table class="ledger-table">
+        <thead>
+            <tr>
+                <th width="12%">Date</th>
+                <th width="25%">Coupon Code</th>
+                <th width="18%">Discount</th>
+                <th width="15%">End Date</th>
+                <th width="10%">Used</th>
+                <th width="20%">Revenue</th>
+            </tr>
+        </thead>
+        <tbody id="ledger-rows">
+            </tbody>
+    </table>
+
+    <div class="footer-tools">
+        <div>
+            <span style="font-weight: 900;">GHOST@NDY ID:</span> 
+            <span style="background: #000; color: var(--neon); padding: 2px 6px;">#7744-KING</span>
+        </div>
+        <div id="total-stat" style="font-weight: 900; font-size: 1.2em;">TOTAL REVENUE: $0.00</div>
+        <button class="btn-action" onclick="window.print()">PRINT PHYSICAL LEDGER</button>
+    </div>
+</div>
+
+<script>
+    const GHOST_ID = "GHOST@NDY";
+    const data = [
+        { date: '03/11/26', code: 'PRO-WAVE-20', discount: '$1.00 OFF', end: '04/01/26', used: 142, rev: 35.50 },
+        { date: '03/10/26', code: 'KING-SAVE-15', discount: '15% OFF', end: '03/30/26', used: 12, rev: 3.00 },
+        { date: '03/08/26', code: 'GOLD-TICKET', discount: 'FREE S&H', end: '05/01/26', used: 89, rev: 22.25 }
+    ];
+
+    function buildLedger() {
+        const container = document.getElementById('ledger-rows');
+        let grandTotal = 0;
+        
+        for (let i = 0; i < 25; i++) {
+            const row = document.createElement('tr');
+            const item = data[i] || null;
+            
+            if (item) {
+                grandTotal += item.rev;
+                const isHot = item.used > 50 ? 'class="hot-row"' : '';
+                row.innerHTML = `
+                    <td ${isHot}>${item.date}</td>
+                    <td class="code-cell" onclick="sign('${item.code}')">${item.code}</td>
+                    <td style="color:#d00000; text-align:center;">${item.discount}</td>
+                    <td>${item.end}</td>
+                    <td style="text-align:center;">${item.used}</td>
+                    <td class="revenue-cell">$${item.rev.toFixed(2)}</td>
+                `;
+            } else {
+                row.innerHTML = "<td></td><td></td><td></td><td></td><td></td><td></td>";
+            }
+            container.appendChild(row);
+        }
+        document.getElementById('total-stat').innerText = `TOTAL REVENUE: $${grandTotal.toFixed(2)}`;
+        updateRank(grandTotal);
+    }
+
+    function sign(code) {
+        const qr = document.getElementById('dynamic-qr');
+        const display = document.getElementById('active-code');
+        
+        // Final Genius Signature Logic: Embeds ID and Code for 100% Tracking
+        const secureLink = `https://click-mortar.com/track?c=${code}&ref=${GHOST_ID}`;
+        
+        qr.classList.remove('pulse');
+        void qr.offsetWidth; // Trigger reflow
+        qr.classList.add('pulse');
+        
+        qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(secureLink)}`;
+        display.innerText = `SIGNED: ${code}`;
+    }
+
+    function updateRank(total) {
+        const rank = document.getElementById('rank-text');
+        if (total > 50) rank.innerText = "RANK: GOLD DISTRIBUTOR";
+        else if (total > 20) rank.innerText = "RANK: SILVER DISTRIBUTOR";
+    }
+
+    buildLedger();
+</script>
+
+</body>
+</html>

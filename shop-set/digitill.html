@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Payment Processor</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Basic styles for the app */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        section {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .currency-converter {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button {
+            padding: 10px 15px;
+            margin-top: 15px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>All-in-One Digital Payment Processor</h1>
+    </header>
+
+    <nav>
+        <a href="#bill-payment">Bill Payment</a>
+        <a href="#seller-schedule">Seller Schedule</a>
+        <a href="#investment-app">Investment App</a>
+        <a href="#rewards-system">Rewards System</a>
+        <a href="#links">Links</a>
+    </nav>
+
+    <!-- Bill Payment Section -->
+    <section id="bill-payment">
+        <h2>Bill Payment Schedule</h2>
+        <form id="billPaymentForm">
+            <label for="bill-type">Select Bill Type:</label>
+            <select id="bill-type" required>
+                <option value="electricity">Electricity</option>
+                <option value="water">Water</option>
+                <option value="internet">Internet</option>
+            </select>
+            <br>
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" required>
+            <br>
+            <label for="date">Due Date:</label>
+            <input type="date" id="date" required>
+            <br>
+            <button type="submit" class="button">Schedule Payment</button>
+        </form>
+    </section>
+
+    <!-- Seller Schedule Section -->
+    <section id="seller-schedule">
+        <h2>Seller Schedule with Shipping</h2>
+        <form id="shippingForm">
+            <label for="product">Product Name:</label>
+            <input type="text" id="product" required>
+            <br>
+            <label for="price">Price:</label>
+            <input type="number" id="price" required>
+            <br>
+            <label for="shipping-address">Shipping Address:</label>
+            <input type="text" id="shipping-address" required>
+            <br>
+            <button type="submit" class="button">Schedule Shipment</button>
+        </form>
+    </section>
+
+    <!-- Investment App Section -->
+    <section id="investment-app">
+        <h2>Investment App</h2>
+        <form id="investmentForm">
+            <label for="investment-type">Investment Type:</label>
+            <select id="investment-type">
+                <option value="stocks">Stocks</option>
+                <option value="crypto">Cryptocurrency</option>
+                <option value="bonds">Bonds</option>
+            </select>
+            <br>
+            <label for="investment-amount">Amount to Invest:</label>
+            <input type="number" id="investment-amount" required>
+            <br>
+            <button type="submit" class="button">Invest</button>
+        </form>
+    </section>
+
+    <!-- Rewards System Section -->
+    <section id="rewards-system">
+        <h2>Platform Reward System</h2>
+        <p>Your current rewards points: <span id="rewardsPoints">1000</span></p>
+        <button class="button" onclick="redeemRewards();">Redeem Rewards</button>
+    </section>
+
+    <!-- Links Section -->
+    <section id="links">
+        <h2>Links to Other Sites</h2>
+        <a href="site1.html" target="_blank">Site 1</a><br>
+        <a href="site2.html" target="_blank">Site 2</a><br>
+        <a href="site3.html" target="_blank">Site 3</a>
+    </section>
+
+    <!-- Real Time Currency Converter Section -->
+    <section id="currency-converter">
+        <h2>Currency Converter</h2>
+        <div class="currency-converter">
+            <input type="number" id="convertAmount" placeholder="Amount" required>
+            <select id="currencyFrom">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="BTC">BTC</option>
+                <option value="ETH">ETH</option>
+            </select>
+            <span>to</span>
+            <select id="currencyTo">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="BTC">BTC</option>
+                <option value="ETH">ETH</option>
+            </select>
+        </div>
+        <button class="button" onclick="convertCurrency();">Convert</button>
+        <p id="conversionResult">Conversion will display here.</p>
+    </section>
+
+    <script>
+        // Sample function to convert currencies - placeholder 
+        function convertCurrency() {
+            const amount = document.getElementById('convertAmount').value;
+            const currencyFrom = document.getElementById('currencyFrom').value;
+            const currencyTo = document.getElementById('currencyTo').value;
+            // Here you would call an API to get real-time currency rates
+            // For this example, we will just show the input as output
+            document.getElementById('conversionResult').innerText = `Converted ${amount} from ${currencyFrom} to ${currencyTo}.`;
+        }
+
+        // Reward redemption logic placeholder
+        function redeemRewards() {
+            const points = document.getElementById('rewardsPoints');
+            points.innerText = Math.max(0, points.innerText - 100); // Example redemption logic
+            alert('You have redeemed your rewards!');
+        }
+
+        // Example to handle bill payment form
+        document.getElementById('billPaymentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Bill payment scheduled successfully!');
+            this.reset(); // Reset the form after submission
+        });
+
+        // Example to handle shipping schedule form
+        document.getElementById('shippingForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Shipment scheduled successfully!');
+            this.reset();
+        });
+
+        // Example to handle investment form
+        document.getElementById('investmentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Investment made successfully!');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

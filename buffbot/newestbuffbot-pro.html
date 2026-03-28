@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buff Bot AI-Gym</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cyan: #00c4cc;
+            --cyan-dark: #01969c;
+            --cyan-glow: rgba(0,196,204,0.18);
+            --bg: #0d0d0d;
+            --card-bg: rgba(255,255,255,0.07);
+            --gold: #ffd700;
+            --magenta: #e040fb;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: #ffffff;
+            font-family: 'Exo 2', Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* ── Typography ── */
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+        /* ── HERO ── */
+        .hero {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            padding: 50px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 60% 40%, rgba(0,196,204,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ── DARLA hero ── */
+        .darla-hero {
+            background: linear-gradient(135deg, #0a0a1a 0%, #0d1b2a 40%, #0f2027 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .darla-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(224,64,251,0.15) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 50%, rgba(0,196,204,0.15) 0%, transparent 55%);
+            pointer-events: none;
+        }
+        .darla-pulse {
+            animation: darla-glow 3s ease-in-out infinite alternate;
+        }
+        @keyframes darla-glow {
+            from { box-shadow: 0 0 30px rgba(224,64,251,0.4), 0 0 60px rgba(0,196,204,0.2); }
+            to   { box-shadow: 0 0 60px rgba(224,64,251,0.7), 0 0 120px rgba(0,196,204,0.4); }
+        }
+        .darla-avatar {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            border: 3px solid var(--magenta);
+            background: linear-gradient(135deg, #1a0030, #0d1b2a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 90px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .darla-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 2px solid rgba(0,196,204,0.4);
+            animation: orbit 4s linear infinite;
+        }
+        @keyframes orbit {
+            from { transform: rotate(0deg); border-color: rgba(0,196,204,0.6); }
+            50%  { border-color: rgba(224,64,251,0.6); }
+            to   { transform: rotate(360deg); border-color: rgba(0,196,204,0.6); }
+        }
+        .stat-badge {
+            background: rgba(0,196,204,0.12);
+            border: 1px solid rgba(0,196,204,0.4);
+            border-radius: 12px;
+            padding: 12px 20px;
+            text-align: center;
+            flex: 1;
+        }
+        .stat-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            color: var(--cyan);
+            font-weight: 900;
+        }
+
+        /* ── BUTTONS ── */
+        .btn-primary {
+            background-color: var(--cyan);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+        .btn-primary:hover {
+            background-color: var(--cyan-dark);
+            box-shadow: 0 0 20px rgba(0,196,204,0.5);
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+        .btn-magenta {
+            background: linear-gradient(135deg, #e040fb, #9c27b0);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-magenta:hover {
+            box-shadow: 0 0 20px rgba(224,64,251,0.5);
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, #ffd700, #ff9800);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-gold:hover {
+            box-shadow: 0 0 20px rgba(255,215,0,0.5);
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--cyan);
+            color: var(--cyan);
+            padding: 10px 22px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-outline:hover {
+            background: var(--cyan-glow);
+            box-shadow: 0 0 15px rgba(0,196,204,0.3);
+            text-decoration: none;
+        }
+
+        /* ── CARDS ── */
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 250px;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,196,204,0.15);
+        }
+        .card h4 {
+            font-size: 18px;
+            color: var(--cyan);
+            margin-bottom: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+        }
+        .pricing {
+            font-size: 26px;
+            font-weight: bold;
+            color: #ffffff;
+            margin: 12px 0;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .commission-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff9800, #ffd700);
+            color: #000;
+            font-weight: 800;
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── CUSTOM AI HIGHLIGHT ── */
+        .custom-ai-highlight {
+            border: 2px solid var(--cyan);
+            background: rgba(0,196,204,0.07);
+            position: relative;
+        }
+        .custom-ai-highlight::before {
+            content: "★ Custom AI";
+            position: absolute;
+            top: -12px;
+            right: 10px;
+            background: var(--cyan);
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .darla-card {
+            border: 2px solid var(--magenta);
+            background: rgba(224,64,251,0.07);
+            position: relative;
+        }
+        .darla-card::before {
+            content: "★ DARLA Exclusive";
+            position: absolute;
+            top: -12px;
+            right: 10px;
+            background: linear-gradient(135deg, var(--magenta), #9c27b0);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .gold-card {
+            border: 2px solid var(--gold);
+            background: rgba(255,215,0,0.05);
+            position: relative;
+        }
+        .gold-card::before {
+            content: "💰 Top Earner";
+            position: absolute;
+            top: -12px;
+            left: 10px;
+            background: linear-gradient(135deg, #ffd700, #ff9800);
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        /* ── SECTIONS ── */
+        footer {
+            background-color: #101010;
+            padding: 20px 0;
+        }
+        .marketplace-grid {
+            max-height: 800px;
+            overflow-y: auto;
+        }
+        .section-label {
+            display: inline-block;
+            background: rgba(0,196,204,0.15);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 4px 16px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+
+        /* ── DARLA CUSTOMIZER ── */
+        .custom-tab { cursor: pointer; padding: 10px 20px; border-radius: 6px; transition: all 0.2s; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); }
+        .custom-tab.active { background: var(--cyan); color: #000; border-color: var(--cyan); }
+        .custom-tab:not(.active):hover { background: var(--cyan-glow); border-color: var(--cyan); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: grid; }
+
+        /* ── SKIN SELECTOR ── */
+        .skin-option {
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .skin-option:hover, .skin-option.selected {
+            border-color: var(--cyan);
+            background: var(--cyan-glow);
+        }
+        .skin-emoji { font-size: 42px; display: block; margin-bottom: 8px; }
+
+        /* ── VOICE WAVEFORM ANIMATION ── */
+        .voice-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 40px;
+            justify-content: center;
+        }
+        .voice-bar {
+            width: 4px;
+            border-radius: 2px;
+            background: var(--cyan);
+            animation: wave 1.2s ease-in-out infinite;
+        }
+        .voice-bar:nth-child(2) { animation-delay: 0.1s; }
+        .voice-bar:nth-child(3) { animation-delay: 0.2s; }
+        .voice-bar:nth-child(4) { animation-delay: 0.3s; }
+        .voice-bar:nth-child(5) { animation-delay: 0.4s; }
+        @keyframes wave {
+            0%, 100% { height: 8px; opacity: 0.4; }
+            50% { height: 36px; opacity: 1; }
+        }
+
+        /* ── TESTER SECTION ── */
+        .tester-form input, .tester-form select, .tester-form textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(0,196,204,0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .tester-form input:focus, .tester-form select:focus, .tester-form textarea:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 10px rgba(0,196,204,0.2);
+        }
+        .tester-form select option { background: #1a1a2e; }
+        .tester-form label { display: block; margin-bottom: 6px; font-size: 13px; color: rgba(255,255,255,0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* ── RENTING STATION ── */
+        .rental-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(0,196,204,0.2);
+            border-radius: 14px;
+            padding: 24px;
+            transition: all 0.25s;
+        }
+        .rental-card:hover {
+            border-color: var(--cyan);
+            background: rgba(0,196,204,0.07);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,196,204,0.15);
+        }
+        .rental-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        .badge-hot { background: rgba(255,87,87,0.2); color: #ff5757; border: 1px solid #ff5757; }
+        .badge-new { background: rgba(0,196,204,0.2); color: var(--cyan); border: 1px solid var(--cyan); }
+        .badge-pro { background: rgba(255,215,0,0.2); color: var(--gold); border: 1px solid var(--gold); }
+
+        /* ── AFFILIATE EARNINGS TICKER ── */
+        .ticker-wrap {
+            overflow: hidden;
+            background: rgba(0,196,204,0.08);
+            border-top: 1px solid rgba(0,196,204,0.2);
+            border-bottom: 1px solid rgba(0,196,204,0.2);
+            padding: 10px 0;
+        }
+        .ticker-track {
+            display: flex;
+            gap: 60px;
+            animation: ticker 40s linear infinite;
+            white-space: nowrap;
+        }
+        @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .ticker-item { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--cyan); font-weight: 600; }
+
+        /* ── REVENUE DASHBOARD ── */
+        .rev-tier {
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid var(--cyan);
+            border-radius: 0 8px 8px 0;
+            padding: 14px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .rev-tier.gold-tier { border-color: var(--gold); }
+        .rev-tier.magenta-tier { border-color: var(--magenta); }
+
+        /* ── TRAINING LEVELS ── */
+        .training-level {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+        .training-level:hover { border-color: var(--cyan); background: rgba(0,196,204,0.06); }
+        .level-dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            display: inline-block; margin-right: 6px;
+        }
+        .progress-bar-bg {
+            width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--cyan), #01dde6);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .darla-avatar { width: 160px; height: 160px; font-size: 64px; }
+            .stat-num { font-size: 20px; }
+        }
+
+        /* ── SCROLL ANIMATION ── */
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════════ -->
+<header class="py-4 px-8 bg-black flex items-center justify-between sticky top-0 z-50" style="border-bottom:1px solid rgba(0,196,204,0.15);">
+    <h1 class="text-3xl font-bold text-cyan-500 flex items-center font-orbitron">
+        <i class="fas fa-robot mr-3"></i> Buff Bot AI-Gym
+    </h1>
+    <nav class="space-x-5 hidden md:block text-sm font-semibold">
+        <a href="#darla"       class="hover:text-cyan-300 transition-colors">Meet DARLA</a>
+        <a href="#customize"   class="hover:text-cyan-300 transition-colors">Customize</a>
+        <a href="#train"       class="hover:text-cyan-300 transition-colors">Train AI</a>
+        <a href="#renting"     class="hover:text-cyan-300 transition-colors">AI Rentals</a>
+        <a href="#marketplace" class="hover:text-cyan-300 transition-colors">Marketplace</a>
+        <a href="#dream"       class="hover:text-cyan-300 transition-colors">Ask Genie</a>
+        <a href="#testers"     class="hover:text-cyan-300 transition-colors">Beta Testers</a>
+        <a href="#affiliate"   class="hover:text-cyan-300 transition-colors">Affiliate</a>
+    </nav>
+    <a href="/account" class="btn-primary text-sm">Login</a>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════
+     AFFILIATE EARNINGS TICKER
+═══════════════════════════════════════════════════════ -->
+<div class="ticker-wrap">
+    <div class="ticker-track">
+        <!-- First set -->
+        <span class="ticker-item"><i class="fas fa-fire text-orange-400"></i> Copy.ai Affiliate — 45% Recurring Commission</span>
+        <span class="ticker-item"><i class="fas fa-microphone text-purple-400"></i> ElevenLabs Voice — 22% Recurring</span>
+        <span class="ticker-item"><i class="fas fa-dollar-sign text-yellow-400"></i> Jasper AI — 30% Recurring Commission</span>
+        <span class="ticker-item"><i class="fas fa-video text-pink-400"></i> Synthesia AI Video — 30% Commission</span>
+        <span class="ticker-item"><i class="fas fa-robot text-cyan-400"></i> Writesonic — 30% Recurring</span>
+        <span class="ticker-item"><i class="fas fa-bolt text-yellow-300"></i> Zapier Automation — 20% / 6 Months</span>
+        <span class="ticker-item"><i class="fas fa-sticky-note text-blue-400"></i> Notion Workspace — $5/User/Month</span>
+        <span class="ticker-item"><i class="fas fa-star text-yellow-400"></i> Buff Bot AI-Gym — YOUR MALL, YOUR COMMISSIONS</span>
+        <!-- Duplicate for seamless loop -->
+        <span class="ticker-item"><i class="fas fa-fire text-orange-400"></i> Copy.ai Affiliate — 45% Recurring Commission</span>
+        <span class="ticker-item"><i class="fas fa-microphone text-purple-400"></i> ElevenLabs Voice — 22% Recurring</span>
+        <span class="ticker-item"><i class="fas fa-dollar-sign text-yellow-400"></i> Jasper AI — 30% Recurring Commission</span>
+        <span class="ticker-item"><i class="fas fa-video text-pink-400"></i> Synthesia AI Video — 30% Commission</span>
+        <span class="ticker-item"><i class="fas fa-robot text-cyan-400"></i> Writesonic — 30% Recurring</span>
+        <span class="ticker-item"><i class="fas fa-bolt text-yellow-300"></i> Zapier Automation — 20% / 6 Months</span>
+        <span class="ticker-item"><i class="fas fa-sticky-note text-blue-400"></i> Notion Workspace — $5/User/Month</span>
+        <span class="ticker-item"><i class="fas fa-star text-yellow-400"></i> Buff Bot AI-Gym — YOUR MALL, YOUR COMMISSIONS</span>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     ORIGINAL HERO — PRESERVED
+═══════════════════════════════════════════════════════ -->
+<section class="hero text-center text-white py-20">
+    <div class="section-label">The Ultimate AI Platform</div>
+    <h2 class="text-5xl font-bold font-orbitron mt-2">Train Your AI to Peak Performance</h2>
+    <p class="text-lg mt-4 text-gray-300">The ultimate platform to buy, sell, rent, and train your AI tools — now featuring <span class="text-purple-400 font-bold">DARLA</span>, your personalized AI companion.</p>
+    <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <a href="#darla"       class="btn-magenta">Meet DARLA</a>
+        <a href="#train"       class="btn-primary">Start Training</a>
+        <a href="#marketplace" class="btn-outline">View Marketplace</a>
+    </div>
+    <img src="rental.png" alt="rental bots" style="max-width:100%;height:auto;display:block;margin:30px auto;">
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     DARLA AI SHOWCASE — NEW SECTION
+═══════════════════════════════════════════════════════ -->
+<section id="darla" class="darla-hero py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <div class="section-label" style="border-color:var(--magenta);color:var(--magenta);background:rgba(224,64,251,0.1);">Introducing Your AI Companion</div>
+            <h3 class="text-5xl font-bold font-orbitron mt-3" style="background:linear-gradient(135deg,var(--magenta),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+                Meet DARLA
+            </h3>
+            <p class="text-gray-300 mt-4 text-lg max-w-2xl mx-auto">Dynamic AI Response &amp; Learning Assistant — fully customizable, always learning, built entirely around <em>you</em>.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
+            <!-- Left: Stats -->
+            <div class="space-y-4">
+                <div class="rev-tier magenta-tier">
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Intelligence Core</div>
+                        <div class="font-bold text-lg">Multi-Model AI Brain</div>
+                    </div>
+                    <i class="fas fa-brain text-purple-400 text-2xl"></i>
+                </div>
+                <div class="rev-tier">
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Voice Technology</div>
+                        <div class="font-bold text-lg">50+ Custom Voices</div>
+                    </div>
+                    <i class="fas fa-microphone-alt text-cyan-400 text-2xl"></i>
+                </div>
+                <div class="rev-tier gold-tier">
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Training Domains</div>
+                        <div class="font-bold text-lg">12+ Specializations</div>
+                    </div>
+                    <i class="fas fa-graduation-cap text-yellow-400 text-2xl"></i>
+                </div>
+                <div class="rev-tier magenta-tier">
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Character Skins</div>
+                        <div class="font-bold text-lg">Unlimited Looks</div>
+                    </div>
+                    <i class="fas fa-palette text-purple-400 text-2xl"></i>
+                </div>
+            </div>
+
+            <!-- Center: Avatar -->
+            <div class="text-center">
+                <div class="darla-avatar darla-pulse mb-6">🤖</div>
+                <h4 class="text-2xl font-bold font-orbitron mb-2" style="color:var(--magenta)">DARLA</h4>
+                <div class="voice-bars mb-4">
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                </div>
+                <p class="text-gray-300 text-sm mb-6">"Hello! I'm DARLA — ready to be trained, styled, and made entirely yours."</p>
+                <a href="#customize" class="btn-magenta mr-3">Customize DARLA</a>
+                <a href="/darla-demo" class="btn-outline" style="border-color:var(--magenta);color:var(--magenta);">Live Demo</a>
+            </div>
+
+            <!-- Right: Capabilities -->
+            <div class="space-y-4">
+                <div class="rev-tier" style="border-color:var(--magenta);">
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Personality Engine</div>
+                        <div class="font-bold">Tone, humor &amp; empathy sliders</div>
+                    </div>
+                    <i class="fas fa-smile-beam text-yellow-400 text-2xl"></i>
+                </div>
+                <div class="rev-tier">
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Memory System</div>
+                        <div class="font-bold">Learns your preferences over time</div>
+                    </div>
+                    <i class="fas fa-memory text-cyan-400 text-2xl"></i>
+                </div>
+                <div class="rev-tier magenta-tier">
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Language Support</div>
+                        <div class="font-bold">95+ languages &amp; dialects</div>
+                    </div>
+                    <i class="fas fa-globe text-purple-400 text-2xl"></i>
+                </div>
+                <div class="rev-tier gold-tier">
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Integrations</div>
+                        <div class="font-bold">Works with all Buff Bot tools</div>
+                    </div>
+                    <i class="fas fa-plug text-yellow-400 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Pills -->
+        <div class="flex flex-wrap justify-center gap-3 mt-12">
+            <span class="px-4 py-2 rounded-full text-sm font-semibold" style="background:rgba(224,64,251,0.15);border:1px solid rgba(224,64,251,0.4);color:#e040fb;"><i class="fas fa-microphone mr-2"></i>Custom Voice Skins</span>
+            <span class="px-4 py-2 rounded-full text-sm font-semibold" style="background:rgba(0,196,204,0.12);border:1px solid rgba(0,196,204,0.4);color:var(--cyan);"><i class="fas fa-user-astronaut mr-2"></i>Character Skins</span>
+            <span class="px-4 py-2 rounded-full text-sm font-semibold" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.4);color:var(--gold);"><i class="fas fa-brain mr-2"></i>Specialized Training</span>
+            <span class="px-4 py-2 rounded-full text-sm font-semibold" style="background:rgba(224,64,251,0.15);border:1px solid rgba(224,64,251,0.4);color:#e040fb;"><i class="fas fa-sliders-h mr-2"></i>Personality Tuning</span>
+            <span class="px-4 py-2 rounded-full text-sm font-semibold" style="background:rgba(0,196,204,0.12);border:1px solid rgba(0,196,204,0.4);color:var(--cyan);"><i class="fas fa-plug mr-2"></i>Multi-Platform</span>
+            <span class="px-4 py-2 rounded-full text-sm font-semibold" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.4);color:var(--gold);"><i class="fas fa-shield-alt mr-2"></i>Privacy First</span>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     DARLA CUSTOMIZATION STUDIO — NEW SECTION
+═══════════════════════════════════════════════════════ -->
+<section id="customize" class="py-16 bg-black px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-10">
+            <div class="section-label">DARLA Customization Studio</div>
+            <h3 class="text-4xl font-bold font-orbitron mt-3 text-cyan-400">Build Your Perfect AI</h3>
+            <p class="text-gray-400 mt-3">Power every customization with the world's best AI companies — each integration earns affiliate revenue for the mall.</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex flex-wrap gap-3 justify-center mb-8">
+            <div class="custom-tab active" onclick="switchTab('voice')"><i class="fas fa-microphone-alt mr-2"></i>Voice Skins</div>
+            <div class="custom-tab" onclick="switchTab('skin')"><i class="fas fa-palette mr-2"></i>Character Skins</div>
+            <div class="custom-tab" onclick="switchTab('training')"><i class="fas fa-brain mr-2"></i>Training Levels</div>
+            <div class="custom-tab" onclick="switchTab('personality')"><i class="fas fa-sliders-h mr-2"></i>Personality</div>
+            <div class="custom-tab" onclick="switchTab('integrations')"><i class="fas fa-plug mr-2"></i>AI Integrations</div>
+        </div>
+
+        <!-- VOICE TAB -->
+        <div id="tab-voice" class="tab-panel active grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- ElevenLabs -->
+            <div class="card darla-card">
+                <div>
+                    <span class="commission-badge">22% Recurring Commission</span>
+                    <h4>ElevenLabs Voice Engine</h4>
+                    <p class="text-gray-400 text-sm">Industry-leading AI voice synthesis. Give DARLA any voice — warm, authoritative, playful, or custom-cloned from your own voice.</p>
+                    <div class="voice-bars mt-4 mb-3"><div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div></div>
+                    <p class="text-xs text-gray-500">50+ pre-built voices · Voice cloning · Real-time synthesis</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://elevenlabs.io" target="_blank" class="btn-magenta flex-1 text-center text-sm">Apply Voice</a>
+                    <a href="https://elevenlabs.io/affiliates" target="_blank" class="btn-outline text-sm">Earn 22%</a>
+                </div>
+            </div>
+            <!-- Azure Speech -->
+            <div class="card">
+                <div>
+                    <span class="commission-badge">Partner Commission</span>
+                    <h4>Microsoft Azure Neural Voice</h4>
+                    <p class="text-gray-400 text-sm">Ultra-realistic neural text-to-speech with 400+ voices in 140 languages. Give DARLA a global voice.</p>
+                    <p class="text-xs text-gray-500 mt-3">400+ voices · 140 languages · Custom neural voice</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://azure.microsoft.com/en-us/products/cognitive-services/text-to-speech" target="_blank" class="btn-primary flex-1 text-center text-sm">Apply to DARLA</a>
+                    <a href="https://partner.microsoft.com" target="_blank" class="btn-outline text-sm">Partner</a>
+                </div>
+            </div>
+            <!-- Google TTS -->
+            <div class="card">
+                <div>
+                    <span class="commission-badge">Cloud Partner Program</span>
+                    <h4>Google WaveNet TTS</h4>
+                    <p class="text-gray-400 text-sm">DeepMind's WaveNet technology produces the most natural-sounding voices available. Make DARLA indistinguishable from human.</p>
+                    <p class="text-xs text-gray-500 mt-3">WaveNet · Neural2 · Studio voices</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://cloud.google.com/text-to-speech" target="_blank" class="btn-primary flex-1 text-center text-sm">Apply to DARLA</a>
+                    <a href="https://cloud.google.com/partners" target="_blank" class="btn-outline text-sm">Partner</a>
+                </div>
+            </div>
+            <!-- PlayHT -->
+            <div class="card darla-card">
+                <div>
+                    <span class="commission-badge">Affiliate Available</span>
+                    <h4>PlayHT Voice Cloning</h4>
+                    <p class="text-gray-400 text-sm">Clone any voice in seconds. Users can upload a 30-second clip and give DARLA their own voice — or a celebrity-style preset.</p>
+                    <p class="text-xs text-gray-500 mt-3">Voice cloning · 900+ voices · Real-time API</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://play.ht" target="_blank" class="btn-magenta flex-1 text-center text-sm">Clone Voice</a>
+                    <a href="https://play.ht/affiliate-program" target="_blank" class="btn-outline text-sm">Earn Commission</a>
+                </div>
+            </div>
+            <!-- Murf AI -->
+            <div class="card">
+                <div>
+                    <span class="commission-badge">30% Commission</span>
+                    <h4>Murf AI Studio Voice</h4>
+                    <p class="text-gray-400 text-sm">Professional voiceover quality for DARLA with pitch, tone, and emotion controls. Perfect for business-oriented DARLA builds.</p>
+                    <p class="text-xs text-gray-500 mt-3">120+ voices · Emotion control · Voice changer</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://murf.ai" target="_blank" class="btn-primary flex-1 text-center text-sm">Apply Voice</a>
+                    <a href="https://murf.ai/affiliate-program" target="_blank" class="btn-outline text-sm">Earn 30%</a>
+                </div>
+            </div>
+            <!-- Resemble AI -->
+            <div class="card">
+                <div>
+                    <span class="commission-badge">Affiliate Program</span>
+                    <h4>Resemble AI</h4>
+                    <p class="text-gray-400 text-sm">Hyper-realistic voice synthesis with emotion injection. Add anger, happiness, fear, or excitement to DARLA's speech dynamically.</p>
+                    <p class="text-xs text-gray-500 mt-3">Emotion synthesis · Real-time API · Voice localization</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://resemble.ai" target="_blank" class="btn-primary flex-1 text-center text-sm">Apply Voice</a>
+                    <a href="https://resemble.ai/partners" target="_blank" class="btn-outline text-sm">Partner</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SKIN TAB -->
+        <div id="tab-skin" class="tab-panel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Ready Player Me -->
+            <div class="card darla-card">
+                <div>
+                    <span class="commission-badge">Integration Partner</span>
+                    <h4>Ready Player Me</h4>
+                    <p class="text-gray-400 text-sm">Create a full 3D avatar for DARLA in minutes. Choose from thousands of outfits, hairstyles, and accessories — all customizable.</p>
+                    <p class="text-xs text-gray-500 mt-3">Full 3D avatars · Outfit catalog · Web/Mobile/VR</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://readyplayer.me" target="_blank" class="btn-magenta flex-1 text-center text-sm">Build Avatar</a>
+                    <a href="https://readyplayer.me/developers" target="_blank" class="btn-outline text-sm">Integrate</a>
+                </div>
+            </div>
+            <!-- D-ID -->
+            <div class="card">
+                <div>
+                    <span class="commission-badge">25% Partner Commission</span>
+                    <h4>D-ID Talking Avatar</h4>
+                    <p class="text-gray-400 text-sm">Turn any photo or AI portrait into a lip-synced, talking DARLA avatar. Choose any face — hyper-realistic or stylized.</p>
+                    <p class="text-xs text-gray-500 mt-3">Lip sync · Photo-realistic · Real-time video</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://d-id.com" target="_blank" class="btn-primary flex-1 text-center text-sm">Animate DARLA</a>
+                    <a href="https://d-id.com/affiliates" target="_blank" class="btn-outline text-sm">Earn 25%</a>
+                </div>
+            </div>
+            <!-- HeyGen -->
+            <div class="card darla-card">
+                <div>
+                    <span class="commission-badge">Affiliate Program</span>
+                    <h4>HeyGen AI Avatar</h4>
+                    <p class="text-gray-400 text-sm">Create a photorealistic AI avatar for DARLA with HeyGen. Interactive video presentations, instant language dubbing.</p>
+                    <p class="text-xs text-gray-500 mt-3">Video avatars · 40+ languages · Interactive mode</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://heygen.com" target="_blank" class="btn-magenta flex-1 text-center text-sm">Create Look</a>
+                    <a href="https://heygen.com/affiliate" target="_blank" class="btn-outline text-sm">Partner</a>
+                </div>
+            </div>
+            <!-- Midjourney / DALL-E -->
+            <div class="card">
+                <div>
+                    <span class="commission-badge">API Access</span>
+                    <h4>DALL-E Character Design</h4>
+                    <p class="text-gray-400 text-sm">Generate completely unique DARLA character art using OpenAI's DALL-E. Describe your ideal AI companion and watch her come to life.</p>
+                    <p class="text-xs text-gray-500 mt-3">Custom character art · Style presets · Unlimited generations</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://openai.com/api" target="_blank" class="btn-primary flex-1 text-center text-sm">Design Look</a>
+                    <a href="https://openai.com/api" target="_blank" class="btn-outline text-sm">API Access</a>
+                </div>
+            </div>
+            <!-- Stability AI -->
+            <div class="card">
+                <div>
+                    <span class="commission-badge">API Access</span>
+                    <h4>Stability AI — Skin Art</h4>
+                    <p class="text-gray-400 text-sm">Use Stable Diffusion to generate anime, realistic, cyberpunk, or fantasy character skins for DARLA. Unlimited unique looks.</p>
+                    <p class="text-xs text-gray-500 mt-3">Anime · Realistic · Cyberpunk · Fantasy · Custom</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://stability.ai" target="_blank" class="btn-primary flex-1 text-center text-sm">Generate Skin</a>
+                    <a href="https://stability.ai" target="_blank" class="btn-outline text-sm">Explore</a>
+                </div>
+            </div>
+            <!-- Synthesia -->
+            <div class="card gold-card">
+                <div>
+                    <span class="commission-badge">30% Commission</span>
+                    <h4>Synthesia AI Video Skin</h4>
+                    <p class="text-gray-400 text-sm">Bring DARLA to video life. Create full video presentations with your custom AI avatar — perfect for onboarding and training.</p>
+                    <p class="text-xs text-gray-500 mt-3">150+ avatars · 120 languages · Custom scenes</p>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="https://synthesia.io" target="_blank" class="btn-gold flex-1 text-center text-sm">Video DARLA</a>
+                    <a href="https://synthesia.io/affiliate" target="_blank" class="btn-outline text-sm">Earn 30%</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRAINING TAB -->
+        <div id="tab-training" class="tab-panel grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <h4 class="text-xl font-bold text-cyan-400 font-orbitron mb-4">DARLA Training Specializations</h4>
+                <div class="training-level">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold"><span class="level-dot" style="background:#e040fb;"></span>Legal Intelligence</span>
+                        <span class="text-xs text-gray-400">Powered by IBM Watson + LawBot</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-3">Train DARLA on legal documents, case law, contracts, and compliance. Integrates with LawBot AI.</p>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:85%;background:linear-gradient(90deg,#e040fb,#9c27b0);"></div></div>
+                    <div class="flex justify-between mt-1 text-xs text-gray-500"><span>Beginner</span><span>Advanced</span></div>
+                    <a href="lawbot2update.html" class="btn-magenta text-sm mt-3 inline-block">Activate Legal Training</a>
+                </div>
+                <div class="training-level">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold"><span class="level-dot" style="background:#ffd700;"></span>Business &amp; Finance</span>
+                        <span class="text-xs text-gray-400">Powered by Jasper AI + Copy.ai</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-3">Marketing copy, financial analysis, business planning, and pitch creation. Perfect for entrepreneurs.</p>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:90%;background:linear-gradient(90deg,#ffd700,#ff9800);"></div></div>
+                    <a href="https://jasper.ai" target="_blank" class="btn-gold text-sm mt-3 inline-block">Activate Business Training</a>
+                </div>
+                <div class="training-level">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold"><span class="level-dot" style="background:var(--cyan);"></span>Healthcare &amp; Wellness</span>
+                        <span class="text-xs text-gray-400">Powered by AWS HealthLake + BetterHelp</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-3">HIPAA-aware health information, wellness coaching, mental health support guidelines, and medical terminology.</p>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:75%;"></div></div>
+                    <a href="https://aws.amazon.com/healthlake/" target="_blank" class="btn-primary text-sm mt-3 inline-block">Activate Health Training</a>
+                </div>
+                <div class="training-level">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold"><span class="level-dot" style="background:#4caf50;"></span>Customer Service Pro</span>
+                        <span class="text-xs text-gray-400">Powered by Intercom + Drift</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-3">Transform DARLA into a world-class customer support agent. Train on your FAQs, product catalog, and policies.</p>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:95%;background:linear-gradient(90deg,#4caf50,#00e676);"></div></div>
+                    <a href="/darla-cs-training" class="btn-outline text-sm mt-3 inline-block">Activate CS Training</a>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h4 class="text-xl font-bold text-cyan-400 font-orbitron mb-4">Advanced Specializations</h4>
+                <div class="training-level">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold"><span class="level-dot" style="background:#ff5757;"></span>Creative &amp; Content</span>
+                        <span class="text-xs text-gray-400">Powered by Writesonic + Copy.ai</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-3">Blogs, social media, screenwriting, poetry, and brand storytelling. The ultimate creative partner.</p>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:88%;background:linear-gradient(90deg,#ff5757,#ff9800);"></div></div>
+                    <a href="https://writesonic.com" target="_blank" class="btn-outline text-sm mt-3 inline-block">Activate Creative Training</a>
+                </div>
+                <div class="training-level">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold"><span class="level-dot" style="background:#2196f3;"></span>Coding &amp; Dev</span>
+                        <span class="text-xs text-gray-400">Powered by GitHub Copilot + Replit</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-3">Train DARLA to debug, code review, explain algorithms, and assist with full-stack development projects.</p>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:80%;background:linear-gradient(90deg,#2196f3,#03a9f4);"></div></div>
+                    <a href="/darla-dev-training" class="btn-outline text-sm mt-3 inline-block">Activate Dev Training</a>
+                </div>
+                <div class="training-level">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold"><span class="level-dot" style="background:#9c27b0;"></span>Sales &amp; Negotiation</span>
+                        <span class="text-xs text-gray-400">Powered by Salesforce AI + Zapier</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-3">Make DARLA your top-performing sales rep. Train on objection handling, closing techniques, and CRM automation.</p>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:82%;background:linear-gradient(90deg,#9c27b0,#e040fb);"></div></div>
+                    <a href="https://zapier.com" target="_blank" class="btn-outline text-sm mt-3 inline-block">Activate Sales Training</a>
+                </div>
+                <div class="training-level">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold"><span class="level-dot" style="background:#00bcd4;"></span>Education &amp; Tutoring</span>
+                        <span class="text-xs text-gray-400">Powered by Coursera + SkillShare</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-3">Turn DARLA into a personalized tutor for any subject. Connects to Coursera and SkillShare course catalogs.</p>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:78%;background:linear-gradient(90deg,#00bcd4,#4db6ac);"></div></div>
+                    <a href="https://coursera.org" target="_blank" class="btn-outline text-sm mt-3 inline-block">Activate Edu Training</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERSONALITY TAB -->
+        <div id="tab-personality" class="tab-panel grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+                <h4 class="text-xl font-bold text-cyan-400 font-orbitron mb-6">Personality Sliders</h4>
+                <div class="space-y-5">
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm"><span>Serious 🎯</span><span id="tone-val">50%</span><span>Playful 😄</span></div>
+                        <input type="range" min="0" max="100" value="50" class="w-full accent-cyan-400" oninput="document.getElementById('tone-val').textContent=this.value+'%'">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm"><span>Concise ✂️</span><span id="verb-val">40%</span><span>Detailed 📚</span></div>
+                        <input type="range" min="0" max="100" value="40" class="w-full accent-cyan-400" oninput="document.getElementById('verb-val').textContent=this.value+'%'">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm"><span>Formal 🤝</span><span id="form-val">30%</span><span>Casual 👋</span></div>
+                        <input type="range" min="0" max="100" value="30" class="w-full accent-cyan-400" oninput="document.getElementById('form-val').textContent=this.value+'%'">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm"><span>Cautious 🛡️</span><span id="bold-val">70%</span><span>Bold 🔥</span></div>
+                        <input type="range" min="0" max="100" value="70" class="w-full accent-cyan-400" oninput="document.getElementById('bold-val').textContent=this.value+'%'">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm"><span>Empathetic ❤️</span><span id="emp-val">80%</span><span>Analytical 🔬</span></div>
+                        <input type="range" min="0" max="100" value="80" class="w-full accent-cyan-400" oninput="document.getElementById('emp-val').textContent=this.value+'%'">
+                    </div>
+                </div>
+                <button class="btn-magenta mt-6" onclick="alert('DARLA personality profile saved! Powered by Hugging Face fine-tuning.')">Save Personality Profile</button>
+            </div>
+            <div>
+                <h4 class="text-xl font-bold text-cyan-400 font-orbitron mb-6">Powered By — Personality AI</h4>
+                <div class="space-y-3">
+                    <div class="rev-tier"><div><div class="font-bold">Hugging Face Fine-Tuning</div><div class="text-xs text-gray-400">Custom model training for personality alignment</div></div><span class="commission-badge">Enterprise</span></div>
+                    <div class="rev-tier" style="border-color:var(--magenta)"><div><div class="font-bold">Anthropic Claude API</div><div class="text-xs text-gray-400">Constitutional AI for safe, helpful personality</div></div><span class="commission-badge">API Access</span></div>
+                    <div class="rev-tier gold-tier"><div><div class="font-bold">OpenAI GPT-4 Fine-Tune</div><div class="text-xs text-gray-400">Fine-tune on your custom persona dataset</div></div><span class="commission-badge">$0.008/1K tokens</span></div>
+                    <div class="rev-tier"><div><div class="font-bold">Cohere Classify</div><div class="text-xs text-gray-400">Tone and intent classification in real-time</div></div><span class="commission-badge">Enterprise</span></div>
+                </div>
+                <a href="https://huggingface.co/enterprise" target="_blank" class="btn-primary mt-4 inline-block">Start Fine-Tuning</a>
+            </div>
+        </div>
+
+        <!-- INTEGRATIONS TAB -->
+        <div id="tab-integrations" class="tab-panel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="card">
+                <h4>Notion Workspace</h4>
+                <p class="text-gray-400 text-sm">Connect DARLA to your Notion — she'll read your notes, update databases, and manage your workspace intelligently.</p>
+                <span class="commission-badge">$5/User/Month</span>
+                <a href="https://notion.so/affiliates" target="_blank" class="btn-primary mt-3">Connect + Earn</a>
+            </div>
+            <div class="card">
+                <h4>Zapier Automation</h4>
+                <p class="text-gray-400 text-sm">Connect DARLA to 5,000+ apps. Trigger workflows, send emails, post to social — all through natural conversation.</p>
+                <span class="commission-badge">20% / 6 Months</span>
+                <a href="https://zapier.com/affiliate" target="_blank" class="btn-primary mt-3">Connect + Earn</a>
+            </div>
+            <div class="card">
+                <h4>Salesforce CRM</h4>
+                <p class="text-gray-400 text-sm">DARLA becomes your CRM co-pilot — pulling customer data, logging calls, and suggesting next actions.</p>
+                <span class="commission-badge">Partner Commission</span>
+                <a href="https://salesforce.com/partners" target="_blank" class="btn-primary mt-3">Connect + Earn</a>
+            </div>
+            <div class="card">
+                <h4>Slack + Teams</h4>
+                <p class="text-gray-400 text-sm">Deploy DARLA directly inside Slack or Microsoft Teams. Let your whole team access a shared AI assistant.</p>
+                <span class="commission-badge">Integration Free</span>
+                <a href="/darla-slack" class="btn-outline mt-3">Connect</a>
+            </div>
+            <div class="card">
+                <h4>Google Workspace</h4>
+                <p class="text-gray-400 text-sm">DARLA reads your Docs, Sheets, and Gmail to give contextual help. Draft replies, summarize meetings, build reports.</p>
+                <span class="commission-badge">Cloud Partner</span>
+                <a href="https://cloud.google.com/partners" target="_blank" class="btn-primary mt-3">Connect + Earn</a>
+            </div>
+            <div class="card">
+                <h4>Shopify + eCommerce</h4>
+                <p class="text-gray-400 text-sm">Give DARLA your product catalog. She becomes your 24/7 sales assistant, answering questions and closing orders.</p>
+                <span class="commission-badge">Up to $150/Sale</span>
+                <a href="https://shopify.com/affiliates" target="_blank" class="btn-primary mt-3">Connect + Earn</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     AI RENTAL PACKAGES — PRESERVED + ENHANCED
+═══════════════════════════════════════════════════════ -->
+<section id="train" class="py-12 bg-gray-900">
+    <h3 class="text-3xl font-bold text-center text-cyan-400 font-orbitron">AI Rental Packages</h3>
+    <p class="text-center text-gray-400 mt-4">Rent state-of-the-art AI systems to develop your next project.</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 px-8">
+        <div class="card">
+            <h4>Quantum Processing Unit (QPU)</h4>
+            <p>Advanced quantum computing for complex AI scenarios.</p>
+            <p class="pricing">$999/week</p>
+            <a href="/reserve-qpu" class="btn-primary mt-4">Reserve Now</a>
+        </div>
+        <div class="card">
+            <h4>Neural Network Accelerator</h4>
+            <p>Specialized hardware for rapid neural network training.</p>
+            <p class="pricing">$799/week</p>
+            <a href="/reserve-nna" class="btn-primary mt-4">Reserve Now</a>
+        </div>
+        <div class="card">
+            <h4>Data Processing Array</h4>
+            <p>High-throughput data processing for AI systems.</p>
+            <p class="pricing">$699/week</p>
+            <a href="/reserve-dpa" class="btn-primary mt-4">Reserve Now</a>
+        </div>
+    </div>
+    <img src="training.png" alt="trainer" style="max-width:100%;height:auto;display:block;margin:20px auto;">
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     AI TOOL RENTING STATION — NEW SECTION
+═══════════════════════════════════════════════════════ -->
+<section id="renting" class="py-16 bg-black px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-10">
+            <div class="section-label">🔧 Renting Station</div>
+            <h3 class="text-4xl font-bold font-orbitron mt-3 text-cyan-400">AI Tool Renting Station</h3>
+            <p class="text-gray-400 mt-3 max-w-2xl mx-auto">Rent premium AI capabilities by the hour, day, or month. No subscriptions — pay only for what you use. Every rental earns mall commission.</p>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="flex flex-wrap gap-3 justify-center mb-8">
+            <button class="btn-primary text-sm" onclick="filterRentals('all')">All Tools</button>
+            <button class="btn-outline text-sm" onclick="filterRentals('voice')">Voice AI</button>
+            <button class="btn-outline text-sm" onclick="filterRentals('visual')">Visual AI</button>
+            <button class="btn-outline text-sm" onclick="filterRentals('writing')">Writing AI</button>
+            <button class="btn-outline text-sm" onclick="filterRentals('analytics')">Analytics AI</button>
+            <button class="btn-outline text-sm" onclick="filterRentals('automation')">Automation AI</button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Voice AI Rentals -->
+            <div class="rental-card" data-cat="voice">
+                <span class="rental-badge badge-hot">🔥 Hot</span>
+                <h4 class="text-lg font-bold text-cyan-400 font-orbitron mb-2">ElevenLabs Voice Studio</h4>
+                <p class="text-gray-400 text-sm mb-3">Professional AI voice generation. Clone voices, create audiobooks, power your podcast or DARLA.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <div class="text-2xl font-bold font-orbitron">$4<span class="text-sm text-gray-400">/hr</span></div>
+                        <div class="text-xs text-gray-500">or $49/week · $149/month</div>
+                    </div>
+                    <span class="commission-badge">22% to Mall</span>
+                </div>
+                <a href="https://elevenlabs.io" target="_blank" class="btn-primary w-full text-center">Rent Now</a>
+            </div>
+
+            <div class="rental-card" data-cat="voice">
+                <span class="rental-badge badge-new">✨ New</span>
+                <h4 class="text-lg font-bold text-cyan-400 font-orbitron mb-2">Murf Voice Studio</h4>
+                <p class="text-gray-400 text-sm mb-3">120+ studio-quality AI voices. Perfect for ads, e-learning, and customer-facing DARLA deployments.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <div class="text-2xl font-bold font-orbitron">$2<span class="text-sm text-gray-400">/hr</span></div>
+                        <div class="text-xs text-gray-500">or $29/week · $99/month</div>
+                    </div>
+                    <span class="commission-badge">30% to Mall</span>
+                </div>
+                <a href="https://murf.ai" target="_blank" class="btn-primary w-full text-center">Rent Now</a>
+            </div>
+
+            <!-- Visual AI Rentals -->
+            <div class="rental-card" data-cat="visual">
+                <span class="rental-badge badge-pro">⭐ Pro</span>
+                <h4 class="text-lg font-bold text-cyan-400 font-orbitron mb-2">Synthesia Video Studio</h4>
+                <p class="text-gray-400 text-sm mb-3">Create AI presenter videos with custom DARLA avatars. Training videos, product demos, announcements.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <div class="text-2xl font-bold font-orbitron">$15<span class="text-sm text-gray-400">/hr</span></div>
+                        <div class="text-xs text-gray-500">or $99/week · $299/month</div>
+                    </div>
+                    <span class="commission-badge">30% to Mall</span>
+                </div>
+                <a href="https://synthesia.io" target="_blank" class="btn-primary w-full text-center">Rent Now</a>
+            </div>
+
+            <div class="rental-card" data-cat="visual">
+                <span class="rental-badge badge-hot">🔥 Hot</span>
+                <h4 class="text-lg font-bold text-cyan-400 font-orbitron mb-2">DALL-E 3 Image Studio</h4>
+                <p class="text-gray-400 text-sm mb-3">Access OpenAI's most powerful image generator. Create character skins, marketing art, product visuals.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <div class="text-2xl font-bold font-orbitron">$6<span class="text-sm text-gray-400">/hr</span></div>
+                        <div class="text-xs text-gray-500">or $39/week · $119/month</div>
+                    </div>
+                    <span class="commission-badge">API Commission</span>
+                </div>
+                <a href="https://openai.com/api" target="_blank" class="btn-primary w-full text-center">Rent Now</a>
+            </div>
+
+            <div class="rental-card" data-cat="visual">
+                <span class="rental-badge badge-new">✨ New</span>
+                <h4 class="text-lg font-bold text-cyan-400 font-orbitron mb-2">Stable Diffusion XL</h4>
+                <p class="text-gray-400 text-sm mb-3">Open-source power with no restrictions. Generate unlimited character skins, art styles, and creative assets.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <div class="text-2xl font-bold font-orbitron">$3<span class="text-sm text-gray-400">/hr</span></div>
+                        <div class="text-xs text-gray-500">or $19/week · $59/month</div>
+                    </div>
+                    <span class="commission-badge">API Access</span>
+                </div>
+                <a href="https://stability.ai" target="_blank" class="btn-primary w-full text-center">Rent Now</a>
+            </div>
+
+            <!-- Writing AI Rentals -->
+            <div class="rental-card" data-cat="writing">
+                <span class="rental-badge badge-pro">⭐ Pro</span>
+                <h4 class="text-lg font-bold text-cyan-400 font-orbitron mb-2">Jasper AI Writer</h4>
+                <p class="text-gray-400 text-sm mb-3">Enterprise-grade AI copywriting. Blog posts, ads, emails, social content — 50+ templates included.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <div class="text-2xl font-bold font-orbitron">$8<span class="text-sm text-gray-400">/hr</span></div>
+                        <div class="text-xs text-gray-500">or $59/week · $179/month</div>
+                    </div>
+                    <span class="commission-badge">30% to Mall</span>
+                </div>
+                <a href="https://jasper.ai" target="_blank" class="btn-gold w-full text-center">Rent Now</a>
+            </div>
+
+            <div class="rental-card" data-cat="writing">
+                <span class="rental-badge badge-hot">🔥 Top Earner</span>
+                <h4 class="text-lg font-bold text-cyan-400 font-orbitron mb-2">Copy.ai Studio</h4>
+                <p class="text-gray-400 text-sm mb-3">The highest-commission AI writing platform. Sales copy, cold emails, product descriptions — fully automated.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <div class="text-2xl font-bold font-orbitron">$7<span class="text-sm text-gray-400">/hr</span></div>
+                        <div class="text-xs text-gray-500">or $49/week · $149/month</div>
+                    </div>
+                    <span class="commission-badge">45% to Mall ⭐</span>
+                </div>
+                <a href="https://copy.ai" target="_blank" class="btn-gold w-full text-center">Rent Now</a>
+            </div>
+
+            <!-- Analytics -->
+            <div class="rental-card" data-cat="analytics">
+                <span class="rental-badge badge-pro">⭐ Pro</span>
+                <h4 class="text-lg font-bold text-cyan-400 font-orbitron mb-2">DataRobot AutoML</h4>
+                <p class="text-gray-400 text-sm mb-3">Automated machine learning for predictive analytics. Build models without data science expertise.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <div class="text-2xl font-bold font-orbitron">$25<span class="text-sm text-gray-400">/hr</span></div>
+                        <div class="text-xs text-gray-500">or $199/week · $599/month</div>
+                    </div>
+                    <span class="commission-badge">Partner Commission</span>
+                </div>
+                <a href="https://datarobot.com" target="_blank" class="btn-primary w-full text-center">Rent Now</a>
+            </div>
+
+            <!-- Automation -->
+            <div class="rental-card" data-cat="automation">
+                <span class="rental-badge badge-new">✨ New</span>
+                <h4 class="text-lg font-bold text-cyan-400 font-orbitron mb-2">Zapier AI Automation</h4>
+                <p class="text-gray-400 text-sm mb-3">Connect DARLA and all your tools with AI-powered automation. Build multi-step workflows in plain English.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <div class="text-2xl font-bold font-orbitron">$5<span class="text-sm text-gray-400">/hr</span></div>
+                        <div class="text-xs text-gray-500">or $35/week · $99/month</div>
+                    </div>
+                    <span class="commission-badge">20% / 6mo to Mall</span>
+                </div>
+                <a href="https://zapier.com" target="_blank" class="btn-primary w-full text-center">Rent Now</a>
+            </div>
+        </div>
+
+        <div class="text-center mt-10">
+            <a href="/renting-all" class="btn-outline mr-4">Browse All 50+ AI Rentals</a>
+            <a href="/renting-bundle" class="btn-gold">Bundle &amp; Save 40%</a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     AI MARKETPLACE — PRESERVED + EXPANDED
+═══════════════════════════════════════════════════════ -->
+<section id="marketplace" class="py-12 bg-gray-900">
+    <h3 class="text-3xl font-bold text-center text-cyan-400 font-orbitron">AI Marketplace</h3>
+    <p class="text-center text-gray-400 mt-4">Buy and sell custom AI tools and models from leading providers. Every purchase earns the mall a commission.</p>
+    <div class="marketplace-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8 px-8">
+
+        <!-- Custom AI Concepts - Featured -->
+        <div class="card custom-ai-highlight">
+            <h4>Law Bot AI</h4>
+            <p>Advanced legal AI assistant for research and consultation.</p>
+            <p class="pricing">Premium</p>
+            <a href="lawbot2update.html" class="btn-primary mt-4">Explore Law Bot</a>
+        </div>
+
+        <div class="card darla-card">
+            <h4>DARLA AI Assistant</h4>
+            <p>Your fully customizable AI companion — voice, skin, training, and personality all yours.</p>
+            <p class="pricing">From $29/mo</p>
+            <a href="#darla" class="btn-magenta mt-4">Get DARLA</a>
+        </div>
+
+        <div class="card custom-ai-highlight">
+            <h4>Dream Genie AI</h4>
+            <p>Transform your dreams into actionable AI-powered plans.</p>
+            <p class="pricing">Premium</p>
+            <a href="dreamgenie2.html" class="btn-primary mt-4">Meet Dream Genie</a>
+        </div>
+
+        <!-- Top Affiliate Earners -->
+        <div class="card gold-card">
+            <div><span class="commission-badge">45% Recurring</span></div>
+            <h4>Copy.ai</h4>
+            <p>Best commission AI writing platform. Sales copy, emails, product descriptions — fully automated.</p>
+            <p class="pricing">$36/mo</p>
+            <div class="flex gap-2 mt-4">
+                <a href="https://copy.ai" target="_blank" class="btn-gold flex-1">Buy Now</a>
+                <a href="https://copy.ai/affiliate" target="_blank" class="btn-outline text-xs">Earn</a>
+            </div>
+        </div>
+
+        <div class="card gold-card">
+            <div><span class="commission-badge">30% Recurring</span></div>
+            <h4>Jasper AI</h4>
+            <p>Enterprise AI copywriting. 50+ templates, brand voice, and DARLA integration ready.</p>
+            <p class="pricing">$49/mo</p>
+            <div class="flex gap-2 mt-4">
+                <a href="https://jasper.ai" target="_blank" class="btn-gold flex-1">Buy Now</a>
+                <a href="https://jasper.ai/affiliate" target="_blank" class="btn-outline text-xs">Earn</a>
+            </div>
+        </div>
+
+        <div class="card gold-card">
+            <div><span class="commission-badge">22% Recurring</span></div>
+            <h4>ElevenLabs</h4>
+            <p>AI voice synthesis. The engine powering DARLA's voice skins. 50+ voices + cloning.</p>
+            <p class="pricing">$22/mo</p>
+            <div class="flex gap-2 mt-4">
+                <a href="https://elevenlabs.io" target="_blank" class="btn-gold flex-1">Buy Now</a>
+                <a href="https://elevenlabs.io/affiliates" target="_blank" class="btn-outline text-xs">Earn</a>
+            </div>
+        </div>
+
+        <div class="card gold-card">
+            <div><span class="commission-badge">30% Commission</span></div>
+            <h4>Synthesia AI Video</h4>
+            <p>Create AI video presentations with your DARLA avatar. 150 presenters, 120 languages.</p>
+            <p class="pricing">$30/mo</p>
+            <div class="flex gap-2 mt-4">
+                <a href="https://synthesia.io" target="_blank" class="btn-gold flex-1">Buy Now</a>
+                <a href="https://synthesia.io/affiliate" target="_blank" class="btn-outline text-xs">Earn</a>
+            </div>
+        </div>
+
+        <div class="card gold-card">
+            <div><span class="commission-badge">30% Recurring</span></div>
+            <h4>Writesonic</h4>
+            <p>Fast-growing AI content platform. Chatbots, landing pages, articles, and product copy.</p>
+            <p class="pricing">$19/mo</p>
+            <div class="flex gap-2 mt-4">
+                <a href="https://writesonic.com" target="_blank" class="btn-gold flex-1">Buy Now</a>
+                <a href="https://writesonic.com/affiliate" target="_blank" class="btn-outline text-xs">Earn</a>
+            </div>
+        </div>
+
+        <!-- Original + Major AI Partners -->
+        <div class="card">
+            <h4>Custom GPT Model</h4>
+            <p>Fully-trained GPT model tailored for your needs.</p>
+            <p class="pricing">$1,499</p>
+            <a href="/buy-gpt" class="btn-primary mt-4">Buy Now</a>
+        </div>
+
+        <div class="card">
+            <h4>Image Processing AI</h4>
+            <p>AI model optimized for image generation and editing.</p>
+            <p class="pricing">$1,199</p>
+            <a href="/buy-image-ai" class="btn-primary mt-4">Buy Now</a>
+        </div>
+
+        <div class="card">
+            <h4>AI Content Generator</h4>
+            <p>Create unique content for blogs, social media, and more.</p>
+            <p class="pricing">$999</p>
+            <a href="/buy-content-ai" class="btn-primary mt-4">Buy Now</a>
+        </div>
+
+        <div class="card">
+            <h4>Voice Recognition AI</h4>
+            <p>Accurate and fast speech-to-text processing AI.</p>
+            <p class="pricing">$1,299</p>
+            <a href="/buy-voice-ai" class="btn-primary mt-4">Buy Now</a>
+        </div>
+
+        <div class="card">
+            <h4>OpenAI GPT-4 API</h4>
+            <p>Access powerful language models for chatbots and content generation.</p>
+            <p class="pricing">API Access</p>
+            <a href="https://openai.com/api" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Get API Access</a>
+        </div>
+
+        <div class="card">
+            <h4>Microsoft Azure AI</h4>
+            <p>Vision, Speech, Language APIs with reseller opportunities.</p>
+            <p class="pricing">Partnership</p>
+            <a href="https://partner.microsoft.com/en-US/solutions/ai" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Become Reseller</a>
+        </div>
+
+        <div class="card">
+            <h4>Google Cloud AI</h4>
+            <p>Custom ML models, Dialogflow chatbots, Vision AI platform.</p>
+            <p class="pricing">Partnership</p>
+            <a href="https://cloud.google.com/partners" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Join Partners</a>
+        </div>
+
+        <div class="card">
+            <h4>IBM Watson AI</h4>
+            <p>Customer service automation and advanced data analysis tools.</p>
+            <p class="pricing">Partnership</p>
+            <a href="https://www.ibm.com/partnerworld/public" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Become Partner</a>
+        </div>
+
+        <div class="card">
+            <h4>AWS AI &amp; ML</h4>
+            <p>SageMaker, Rekognition, Lex, Comprehend APIs and services.</p>
+            <p class="pricing">Partnership</p>
+            <a href="https://aws.amazon.com/partners/" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Join AWS Network</a>
+        </div>
+
+        <div class="card">
+            <h4>Hugging Face API</h4>
+            <p>NLP models, AutoNLP, and comprehensive model hosting platform.</p>
+            <p class="pricing">Enterprise</p>
+            <a href="https://huggingface.co/enterprise" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Enterprise Plans</a>
+        </div>
+
+        <div class="card">
+            <h4>DataRobot AutoML</h4>
+            <p>Automated machine learning platform for predictive analytics.</p>
+            <p class="pricing">Partnership</p>
+            <a href="https://www.datarobot.com/partners/" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Become Partner</a>
+        </div>
+
+        <div class="card">
+            <h4>UiPath RPA + AI</h4>
+            <p>Robotic process automation enhanced with AI capabilities.</p>
+            <p class="pricing">Partnership</p>
+            <a href="https://www.uipath.com/partners" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Partner Program</a>
+        </div>
+
+        <div class="card">
+            <h4>Anthropic Claude</h4>
+            <p>Constitutional AI for safe and helpful AI assistant applications.</p>
+            <p class="pricing">API Access</p>
+            <a href="https://www.anthropic.com" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Learn More</a>
+        </div>
+
+        <div class="card">
+            <h4>Stability AI</h4>
+            <p>Stable Diffusion and other generative AI models for creativity.</p>
+            <p class="pricing">API Access</p>
+            <a href="https://stability.ai" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Explore Models</a>
+        </div>
+
+        <div class="card">
+            <h4>Cohere NLP</h4>
+            <p>Enterprise-grade natural language processing and generation APIs.</p>
+            <p class="pricing">Enterprise</p>
+            <a href="https://cohere.ai" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Get Started</a>
+        </div>
+
+        <div class="card">
+            <h4>Scale AI</h4>
+            <p>Data platform for AI training with high-quality datasets.</p>
+            <p class="pricing">Enterprise</p>
+            <a href="https://scale.com" target="_blank" rel="noopener noreferrer" class="btn-primary mt-4">Scale Platform</a>
+        </div>
+
+        <!-- Additional from affiliate doc -->
+        <div class="card">
+            <h4>Jasper.ai Content Suite</h4>
+            <p>AI writing for marketing teams. Pair with BuffBot content strategy.</p>
+            <p class="pricing">$49/mo</p>
+            <a href="https://jasper.ai" target="_blank" class="btn-primary mt-4">Get Jasper</a>
+        </div>
+
+        <div class="card">
+            <h4>D-ID Talking Avatars</h4>
+            <p>Photo-realistic talking AI presenters. Power DARLA's video appearances.</p>
+            <p class="pricing">$5.90/min</p>
+            <a href="https://d-id.com" target="_blank" class="btn-primary mt-4">Create Avatar</a>
+        </div>
+
+        <div class="card">
+            <h4>HeyGen AI Video</h4>
+            <p>Photorealistic AI avatars for video content. 40+ languages, instant dubbing.</p>
+            <p class="pricing">$29/mo</p>
+            <a href="https://heygen.com" target="_blank" class="btn-primary mt-4">Create Video</a>
+        </div>
+
+        <div class="card">
+            <h4>Algolia AI Search</h4>
+            <p>AI-powered search and discovery API for any platform or marketplace.</p>
+            <p class="pricing">Partnership</p>
+            <a href="https://algolia.com/partners" target="_blank" class="btn-primary mt-4">Become Partner</a>
+        </div>
+
+        <div class="card">
+            <h4>DeepL Translation AI</h4>
+            <p>Best-in-class AI translation. Give DARLA a global voice in any language.</p>
+            <p class="pricing">Affiliate + Reseller</p>
+            <a href="https://deepl.com" target="_blank" class="btn-primary mt-4">Get DeepL</a>
+        </div>
+
+        <div class="card">
+            <h4>Clarifai Vision AI</h4>
+            <p>Computer vision API for image recognition, content moderation, and more.</p>
+            <p class="pricing">Partnership</p>
+            <a href="https://clarifai.com" target="_blank" class="btn-primary mt-4">Explore Vision AI</a>
+        </div>
+
+        <div class="card">
+            <h4>Notion AI Workspace</h4>
+            <p>AI-enhanced notes, wikis, and project management. DARLA workspace integration.</p>
+            <p class="pricing">$5/user/mo</p>
+            <a href="https://notion.so/affiliates" target="_blank" class="btn-primary mt-4">Get Notion AI</a>
+        </div>
+
+        <div class="card">
+            <h4>Zapier AI Automation</h4>
+            <p>Connect 5,000+ apps with AI. Automate DARLA workflows and buff your whole operation.</p>
+            <p class="pricing">20% Recurring</p>
+            <a href="https://zapier.com/affiliate" target="_blank" class="btn-primary mt-4">Automate Now</a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     ASK THE GENIE — PRESERVED
+═══════════════════════════════════════════════════════ -->
+<section id="dream" class="py-20 bg-black text-center">
+    <div class="section-label">✨ AI Dream Engine</div>
+    <h3 class="text-4xl font-bold text-cyan-400 font-orbitron mt-3">Ask the Genie</h3>
+    <p class="text-gray-400 mt-4 max-w-xl mx-auto">Dare to dream and let the Genie map out a path to achieve it. Powered by the world's most advanced AI reasoning models.</p>
+    <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <a href="dreamgenie2.html" class="btn-magenta text-lg px-8">✨ Ask the Genie</a>
+        <a href="dreamgenie2.html" class="btn-gold text-lg px-8">💎 Premium Genie</a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 px-8 max-w-4xl mx-auto">
+        <div class="card" style="min-height:auto;padding:20px;">
+            <i class="fas fa-magic text-purple-400 text-3xl mb-3"></i>
+            <h4 style="font-size:15px;">Dream to Plan</h4>
+            <p class="text-sm text-gray-400">Turn any dream into a step-by-step actionable roadmap powered by AI.</p>
+        </div>
+        <div class="card" style="min-height:auto;padding:20px;">
+            <i class="fas fa-chart-line text-cyan-400 text-3xl mb-3"></i>
+            <h4 style="font-size:15px;">Business Blueprint</h4>
+            <p class="text-sm text-gray-400">Get a full business plan, market analysis, and revenue projections.</p>
+        </div>
+        <div class="card" style="min-height:auto;padding:20px;">
+            <i class="fas fa-star text-yellow-400 text-3xl mb-3"></i>
+            <h4 style="font-size:15px;">Life Strategy</h4>
+            <p class="text-sm text-gray-400">Financial freedom, career pivots, creative goals — the Genie sees the path.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     BETA TESTER SIGN-UP — NEW SECTION
+═══════════════════════════════════════════════════════ -->
+<section id="testers" class="py-16 bg-gray-900 px-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-12">
+            <div class="section-label" style="background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold);">🧪 Exclusive Access</div>
+            <h3 class="text-4xl font-bold font-orbitron mt-3 text-yellow-400">Beta Tester Program</h3>
+            <p class="text-gray-400 mt-3 max-w-2xl mx-auto">Be first to test cutting-edge AI products before they launch. Shape the future of DARLA, Buff Bot tools, and partner AI systems. Earn rewards for your feedback.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <!-- Benefits -->
+            <div>
+                <h4 class="text-xl font-bold text-yellow-400 font-orbitron mb-6">Tester Perks</h4>
+                <div class="space-y-4">
+                    <div class="rev-tier gold-tier">
+                        <div>
+                            <div class="font-bold">Free Early Access</div>
+                            <div class="text-sm text-gray-400">Use new AI tools weeks before public launch</div>
+                        </div>
+                        <i class="fas fa-rocket text-yellow-400 text-xl"></i>
+                    </div>
+                    <div class="rev-tier gold-tier">
+                        <div>
+                            <div class="font-bold">Cash Rewards</div>
+                            <div class="text-sm text-gray-400">Earn $5–$50 per completed feedback session</div>
+                        </div>
+                        <i class="fas fa-dollar-sign text-yellow-400 text-xl"></i>
+                    </div>
+                    <div class="rev-tier gold-tier">
+                        <div>
+                            <div class="font-bold">DARLA Beta Skins</div>
+                            <div class="text-sm text-gray-400">Exclusive character skins only for testers</div>
+                        </div>
+                        <i class="fas fa-palette text-yellow-400 text-xl"></i>
+                    </div>
+                    <div class="rev-tier gold-tier">
+                        <div>
+                            <div class="font-bold">Mall Credit</div>
+                            <div class="text-sm text-gray-400">Earn Buff Bucks redeemable on any AI purchase</div>
+                        </div>
+                        <i class="fas fa-coins text-yellow-400 text-xl"></i>
+                    </div>
+                    <div class="rev-tier gold-tier">
+                        <div>
+                            <div class="font-bold">Direct Line to Dev Team</div>
+                            <div class="text-sm text-gray-400">Your feedback directly shapes features</div>
+                        </div>
+                        <i class="fas fa-comments text-yellow-400 text-xl"></i>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <h5 class="font-bold text-cyan-400 mb-4">Currently Testing:</h5>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:rgba(224,64,251,0.2);border:1px solid var(--magenta);color:var(--magenta);">DARLA v2.0 Voice Beta</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:rgba(0,196,204,0.15);border:1px solid var(--cyan);color:var(--cyan);">Buff Bot Autopilot</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:rgba(255,215,0,0.15);border:1px solid var(--gold);color:var(--gold);">Dream Genie Pro</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:rgba(255,87,87,0.15);border:1px solid #ff5757;color:#ff5757;">AI Rental API</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:rgba(76,175,80,0.15);border:1px solid #4caf50;color:#4caf50;">DARLA Skin Studio</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sign-Up Form -->
+            <div class="tester-form">
+                <div style="background:rgba(255,215,0,0.05);border:1px solid rgba(255,215,0,0.3);border-radius:14px;padding:32px;">
+                    <h4 class="text-xl font-bold text-yellow-400 font-orbitron mb-6">Apply to Test</h4>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label>First Name</label>
+                                <input type="text" placeholder="Your first name">
+                            </div>
+                            <div>
+                                <label>Last Name</label>
+                                <input type="text" placeholder="Your last name">
+                            </div>
+                        </div>
+                        <div>
+                            <label>Email Address</label>
+                            <input type="email" placeholder="your@email.com">
+                        </div>
+                        <div>
+                            <label>What AI Product to Test?</label>
+                            <select>
+                                <option value="">Select a product...</option>
+                                <option>DARLA AI Assistant v2.0</option>
+                                <option>DARLA Voice Skin Studio</option>
+                                <option>DARLA Character Skin Builder</option>
+                                <option>Dream Genie Pro</option>
+                                <option>Buff Bot Autopilot</option>
+                                <option>AI Rental API Platform</option>
+                                <option>Buff Bot Law Bot v3</option>
+                                <option>OPERaiTOR Automation Suite</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Experience Level</label>
+                            <select>
+                                <option>Beginner — I'm new to AI</option>
+                                <option>Intermediate — I use AI tools regularly</option>
+                                <option>Advanced — I work in tech/AI professionally</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>How often can you test?</label>
+                            <select>
+                                <option>1–2 hours per week</option>
+                                <option>3–5 hours per week</option>
+                                <option>5+ hours per week</option>
+                                <option>Full-time tester available</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Tell us your testing background</label>
+                            <textarea rows="3" placeholder="Brief background — what you use AI for, what platforms you know..."></textarea>
+                        </div>
+                        <button class="btn-gold w-full text-center text-base" onclick="handleTesterSignup()">
+                            <i class="fas fa-flask mr-2"></i> Apply to Beta Program
+                        </button>
+                        <p class="text-xs text-gray-500 text-center">Applications reviewed within 24–48 hours. Limited spots available per product.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     AFFILIATE PROGRAM — PRESERVED + MASSIVELY EXPANDED
+═══════════════════════════════════════════════════════ -->
+<section id="affiliate" class="py-16 bg-black px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <div class="section-label">💰 Revenue Engine</div>
+            <h3 class="text-4xl font-bold text-cyan-400 font-orbitron mt-3">Affiliate &amp; Partner Program</h3>
+            <p class="text-gray-400 mt-3 max-w-2xl mx-auto">Every tool in the mall earns commission. Every customer earns recurring revenue. Build your AI empire and let the mall work for you 24/7.</p>
+        </div>
+
+        <!-- Top 3 Original Cards — Preserved -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div class="card">
+                <h4>AI Reseller Program</h4>
+                <p>Earn up to 30% commission on AI tool sales and subscriptions.</p>
+                <a href="/affiliate-reseller" class="btn-primary mt-4">Join Now</a>
+            </div>
+            <div class="card">
+                <h4>Rental Affiliate</h4>
+                <p>Get 15% commission on all AI hardware rental bookings you refer.</p>
+                <a href="/affiliate-rental" class="btn-primary mt-4">Start Earning</a>
+            </div>
+            <div class="card">
+                <h4>Premium Partnership</h4>
+                <p>Exclusive access to enterprise deals and custom AI solutions.</p>
+                <a href="/affiliate-premium" class="btn-primary mt-4">Apply Today</a>
+            </div>
+        </div>
+
+        <!-- Revenue Dashboard -->
+        <div class="mb-12">
+            <h4 class="text-2xl font-bold text-yellow-400 font-orbitron mb-6 text-center">💰 Mall Revenue Dashboard — AI/Productivity Tier</h4>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div>
+                    <div class="rev-tier gold-tier">
+                        <div>
+                            <div class="commission-badge mb-1">45% Recurring ⭐ BEST</div>
+                            <div class="font-bold text-lg">Copy.ai</div>
+                            <div class="text-sm text-gray-400">AI writing — highest commission in the category</div>
+                        </div>
+                        <a href="https://copy.ai/affiliate" target="_blank" class="btn-gold text-sm">Join Now</a>
+                    </div>
+                    <div class="rev-tier gold-tier">
+                        <div>
+                            <div class="commission-badge mb-1">30% Recurring</div>
+                            <div class="font-bold text-lg">Jasper AI</div>
+                            <div class="text-sm text-gray-400">Pair with BuffBot — enterprise content creation</div>
+                        </div>
+                        <a href="https://jasper.ai/affiliate" target="_blank" class="btn-gold text-sm">Join Now</a>
+                    </div>
+                    <div class="rev-tier gold-tier">
+                        <div>
+                            <div class="commission-badge mb-1">30% Recurring</div>
+                            <div class="font-bold text-lg">Writesonic</div>
+                            <div class="text-sm text-gray-400">Fast-growing AI content tool — stack with Copy.ai</div>
+                        </div>
+                        <a href="https://writesonic.com/affiliate" target="_blank" class="btn-gold text-sm">Join Now</a>
+                    </div>
+                    <div class="rev-tier gold-tier">
+                        <div>
+                            <div class="commission-badge mb-1">30% Commission</div>
+                            <div class="font-bold text-lg">Synthesia AI Video</div>
+                            <div class="text-sm text-gray-400">AI video creation — BuffBot showcase tool</div>
+                        </div>
+                        <a href="https://synthesia.io/affiliate" target="_blank" class="btn-gold text-sm">Join Now</a>
+                    </div>
+                </div>
+                <div>
+                    <div class="rev-tier magenta-tier">
+                        <div>
+                            <div class="commission-badge mb-1">22% Recurring</div>
+                            <div class="font-bold text-lg">ElevenLabs</div>
+                            <div class="text-sm text-gray-400">AI voices — perfect for DARLA voice skins</div>
+                        </div>
+                        <a href="https://elevenlabs.io/affiliates" target="_blank" class="btn-magenta text-sm">Join Now</a>
+                    </div>
+                    <div class="rev-tier">
+                        <div>
+                            <div class="commission-badge mb-1">20% / 6 Months</div>
+                            <div class="font-bold text-lg">Zapier Automation</div>
+                            <div class="text-sm text-gray-400">BuffBot + OPERaiTOR automation stack fit</div>
+                        </div>
+                        <a href="https://zapier.com/affiliate" target="_blank" class="btn-primary text-sm">Join Now</a>
+                    </div>
+                    <div class="rev-tier">
+                        <div>
+                            <div class="commission-badge mb-1">$5 / User / Month</div>
+                            <div class="font-bold text-lg">Notion Workspace</div>
+                            <div class="text-sm text-gray-400">DARLA workspace angle — productivity + AI</div>
+                        </div>
+                        <a href="https://notion.so/affiliates" target="_blank" class="btn-primary text-sm">Join Now</a>
+                    </div>
+                    <div class="rev-tier magenta-tier">
+                        <div>
+                            <div class="commission-badge mb-1">30% Murf + 25% D-ID</div>
+                            <div class="font-bold text-lg">DARLA Stack Bundle</div>
+                            <div class="text-sm text-gray-400">ElevenLabs + Murf + D-ID + Synthesia — full DARLA suite</div>
+                        </div>
+                        <a href="/darla-affiliate-bundle" class="btn-magenta text-sm">Bundle Earn</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Affiliate Tiers -->
+        <div class="mb-12">
+            <h4 class="text-2xl font-bold text-cyan-400 font-orbitron mb-6 text-center">Mall Affiliate Tiers</h4>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="card" style="min-height:auto;border:1px solid rgba(255,255,255,0.1);">
+                    <h4 style="font-size:15px;">Starter Bot</h4>
+                    <div class="text-3xl font-bold font-orbitron text-gray-300 my-2">5%</div>
+                    <p class="text-xs text-gray-400">On all mall purchases you refer. Free to join.</p>
+                    <a href="/affiliate/starter" class="btn-outline mt-3 text-sm">Join Free</a>
+                </div>
+                <div class="card" style="min-height:auto;border:1px solid var(--cyan);">
+                    <h4 style="font-size:15px;">Buff Bot Pro</h4>
+                    <div class="text-3xl font-bold font-orbitron text-cyan-400 my-2">12%</div>
+                    <p class="text-xs text-gray-400">On all products + 5% on sub-affiliates you recruit.</p>
+                    <a href="/affiliate/pro" class="btn-primary mt-3 text-sm">Go Pro</a>
+                </div>
+                <div class="card" style="min-height:auto;border:2px solid var(--magenta);">
+                    <h4 style="font-size:15px;">DARLA Partner</h4>
+                    <div class="text-3xl font-bold font-orbitron my-2" style="color:var(--magenta);">20%</div>
+                    <p class="text-xs text-gray-400">Full stack commissions + DARLA reseller rights.</p>
+                    <a href="/affiliate/darla" class="btn-magenta mt-3 text-sm">Apply Now</a>
+                </div>
+                <div class="card gold-card" style="min-height:auto;">
+                    <h4 style="font-size:15px;">Mall Owner</h4>
+                    <div class="text-3xl font-bold font-orbitron text-yellow-400 my-2">30%+</div>
+                    <p class="text-xs text-gray-400">White-label rights, sub-affiliate network, custom deals.</p>
+                    <a href="/affiliate/mall-owner" class="btn-gold mt-3 text-sm">Apply</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="/affiliate" class="btn-primary text-lg px-10 mr-4">Join Full Affiliate Program</a>
+            <a href="/affiliate-dashboard" class="btn-outline text-lg px-10">View Earnings Dashboard</a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOOTER — PRESERVED
+═══════════════════════════════════════════════════════ -->
+<footer class="text-center text-gray-400 py-6">
+    <p class="font-orbitron text-cyan-500 text-lg font-bold mb-2">Buff Bot AI-Gym</p>
+    <p>&copy; 2024 Buff Bot AI-Gym. All Rights Reserved.</p>
+    <div class="mt-4 space-x-4">
+        <a href="/privacy"  class="hover:text-cyan-300">Privacy Policy</a>
+        <a href="/terms"    class="hover:text-cyan-300">Terms of Service</a>
+        <a href="/contact"  class="hover:text-cyan-300">Contact Us</a>
+        <a href="#darla"    class="hover:text-purple-400" style="color:var(--magenta);">Meet DARLA</a>
+        <a href="#testers"  class="hover:text-yellow-300" style="color:var(--gold);">Beta Testers</a>
+        <a href="#affiliate" class="hover:text-cyan-300">Affiliates</a>
+    </div>
+</footer>
+
+<!-- Original Bottom Image — PRESERVED -->
+<img src="buff.png" alt="buff ai gym" style="max-width:100%;height:auto;display:block;margin:0 auto;">
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
+<script>
+    // Tab switcher for Darla Customization Studio
+    function switchTab(name) {
+        document.querySelectorAll('.custom-tab').forEach((t,i) => {
+            const tabs = ['voice','skin','training','personality','integrations'];
+            t.classList.toggle('active', tabs[i] === name);
+        });
+        document.querySelectorAll('.tab-panel').forEach(p => {
+            p.classList.remove('active');
+        });
+        const panel = document.getElementById('tab-' + name);
+        if (panel) panel.classList.add('active');
+    }
+
+    // Rental filter
+    function filterRentals(cat) {
+        document.querySelectorAll('.rental-card').forEach(card => {
+            card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+        });
+    }
+
+    // Tester signup handler
+    function handleTesterSignup() {
+        const email = document.querySelector('.tester-form input[type="email"]').value;
+        if (!email) {
+            alert('Please enter your email address to apply.');
+            return;
+        }
+        alert('🎉 Application submitted! Welcome to the Buff Bot Beta Tester Program. Check ' + email + ' for your confirmation and next steps within 24–48 hours.');
+    }
+
+    // Scroll fade-in observer
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Skin selector interactivity
+    document.querySelectorAll('.skin-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            document.querySelectorAll('.skin-option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+        });
+    });
+</script>
+
+</body>
+</html>
