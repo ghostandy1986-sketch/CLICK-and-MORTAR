@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Phone Booth</title>
+    <!-- Tailwind CSS CDN for modern button styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter and a cursive font for handwritten style -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Indie+Flower&display=swap" rel="stylesheet">
+    <style>
+        /* Base body styling, combining original background with new font */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('jjhh.PNG') no-repeat center center fixed; /* User's original background image */
+            background-size: cover;
+            text-align: center;
+            display: flex; /* Use flexbox for centering content */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Main container styling */
+        .container {
+            max-width: 1920px;
+            margin: 50px auto;
+            padding: 20px;
+            background: url('jjhh.PNG') no-repeat center center fixed;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Enhanced shadow */
+            width: 100%; /* Ensure it takes full width within max-width */
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 2.5rem; /* Larger heading */
+            margin-bottom: 30px;
+            color: #f04e3b; /* Accent color */
+        }
+
+        .section {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap; /* Allow buttons to wrap */
+            justify-content: center;
+            gap: 15px; /* Spacing between main section buttons */
+        }
+
+        /* Original .btn styling */
+        .btn {
+            padding: 12px 25px; /* Slightly larger padding */
+            background-color: #f04e3b;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 8px; /* More rounded */
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+        }
+
+        .btn:hover {
+            background-color: #d0402d;
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 10px; /* Slightly more padding */
+            font-size: 1rem;
+            margin-top: 10px;
+            width: calc(80% - 20px); /* Adjust width for padding */
+            max-width: 400px; /* Max width for inputs */
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+            color: white;
+            outline: none; /* Remove outline on focus */
+        }
+        input[type="text"]::placeholder, input[type="number"]::placeholder {
+            color: #ccc;
+        }
+
+        /* Section visibility */
+        .phone-book, .prank-calls, .auto-dialer, .ringtone-store, .combined-buttons-section {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05); /* Lighter background for active section */
+            border-radius: 10px;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .phone-book ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .phone-book li {
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
+        }
+        .phone-book li:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .product-links a, .ringtone a {
+            color: #00ffff; /* Cyan color for links */
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+
+        .product-links a:hover, .ringtone a:hover {
+            text-decoration: underline;
+            color: #00aaff; /* Darker blue on hover */
+        }
+
+        .game-btn {
+            margin-top: 15px;
+            display: inline-block;
+            background-color: #f04e3b;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .game-btn:hover {
+            background-color: #d0402d;
+            transform: translateY(-2px);
+        }
+
+        .call-history {
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 20px;
+        }
+        .call-history h3 {
+            font-size: 1.3rem;
+            color: #00ffff;
+        }
+        .call-history ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .call-history li {
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        /* Styling from phone-buttons-doc for the new button grid */
+        .combined-button-grid {
+            display: grid;
+            gap: 1.25rem; /* Reduced gap slightly for more buttons */
+            padding: 2rem;
+            background-color: #1a1a1a;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 255, 255, 0.2);
+            max-width: 95%; /* Adjust max-width for better fit */
+            margin: 0 auto; /* Center the grid */
+            box-sizing: border-box;
+        }
+        .custom-button {
+            @apply flex items-center justify-center px-4 py-2 text-base font-semibold rounded-xl transition-all duration-300 ease-in-out transform;
+            background: linear-gradient(145deg, #333333, #111111);
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #00ffff, #00aaff) 1;
+            color: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            cursor: pointer;
+            word-break: break-word;
+            min-height: 50px; /* Ensure a minimum height for smaller buttons */
+        }
+        .custom-button:hover {
+            @apply scale-105;
+            background: linear-gradient(145deg, #444444, #222222);
+            border-image: linear-gradient(45deg, #00ffff, #00ffff) 1;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 80px rgba(0, 255, 255, 0.4);
+        }
+        .custom-button:active {
+            @apply scale-95;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Responsive grid adjustments for the combined buttons */
+        @media (min-width: 640px) { /* sm */
+            .combined-button-grid {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            }
+        }
+        @media (min-width: 768px) { /* md */
+            .combined-button-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+        }
+        @media (min-width: 1024px) { /* lg */
+            .combined-button-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+        @media (min-width: 1280px) { /* xl */
+            .combined-button-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
+        }
+
+        .handwritten-button {
+            font-family: 'Indie Flower', cursive; /* Using Indie Flower for handwritten style */
+            font-size: 1.2rem; /* Slightly larger for readability */
+            background: linear-gradient(145deg, #ff6666, #cc3333);
+            border-image: linear-gradient(45deg, #ffff00, #ff00ff) 1;
+            color: #ffffff;
+            font-weight: bold; /* Make it bolder */
+        }
+        .handwritten-button:hover {
+             background: linear-gradient(145deg, #ff8888, #dd5555);
+             border-image: linear-gradient(45deg, #ffff33, #ff33ff) 1;
+        }
+
+        /* Custom Modal Styling */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+            align-items: center; /* Center content vertically */
+            justify-content: center; /* Center content horizontally */
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #00ffff;
+            border-radius: 15px;
+            width: 80%; /* Could be responsive */
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5), 0 0 40px rgba(0, 255, 255, 0.3);
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #00ffff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-message {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome to the Virtual Phone Booth</h1>
+
+        <!-- Main navigation buttons -->
+        <div class="section">
+            <button class="btn" onclick="toggleSection('phone-book')">Open Phone Book</button>
+            <button class="btn" onclick="toggleSection('prank-calls')">Start Prank Call Game</button>
+            <button class="btn" onclick="toggleSection('auto-dialer')">Auto-Dialer App</button>
+            <button class="btn" onclick="toggleSection('ringtone-store')">Buy a New Ringtone</button>
+            <button class="btn" onclick="toggleSection('combined-buttons-section')">Explore More Features</button>
+        </div>
+
+        <!-- Phone Book Section -->
+        <div id="phone-book" class="phone-book">
+            <h2>Phone Book</h2>
+            <input type="text" placeholder="Search for a contact..." id="phoneSearch" oninput="searchPhoneBook()">
+            <ul id="phoneBookList">
+                <li>Tow Truck Service - 555-1234</li>
+                <li>Local Hospital - 555-5678</li>
+                <li>Tobacco Store - 555-9012</li>
+                <li>Mechanic Shop - 555-3456</li>
+                <li>Food Bank - 555-7890</li>
+            </ul>
+            <div class="product-links">
+                <a href="#" onclick="showModal('You clicked: Click here for the cheapest jumper cables')">Click here for the cheapest jumper cables</a><br>
+                <a href="#" onclick="showModal('You clicked: Click here for the best local mechanic')">Click here for the best local mechanic</a>
+            </div>
+        </div>
+
+        <!-- Prank Call Game -->
+        <div id="prank-calls" class="prank-calls">
+            <h2>Prank Call Challenge</h2>
+            <p>Start a new prank call challenge and try to complete objectives!</p>
+            <button class="game-btn" onclick="startPrankCall()">Start Game</button>
+            <div class="call-history">
+                <h3>Your Call History</h3>
+                <ul id="callHistoryList"></ul>
+            </div>
+        </div>
+
+        <!-- Auto-Dialer App -->
+        <div id="auto-dialer" class="auto-dialer">
+            <h2>Auto-Dialer App</h2>
+            <p>Set up emergency numbers to auto-call when needed:</p>
+            <input type="text" id="emergencyContact" placeholder="Enter emergency contact name">
+            <input type="text" id="emergencyPhone" placeholder="Enter emergency contact phone number">
+            <button class="btn" onclick="saveEmergencyContact()">Save Contact</button>
+        </div>
+
+        <!-- Ringtone Store -->
+        <div id="ringtone-store" class="ringtone-store">
+            <h2>Ringtone Store</h2>
+            <p>Browse available ringtones that will be played when someone calls you back.</p>
+            <div class="ringtone">
+                <a href="#" onclick="showModal('You clicked: Buy "Rock Tune" - $1.99')">Buy "Rock Tune" - $1.99</a><br>
+                <a href="#" onclick="showModal('You clicked: Buy "Jazz Beats" - $1.99')">Buy "Jazz Beats" - $1.99</a><br>
+                <a href="#" onclick="showModal('You clicked: Buy "Pop Groove" - $1.99')">Buy "Pop Groove" - $1.99</a>
+            </div>
+        </div>
+
+        <!-- Combined Buttons Section (from PHONEBOOTH.png) -->
+        <div id="combined-buttons-section" class="combined-buttons-section">
+            <h2>Advanced Phone Features</h2>
+            <div class="combined-button-grid">
+                <!-- Handwritten-style buttons -->
+                <button class="custom-button handwritten-button" onclick="handleAdvancedAction('call 355-7033 self')">call 355-7033 self</button>
+                <button class="custom-button handwritten-button" onclick="handleAdvancedAction('some cyber home')">some cyber home</button>
+                <button class="custom-button handwritten-button" onclick="handleAdvancedAction('Tricks!!!!')">Tricks!!!!</button>
+                <button class="custom-button handwritten-button" onclick="handleAdvancedAction('the real deel. ddtits. watch me as u cume -Lindsay 555-2399 ❤️')">the real deel. ddtits. watch me as u cume -Lindsay 555-2399 ❤️</button>
+
+                <!-- General phone-related buttons -->
+                <button class="custom-button" onclick="handleAdvancedAction('PURCHASE PHONES')">PURCHASE PHONES</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CAR PHONE')">CAR PHONE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('BURLAP')">BURLAP</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CONGRESS')">CONGRESS</button>
+                <button class="custom-button" onclick="handleAdvancedAction('WEATHER-PHONE')">WEATHER-PHONE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CYTOGEN')">CYTOGEN</button>
+                <button class="custom-button" onclick="handleAdvancedAction('VENTS')">VENTS</button>
+                <button class="custom-button" onclick="handleAdvancedAction('VIDEO')">VIDEO</button>
+                <button class="custom-button" onclick="handleAdvancedAction('SATELLITE')">SATELLITE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('microphone')">microphone</button>
+                <button class="custom-button" onclick="handleAdvancedAction('HEADPHONE')">HEADPHONE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('BELL')">BELL</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PAY PHONE BILL')">PAY PHONE BILL</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PAY PHONE CALL')">PAY PHONE CALL</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PAYPHONE')">PAYPHONE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PHONE NUMBERS')">PHONE NUMBERS</button>
+                <button class="custom-button" onclick="handleAdvancedAction('ANONYMOUS NICKNAME')">ANONYMOUS NICKNAME</button>
+                <button class="custom-button" onclick="handleAdvancedAction('FAX MACHINE')">FAX MACHINE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('WORKPHONE')">WORKPHONE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PHONE BUGS')">PHONE BUGS</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PHONE ENTRY')">PHONE ENTRY</button>
+                <button class="custom-button" onclick="handleAdvancedAction('POO DOG')">POO DOG</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PHONE HOTMAIL')">PHONE HOTMAIL</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CONSUMER SERVICE')">CONSUMER SERVICE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('TELEMETRY')">TELEMETRY</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PHONE ADS')">PHONE ADS</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CELL NOW')">CELL NOW</button>
+                <button class="custom-button" onclick="handleAdvancedAction('SELL USED')">SELL USED</button>
+                <button class="custom-button" onclick="handleAdvancedAction('TRADE')">TRADE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('BELLPHONES')">BELLPHONES</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PHONE MODELS')">PHONE MODELS</button>
+                <button class="custom-button" onclick="handleAdvancedAction('SCREEN BREAKER')">SCREEN BREAKER</button>
+                <button class="custom-button" onclick="handleAdvancedAction('DATA RECOVERY')">DATA RECOVERY</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PHONE RINGER')">PHONE RINGER</button>
+                <button class="custom-button" onclick="handleAdvancedAction('MINITURES')">MINITURES</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PHONE TONES')">PHONE TONES</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PHONE HACKS')">PHONE HACKS</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CLEPPS')">CLEPPS</button>
+                <button class="custom-button" onclick="handleAdvancedAction('HELLER')">HELLER</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PHONE SERVICE')">PHONE SERVICE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('MONTHLY PLAN')">MONTHLY PLAN</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CONTRACT')">CONTRACT</button>
+                <button class="custom-button" onclick="handleAdvancedAction('1 CELL')">1 CELL</button>
+                <button class="custom-button" onclick="handleAdvancedAction('1 COMPUTER')">1 COMPUTER</button>
+                <button class="custom-button" onclick="handleAdvancedAction('1 PHONE')">1 PHONE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('1 CREDIT')">1 CREDIT</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PHONE ACCESSORIES')">PHONE ACCESSORIES</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CRACKS')">CRACKS</button>
+                <button class="custom-button" onclick="handleAdvancedAction('PROTECTION')">PROTECTION</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CHARGES')">CHARGES</button>
+                <button class="custom-button" onclick="handleAdvancedAction('BATTERIES')">BATTERIES</button>
+                <button class="custom-button" onclick="handleAdvancedAction('SOLUTIONS')">SOLUTIONS</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CAMERAS')">CAMERAS</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CAR HANDBOOK')">CAR HANDBOOK</button>
+                <button class="custom-button" onclick="handleAdvancedAction('CLASSIC USED')">CLASSIC USED</button>
+                <button class="custom-button" onclick="handleAdvancedAction('LITERATURE')">LITERATURE</button>
+                <button class="custom-button" onclick="handleAdvancedAction('VOICE CHANGER')">VOICE CHANGER</button>
+                <button class="custom-button" onclick="handleAdvancedAction('USED PHONE')">USED PHONE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Modal HTML Structure -->
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="hideModal()">&times;</span>
+            <p id="modalMessage" class="modal-message"></p>
+        </div>
+    </div>
+
+    <script>
+        // Function to toggle sections visibility
+        function toggleSection(sectionId) {
+            const sections = ['phone-book', 'prank-calls', 'auto-dialer', 'ringtone-store', 'combined-buttons-section'];
+            sections.forEach(sec => {
+                document.getElementById(sec).classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Function to search phone book contacts
+        function searchPhoneBook() {
+            const searchTerm = document.getElementById('phoneSearch').value.toLowerCase();
+            const phoneBookList = document.getElementById('phoneBookList').getElementsByTagName('li');
+            for (let i = 0; i < phoneBookList.length; i++) {
+                const contact = phoneBookList[i].textContent.toLowerCase();
+                if (contact.includes(searchTerm)) {
+                    phoneBookList[i].style.display = ''; // Show
+                } else {
+                    phoneBookList[i].style.display = 'none'; // Hide
+                }
+            }
+        }
+
+        // Function to start a prank call game (simulated)
+        function startPrankCall() {
+            const callHistory = document.getElementById('callHistoryList');
+            const newCall = document.createElement('li');
+            const prankCalls = [
+                "Called Bob's Burgers - Asked if their fridge was running!",
+                "Dialed a random number - Asked for a refund on a non-existent item.",
+                "Called a pet shop - Asked if they had a 'talking' cat.",
+                "Phoned a pizza place - Ordered 100 pizzas for delivery to the moon."
+            ];
+            const randomPrank = prankCalls[Math.floor(Math.random() * prankCalls.length)];
+            newCall.textContent = randomPrank;
+            callHistory.prepend(newCall); // Add to the top of the list
+            document.querySelector('.call-history').style.display = 'block';
+            showModal(`New Prank Call initiated: ${randomPrank}`);
+        }
+
+        // Function to save emergency contact (simulated)
+        function saveEmergencyContact() {
+            const name = document.getElementById('emergencyContact').value.trim();
+            const phone = document.getElementById('emergencyPhone').value.trim();
+
+            if (name && phone) {
+                showModal(`Emergency contact saved: ${name} - ${phone}`);
+                // Clear inputs after saving
+                document.getElementById('emergencyContact').value = '';
+                document.getElementById('emergencyPhone').value = '';
+            } else {
+                showModal('Please enter both contact name and phone number.');
+            }
+        }
+
+        // --- Custom Modal Functions ---
+        function showModal(message) {
+            const modal = document.getElementById('customModal');
+            const modalMessage = document.getElementById('modalMessage');
+            modalMessage.textContent = message;
+            modal.style.display = 'flex'; // Use flex to center
+        }
+
+        function hideModal() {
+            const modal = document.getElementById('customModal');
+            modal.style.display = 'none';
+        }
+
+        // Close modal if user clicks outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('customModal');
+            if (event.target == modal) {
+                hideModal();
+            }
+        }
+
+        // --- New Functions for Combined Buttons (Advanced Features) ---
+        function handleAdvancedAction(buttonText) {
+            let message = `You pressed: "${buttonText}".`;
+            let actionPerformed = false; // Flag to indicate if a specific action was performed
+
+            // Simulate various actions based on button text
+            switch (buttonText) {
+                case 'call 355-7033 self':
+                    message = `Initiating a call to 355-7033... Ringing!`;
+                    addCallHistory(`Outgoing call: ${buttonText}`);
+                    actionPerformed = true;
+                    break;
+                case 'PURCHASE PHONES':
+                    message = `Redirecting to the "Purchase Phones" catalog...`;
+                    actionPerformed = true;
+                    break;
+                case 'CAR PHONE':
+                    message = `Accessing Car Phone features. Drive safe!`;
+                    actionPerformed = true;
+                    break;
+                case 'WEATHER-PHONE':
+                    message = `Fetching local weather conditions... Expect sunny skies!`;
+                    actionPerformed = true;
+                    break;
+                case 'VIDEO':
+                    message = `Starting video call... Connecting...`;
+                    addCallHistory(`Video call started: ${buttonText}`);
+                    actionPerformed = true;
+                    break;
+                case 'microphone':
+                    message = `Microphone activated. Testing sound... 1, 2, 3.`;
+                    actionPerformed = true;
+                    break;
+                case 'HEADPHONE':
+                    message = `Headphone mode engaged. Enjoy your audio!`;
+                    actionPerformed = true;
+                    break;
+                case 'PAY PHONE BILL':
+                case 'MONTHLY PLAN':
+                case 'CONTRACT':
+                case '1 CELL':
+                case '1 COMPUTER':
+                case '1 PHONE':
+                case '1 CREDIT':
+                    message = `Processing your request for: "${buttonText}". Transaction complete!`;
+                    actionPerformed = true;
+                    break;
+                case 'ANONYMOUS NICKNAME':
+                    message = `Your identity is now masked. Stay stealthy!`;
+                    actionPerformed = true;
+                    break;
+                case 'FAX MACHINE':
+                    message = `Sending fax... BEEP BOOP BEEP... Fax sent!`;
+                    actionPerformed = true;
+                    break;
+                case 'PHONE BUGS':
+                    message = `Scanning for phone bugs... All clear (for now)!`;
+                    actionPerformed = true;
+                    break;
+                case 'PHONE HACKS':
+                    message = `Initiating counter-hack protocols. System secured!`;
+                    actionPerformed = true;
+                    break;
+                case 'SELL USED':
+                case 'TRADE':
+                case 'USED PHONE':
+                    message = `Opening the marketplace for used phones.`;
+                    actionPerformed = true;
+                    break;
+                case 'DATA RECOVERY':
+                    message = `Attempting data recovery... Some files found!`;
+                    actionPerformed = true;
+                    break;
+                case 'PHONE RINGER':
+                    message = `Ringtone volume adjusted. Hear that?`;
+                    actionPerformed = true;
+                    break;
+                case 'VOICE CHANGER':
+                    message = `Voice changer activated. Try speaking in a new voice!`;
+                    actionPerformed = true;
+                    break;
+                case 'CAR HANDBOOK':
+                case 'CLASSIC USED':
+                case 'LITERATURE':
+                    message = `Opening the digital library for "${buttonText}".`;
+                    actionPerformed = true;
+                    break;
+                // For other buttons, a generic message will be used by default
+            }
+
+            // If no specific action was defined, use a generic log message
+            if (!actionPerformed) {
+                 message = `You interacted with: "${buttonText}". This feature is under development!`;
+            }
+            showModal(message); // Display the action in the custom modal
+        }
+
+        // Helper function to add items to call history
+        function addCallHistory(logEntry) {
+            const callHistoryList = document.getElementById('callHistoryList');
+            const newLogItem = document.createElement('li');
+            newLogItem.textContent = `${new Date().toLocaleTimeString()} - ${logEntry}`;
+            callHistoryList.prepend(newLogItem); // Add to the top
+            document.querySelector('.call-history').style.display = 'block'; // Ensure history is visible
+        }
+
+        // Ensure that the sections are hidden initially on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = ['phone-book', 'prank-calls', 'auto-dialer', 'ringtone-store', 'combined-buttons-section'];
+            sections.forEach(sec => {
+                document.getElementById(sec).classList.remove('active');
+            });
+        });
+    </script>
+
+</body>
+</html>
